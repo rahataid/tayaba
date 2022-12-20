@@ -10,14 +10,13 @@ const schema = {
     allowNull: false,
     unique: true,
   },
-  title: {
+  name: {
     type: Sequelize.STRING,
-    unique: true,
   },
 };
-module.exports = class TagModel extends AbstractModel {
+module.exports = class Beneficiaries extends AbstractModel {
   schema = schema;
   constructor() {
-    super({ tableName: "tblTags" });
+    super({ tableName: "tblBeneficiaries" });
   }
 };

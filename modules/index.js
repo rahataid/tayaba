@@ -10,6 +10,8 @@ const {
 //const Tag = require("./tag");
 const { mailOtp } = require("./eventHandlers");
 
+const Beneficiaries = require("./beneficiaries");
+
 let Routes = {
   //Tag: new Tag(),
   Auth: new AuthRouter(),
@@ -22,6 +24,7 @@ let Routes = {
     },
   }),
   AppSettings: AppSettings.Router(),
+  Beneficiaries: new Beneficiaries(),
 };
 
 module.exports = Routes;
