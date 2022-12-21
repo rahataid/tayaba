@@ -11,8 +11,27 @@ const schema = {
     unique: true,
   },
   name: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
   },
+  phone : {
+    type : Sequelize.STRING
+  },
+  wallet_address : {
+    type : Sequelize.STRING
+  },
+  email : {
+    type : Sequelize.STRING
+  },
+  address : {
+    type : Sequelize.STRING
+  },
+  address_temporary : {
+    type : Sequelize.STRING
+  },
+  gender : {
+    type : Sequelize.STRING
+  }
+
 };
 module.exports = class Beneficiaries extends AbstractModel {
   schema = schema;
