@@ -4,11 +4,10 @@ const { AbstractModel } = require("@rumsan/core/abstract");
 
 const schema = {
   id: {
-    type: DataTypes.UUID, //Sequelize.UUID,
-    primaryKey: true,
-    defaultValue: DataTypes.UUIDV4,
-    allowNull: false,
-    unique: true,
+   type : Sequelize.INTEGER,
+   primaryKey : true,
+   autoIncrement: true,
+   allowNull : false
   },
   name: {
     type: Sequelize.STRING

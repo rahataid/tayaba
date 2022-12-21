@@ -1,6 +1,5 @@
 const Joi = require("joi");
 const { AbstractValidator } = require("@rumsan/core/abstract");
-const { payload } = require("@hapi/hapi/lib/validation");
 
 const validators = {
   add: {
@@ -17,13 +16,13 @@ const validators = {
 
   getById : {
     params : Joi.object({
-      id : Joi.string(),
+      id : Joi.number(),
     }),
   },
 
   update : {
     params : Joi.object({
-      id : Joi.string(),
+      id : Joi.number(),
     }),
     payload : Joi.object({
       name : Joi.string().example("john doe"),
@@ -38,7 +37,7 @@ const validators = {
 
   delete : {
     params : Joi.object({
-      id : Joi.string(),
+      id : Joi.number(),
     })
   }
 };
