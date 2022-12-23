@@ -5,12 +5,30 @@ const validators = {
   add: {
     payload: Joi.object({
         name : Joi.string().example("john doe"),
+        gender : Joi.string().valid('male', 'female', 'others'),
+        cnicNumber : Joi.string(),
         phone : Joi.string(),
-        wallet_address : Joi.string().example('0xABJWAN6666...'),
+        walletAddress : Joi.string().example('0xABJWAN6666...'),
         email : Joi.string(),
-        address : Joi.string(),
-        address_temporary : Joi.string(),
-        gender : Joi.string(),
+        address : Joi.object({
+          taluka : Joi.string(),
+          district : Joi.string(),
+          village : Joi.string(),
+        }),
+        extras : Joi.object({
+          phoneOwnedBy :  Joi.string(),  
+          simRegisteredUnder : Joi.string(),  
+          phoneType : Joi.string(),  
+          phoneOwnerRelation : Joi.string(),  
+          unionCouncil : Joi.string(),  
+          relationship : Joi.string(),  
+          relativeName : Joi.string(), 
+          hasInternetAccess : Joi.string(),  
+          bankAccount : Joi.string(),  
+          dailyDistanceCovered : Joi.string(),
+          dailyWaterConsumption : Joi.string(),
+        })
+        
     }),
   },
 
@@ -24,15 +42,33 @@ const validators = {
     params : Joi.object({
       id : Joi.number(),
     }),
-    payload : Joi.object({
+    payload: Joi.object({
       name : Joi.string().example("john doe"),
+      gender : Joi.string().valid('male', 'female', 'others'),
+      cnicNumber : Joi.string(),
       phone : Joi.string(),
-      wallet_address : Joi.string().example('0xABJWAN6666...'),
+      walletAddress : Joi.string().example('0xABJWAN6666...'),
       email : Joi.string(),
-      address : Joi.string(),
-      address_temporary : Joi.string(),
-      gender : Joi.string(),
-    })
+      address : Joi.object({
+        taluka : Joi.string(),
+        district : Joi.string(),
+        village : Joi.string(),
+      }),
+      extras : Joi.object({
+        phoneOwnedBy :  Joi.string(),  
+        simRegisteredUnder : Joi.string(),  
+        phoneType : Joi.string(),  
+        phoneOwnerRelation : Joi.string(),  
+        unionCouncil : Joi.string(),  
+        relationship : Joi.string(),  
+        relativeName : Joi.string(), 
+        hasInternetAccess : Joi.string(),  
+        bankAccount : Joi.string(),  
+        dailyDistanceCovered : Joi.string(),  
+        dailyWaterConsumption : Joi.string(),
+      })
+      
+  }),
   },
 
   delete : {

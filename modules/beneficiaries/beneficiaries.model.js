@@ -9,27 +9,40 @@ const schema = {
    autoIncrement: true,
    allowNull : false
   },
+
   name: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull : false,
   },
+
+  gender : {
+    type : Sequelize.ENUM,
+    values : ['male', 'female', 'others']
+  },
+
   phone : {
     type : Sequelize.STRING
   },
-  wallet_address : {
+
+  walletAddress : {
     type : Sequelize.STRING
   },
-  email : {
+
+  cnicNumber : {
     type : Sequelize.STRING
   },
+
   address : {
-    type : Sequelize.STRING
+    type : Sequelize.JSON,
   },
-  address_temporary : {
-    type : Sequelize.STRING
+
+  extras : {
+    type : Sequelize.JSON,
+    },
+
+  email : {
+    type : Sequelize.STRING,
   },
-  gender : {
-    type : Sequelize.STRING
-  }
 
 };
 module.exports = class Beneficiaries extends AbstractModel {
