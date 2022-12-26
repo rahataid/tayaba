@@ -12,6 +12,8 @@ const { mailOtp } = require("./eventHandlers");
 
 const Beneficiaries = require("./beneficiaries");
 const Projects = require("./project");
+const _Reports = require("./reporting");
+
 
 let Routes = {
   //Tag: new Tag(),
@@ -27,6 +29,8 @@ let Routes = {
   AppSettings: AppSettings.Router(),
   Beneficiaries: new Beneficiaries(),
   Projects:new Projects(),
+  Reports: new _Reports(),
+
 };
 
 module.exports = Routes;
