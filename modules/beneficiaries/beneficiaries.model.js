@@ -20,6 +20,8 @@ const schema = {
   },
   cnicNumber: {
     type: Sequelize.STRING,
+    unique: true,
+    allowNull: false,
   },
   address: {
     type: Sequelize.JSON,
@@ -103,7 +105,7 @@ const schema = {
   projectId: {
     type: Sequelize.INTEGER,
     allowNull: false,
-  },  
+  },
 
   extras: {
     type: Sequelize.JSON,
