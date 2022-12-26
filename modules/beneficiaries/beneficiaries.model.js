@@ -100,6 +100,10 @@ const schema = {
   dailyWaterConsumption: {
     type: Sequelize.STRING,
   },
+  projectId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },  
 
   extras: {
     type: Sequelize.JSON,

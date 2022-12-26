@@ -18,7 +18,7 @@ module.exports = class extends AbstractRouter {
     },
 
     // #region Piechart
-    getBeneficiaryPiechart: {
+    getBeneficiaryPiechartByProject: {
       method: "GET",
       path: "/piechart/${type}",
       description: "Get report piechart",
