@@ -2,9 +2,12 @@ const Joi = require("joi");
 const { AbstractValidator } = require("@rumsan/core/abstract");
 
 const validators = {
-  getBeneficiaryPiechart: {
+  getBeneficiaryPiechartByProject: {
     params: Joi.object({
       type: Joi.string().required().error(new Error("Invalid type")),
+    }),
+    query: Joi.object({
+      projectId: Joi.number().error(new Error("Invalid project id")),
     }),
   },
 };
