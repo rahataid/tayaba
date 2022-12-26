@@ -22,7 +22,7 @@ const schema = {
   projectManager:{
     type: DataTypes.STRING,
   },
-  locations:{
+  location:{
     type: DataTypes.STRING,
   }
 
