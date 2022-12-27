@@ -24,11 +24,16 @@ module.exports = class extends AbstractRouter {
       method: "PUT",
       path: "/{id}",
       description: "update  project",
-    }, 
+    },
     delete: {
       method: "DELETE",
       path: "/{id}",
       description: "delete project",
     },
+    getById: {
+      method: "GET",
+      path: "/{id}",
+      description: "get Project By Id"
+    }
   };
 };
