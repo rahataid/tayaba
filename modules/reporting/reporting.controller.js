@@ -17,7 +17,7 @@ module.exports = class extends AbstractController {
         req.params.type,
         req.query.projectId
       ),
-    getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage()
+    getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id)
   };
 
   async getBeneficiaryDemographicsSummary(query) {
@@ -31,7 +31,7 @@ module.exports = class extends AbstractController {
     return { count, rows, beneficiaryPerVillage };
   }
 
-  async _getBeneficiaryPerVillage() {
+  async getBeneficiaryPerVillage() {
     const data = await this.tblBeneficiaries.findAll();
     const dataValues = data.map((el) => el.dataValues);
     const villageSet = new Set(dataValues.map(el => JSON.parse(el.address).village))
