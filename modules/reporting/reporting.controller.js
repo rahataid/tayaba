@@ -17,6 +17,7 @@ module.exports = class extends AbstractController {
         req.params.type,
         req.query.projectId
       ),
+    getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage()
   };
 
   async getBeneficiaryDemographicsSummary(query) {
@@ -26,16 +27,30 @@ module.exports = class extends AbstractController {
       },
       attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "total"]],
     });
-    return { count, rows };
+    const beneficiaryPerVillage = await this._getBeneficiaryPerVillage()
+    return { count, rows, beneficiaryPerVillage };
+  }
+
+  async _getBeneficiaryPerVillage() {
+    const data = await this.tblBeneficiaries.findAll();
+    const dataValues = data.map((el) => el.dataValues);
+    const villageSet = new Set(dataValues.map(el => JSON.parse(el.address).village))
+    const villages = Array.from(villageSet);
+    const beneficiaryPerVillage = villages.map((village) => {
+      const benInVillage = dataValues.filter(ben => JSON.parse(ben.address).village === village)
+      return { label: village, count: benInVillage.length }
+    }
+    )
+    return beneficiaryPerVillage
   }
 
   async _getPiechartData(type, projectId) {
     let query = projectId
       ? {
-          where: {
-            projectId,
-          },
-        }
+        where: {
+          projectId,
+        },
+      }
       : {};
 
     const { count, rows } = await this.tblBeneficiaries.findAndCountAll({
