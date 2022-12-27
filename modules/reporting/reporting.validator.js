@@ -10,6 +10,11 @@ const validators = {
       projectId: Joi.number().error(new Error("Invalid project id")),
     }),
   },
+  getBeneficiaryDemographicsSummary: {
+    query: Joi.object({
+      projectId: Joi.number().error(new Error("Invalid project id")),
+    }),
+  }
 };
 
 module.exports = class extends AbstractValidator {
