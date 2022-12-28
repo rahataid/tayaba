@@ -78,12 +78,6 @@ const schema = {
   },
   bankAccount: {
     type: Sequelize.STRING,
-    set(v) {
-      if (v) {
-        this.setDataValue("isBanked", true);
-      }
-      this.setDataValue("bankAccount", v);
-    },
   },
   isBanked: {
     type: Sequelize.BOOLEAN,
@@ -103,7 +97,7 @@ const schema = {
   projectId: {
     type: Sequelize.INTEGER,
     allowNull: false,
-  },  
+  },
 
   extras: {
     type: Sequelize.JSON,

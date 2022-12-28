@@ -24,10 +24,11 @@ const validators = {
       relationship: Joi.string().example('azimsd'),
       relativeName: Joi.string().example('azimsd'),
       hasInternetAccess: Joi.bool().example(true),
-      bankAccount: Joi.string().example('azimsd'),
+      bankAccount: Joi.string().example('azimsd').optional(),
       dailyDistanceCovered: Joi.string().example('azimsd'),
       dailyWaterConsumption: Joi.string().example('azimsd'),
       projectId: Joi.number().example(1),
+      isBanked: Joi.bool()
 
 
     }),
