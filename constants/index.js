@@ -1,3 +1,5 @@
+const userConstants = require("@rumsan/user/constants");
+
 module.exports = {
   ENV: {
     PRODUCTION: "production",
@@ -9,5 +11,12 @@ module.exports = {
       subject: "Welcome to our App.",
       html: `${__dirname}/../helpers/templates/user_added.html`,
     },
+  },
+  PERMISSIONS: {
+    ...userConstants.PERMISSIONS,
+  },
+  EVENTS: {
+    ...userConstants.EVENTS,
+    USER_ADD_OTP: "otp-created",
   },
 };
