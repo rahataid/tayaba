@@ -21,7 +21,6 @@ const validators = {
   getById: {
     params: Joi.object({
       id: Joi.number().required(),
-
     }),
   },
   update: {

@@ -1,10 +1,11 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { ProjectModel } = require("../models");
+const { ProjectModel,BeneficiariesModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.table = ProjectModel;
+    this.beneficiariesTable = BeneficiariesModel;
   }
 
   registrations = {
@@ -19,8 +20,15 @@ module.exports = class extends AbstractController {
     return this.table.create(payload);
   }
   async getById(id) {
-    console.log({ id })
-    return await this.table.findByPk(id);
+    const beneficiariesCount =  await this.beneficiariesTable.count({
+      where:{
+        projectId:id
+      }
+    });
+    let {dataValues} =  await this.table.findByPk(id);
+    dataValues.beneficiariesCount=beneficiariesCount;
+
+    return dataValues;
   }
   async list() {
     return this.table.findAll();
