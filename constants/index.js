@@ -12,6 +12,7 @@ module.exports = {
       html: `${__dirname}/../helpers/templates/user_added.html`,
     },
   },
+  ...userConstants,
   PERMISSIONS: {
     ...userConstants.PERMISSIONS,
   },
