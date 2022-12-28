@@ -1,23 +1,18 @@
 require("./services");
 const WSService = require("@rumsan/core/services/webSocket");
 const { AppSettings } = require("@rumsan/core");
-const {
-  UserRouter,
-  AuthRouter,
-  RoleRouter,
-  RSU_EVENTS,
-} = require("@rumsan/user");
+const { UserRouter, RoleRouter, RSU_EVENTS } = require("@rumsan/user");
 //const Tag = require("./tag");
 const { mailOtp } = require("./eventHandlers");
 
 const Beneficiaries = require("./beneficiaries");
 const Projects = require("./project");
 const _Reports = require("./reporting");
-
+const _Auth = require("./auth");
 
 let Routes = {
   //Tag: new Tag(),
-  Auth: new AuthRouter(),
+  Auth: new _Auth(),
   Role: new RoleRouter(),
   User: new UserRouter({
     listeners: {
@@ -28,9 +23,8 @@ let Routes = {
   }),
   AppSettings: AppSettings.Router(),
   Beneficiaries: new Beneficiaries(),
-  Projects:new Projects(),
+  Projects: new Projects(),
   Reports: new _Reports(),
-
 };
 
 module.exports = Routes;

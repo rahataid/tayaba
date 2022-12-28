@@ -5,6 +5,7 @@ const WSService = require("@rumsan/core/services/webSocket");
 
 module.exports = {
   mailOtp(otp, to, user) {
+    console.log("otp,to,user", otp, to, user);
     MailService.send({
       to,
       template: EMAIL_TEMPLATES.USER_ADDED,
