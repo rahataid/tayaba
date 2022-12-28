@@ -24,5 +24,12 @@ module.exports = class extends AbstractRouter {
       description: "Get report piechart",
     },
     //  #endregion
+
+    //beneficiaryPerVillage
+    getBeneficiaryPerVillage: {
+      method: "GET",
+      path: "/beneficiary/village/{type}",
+      description: "Get get Beneficiary Per Village",
+    },
   };
 };
