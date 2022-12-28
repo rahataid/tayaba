@@ -29,7 +29,9 @@ const server = new Hapi.Server({
       additionalHeaders: [
         "cache-control",
         "x-requested-with",
+        "accessToken",
         "access_token",
+        "report_token",
         "auth_signature",
         "data_signature",
         "h-captcha-response",
