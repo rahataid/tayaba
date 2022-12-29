@@ -24,7 +24,9 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    const { limit, start, ...restQuery } = query;
+    let { limit, start, ...restQuery } = query;
+    if(!limit) limit = 50;
+    if(!start) start = 0;
     // checkToken(req);
     let { rows: list, count } = await this.table.findAndCountAll({
       where: { ...restQuery },
