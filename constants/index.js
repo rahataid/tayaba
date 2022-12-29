@@ -15,6 +15,13 @@ module.exports = {
   ...userConstants,
   PERMISSIONS: {
     ...userConstants.PERMISSIONS,
+    BENEFICIARY_READ: "beneficiary-read",
+    BENEFICIARY_WRITE: "beneficiary-write",
+    BENEFICIARY_DELETE: "beneficiary-delete",
+    BENEFICIARY_LIST: "beneficiary-list",
+    PROJECT_READ: "project-read",
+    PROJECT_WRITE: "project-write",
+    PROJECT_DELETE: "project-delete",
   },
   EVENTS: {
     ...userConstants.EVENTS,
