@@ -1,6 +1,7 @@
 const Controller = require("./beneficiaries.controller");
 const Validator = require("./beneficiaries.validators");
 const { AbstractRouter } = require("@rumsan/core/abstract");
+const {PERMISSIONS } = require("../../constants");
 
 module.exports = class extends AbstractRouter {
   constructor(options = {}) {
@@ -14,31 +15,35 @@ module.exports = class extends AbstractRouter {
       method: "POST",
       path: "",
       description: "Add new beneficiaries",
+      permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
     list: {
       method: "GET",
       path: "",
       description: "List all beneficiaries",
-      //permissions: ["note_read"],
+      permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
 
     getById : {
       method : "GET",
       path: "/{id}",
-      description : "get beneficiaries by id"
+      description : "get beneficiaries by id",
+      permissions : [PERMISSIONS.BENEFICIARY_READ]
     },
 
     update : {
       method : "PATCH",
       path : "/{id}",
-      description : "update beneficiaries by id"
+      description : "update beneficiaries by id",
+      permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     }, 
 
     delete : {
       method : "DELETE",
       path : "/{id}",
-      description : "delete beneficiaries by id"
+      description : "delete beneficiaries by id",
+      permissions: [PERMISSIONS.BENEFICIARY_DELETE],
     }
   };
 };

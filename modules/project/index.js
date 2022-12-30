@@ -1,6 +1,7 @@
 const Controller = require("./project.controller");
 const { AbstractRouter } = require("@rumsan/core/abstract");
 const Validator = require("./project.validator")
+const {PERMISSIONS } = require("../../constants");
 module.exports = class extends AbstractRouter {
   constructor(options = {}) {
     options.name = options.name || "projects";
@@ -13,27 +14,35 @@ module.exports = class extends AbstractRouter {
       method: "POST",
       path: "",
       description: "Add new project",
+      permissions: [PERMISSIONS.PROJECT_WRITE],
     },
+    
     list: {
       method: "GET",
       path: "",
       description: "List all projects",
-      //permissions: ["note_read"],
+      permissions: [PERMISSIONS.PROJECT_LIST],
     },
+
     update: {
       method: "PUT",
       path: "/{id}",
       description: "update  project",
+      permissions: [PERMISSIONS.PROJECT_WRITE],
     },
+
     delete: {
       method: "DELETE",
       path: "/{id}",
       description: "delete project",
+      permissions: [PERMISSIONS.PROJECT_DELETE],
     },
+
     getById: {
       method: "GET",
       path: "/{id}",
-      description: "get Project By Id"
+      description: "get Project By Id",
+      permissions: [PERMISSIONS.PROJECT_READ]
     }
   };
 };

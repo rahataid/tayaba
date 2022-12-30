@@ -1,6 +1,7 @@
 const Controller = require("./reporting.controller");
 const Validator = require("./reporting.validator");
 const { AbstractRouter } = require("@rumsan/core/abstract");
+const {PERMISSIONS } = require("../../constants");
 
 module.exports = class extends AbstractRouter {
   constructor(options = {}) {
@@ -15,6 +16,7 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "/demographics/summary",
       description: "Get Beneficiary Demographics Summary",
+      permissions : [PERMISSIONS.REPORT_READ]
     },
 
     // #region Piechart
@@ -22,6 +24,7 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "/piechart/{type}",
       description: "Get report piechart",
+      permissions : [PERMISSIONS.REPORT_READ]
     },
     //  #endregion
 
@@ -30,6 +33,7 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "/beneficiary/village/{type}",
       description: "Get get Beneficiary Per Village",
+      permissions : [PERMISSIONS.REPORT_READ]
     },
   };
 };
