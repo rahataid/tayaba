@@ -18,7 +18,7 @@ const validators = {
 
       phoneOwnedBy: Joi.string().example('azimsd'),
       simRegisteredUnder: Joi.string().example('azimsd'),
-      phoneType: Joi.string().example('azimsd'),
+      phoneType: Joi.string().example('smartphone'),
       phoneOwnerRelation: Joi.string().example('azimsd'),
       unionCouncil: Joi.string().example('azimsd'),
       relationship: Joi.string().example('azimsd'),
