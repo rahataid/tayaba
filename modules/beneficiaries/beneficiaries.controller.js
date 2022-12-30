@@ -16,6 +16,7 @@ module.exports = class extends AbstractController {
   };
 
   async add(payload) {
+    console.log("payload", payload);
     try {
       return await this.table.create(payload);
     } catch (err) {
@@ -25,8 +26,8 @@ module.exports = class extends AbstractController {
 
   async list(query) {
     let { limit, start, ...restQuery } = query;
-    if(!limit) limit = 50;
-    if(!start) start = 0;
+    if (!limit) limit = 50;
+    if (!start) start = 0;
     // checkToken(req);
     let { rows: list, count } = await this.table.findAndCountAll({
       where: { ...restQuery },
