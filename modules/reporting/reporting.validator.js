@@ -8,6 +8,7 @@ const validators = {
     }),
     query: Joi.object({
       projectId: Joi.number().error(new Error("Invalid project id")),
+      village:Joi.string().optional().error(new Error("Invalid Village")),
     }),
   },
   getBeneficiaryDemographicsSummary: {

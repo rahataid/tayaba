@@ -1,5 +1,6 @@
 const { AbstractController } = require("@rumsan/core/abstract");
 const sequelize = require("sequelize");
+const {Op} = sequelize;
 const { BeneficiariesModel } = require("../models");
 
 module.exports = class extends AbstractController {
@@ -15,6 +16,7 @@ module.exports = class extends AbstractController {
     getBeneficiaryPiechartByProject: (req) =>
       this.getBeneficiaryPiechartByProject(
         req.params.type,
+        req.query.village,
         req.query.projectId
       ),
     getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id)
@@ -44,7 +46,28 @@ module.exports = class extends AbstractController {
     return beneficiaryPerVillage
   }
 
-  async _getPiechartData(type, projectId) {
+  async _getPiechartDataByVillage(type, village,projectId){
+    const query={
+      where:{
+        projectId
+      }
+    }
+    const data = await this.tblBeneficiaries.findAll(query);
+    const dataValues = data.map((el) => el.dataValues);
+    const benInVillage = dataValues.filter(ben => JSON.parse(ben.address).village === village)
+    const typeSet = new Set(dataValues.map(el => el[type]));
+    const typeArr = Array.from(typeSet);
+    const beneficiaryPerVillageByType = typeArr.map((el) => {
+      const elTypeArr = benInVillage.filter(ben => ben[type] === el)
+      return { [type]: el, count: elTypeArr.length }
+    }
+    )
+    return beneficiaryPerVillageByType;
+  }
+
+
+  
+  async _getPiechartData(type,projectId) {  
     let query = projectId
       ? {
         where: {
@@ -61,7 +84,8 @@ module.exports = class extends AbstractController {
     return { count, rows };
   }
 
-  async getBeneficiaryPiechartByProject(type, projectId) {
+  async getBeneficiaryPiechartByProject(type, village,projectId) {
+    if(village) return  await this._getPiechartDataByVillage(type,village,projectId);
     const { count } = await this._getPiechartData(type, projectId);
     return count;
   }

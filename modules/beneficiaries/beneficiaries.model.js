@@ -22,7 +22,7 @@ const schema = {
     type: Sequelize.STRING,
   },
   address: {
-    type: Sequelize.JSON,
+    type: Sequelize.JSONB,
     set(v) {
       if (
         !(
