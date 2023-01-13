@@ -28,14 +28,12 @@ module.exports = class extends AbstractController {
     let { limit, start, ...restQuery } = query;
     if (!limit) limit = 50;
     if (!start) start = 0;
-    // checkToken(req);
     let { rows: list, count } = await this.table.findAndCountAll({
       where: { ...restQuery },
       limit: limit || 100,
       offset: start || 0,
       raw: true,
     });
-    // const list = await this.table.findAll({});
     return {
       data: list,
       count,
