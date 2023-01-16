@@ -12,7 +12,7 @@ const schema = {
     defaultValue: "U",
   },
   phone: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
   },
   walletAddress: {
     type: Sequelize.STRING,
