@@ -8,6 +8,9 @@ const { mailOtp } = require("./eventHandlers");
 const Beneficiaries = require("./beneficiaries");
 const Projects = require("./project");
 const Villages = require("./villages");
+const Vendors = require("./vendors");
+const ProjectBeneficiaries = require("./projectBeneficiaries");
+const ProjectVendors = require("./projectVendors");
 const _Reports = require("./reporting");
 const _Auth = require("./auth");
 const { EVENTS } = require("../constants");
@@ -27,6 +30,9 @@ let Routes = {
   Beneficiaries: new Beneficiaries(),
   Projects: new Projects(),
   Villages : new Villages(),
+  Vendors : new Vendors(),
+  ProjectBeneficiaries : new ProjectBeneficiaries(),
+  ProjectVendors : new ProjectVendors(),
   Reports: new _Reports(),
 };
 

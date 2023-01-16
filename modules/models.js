@@ -4,6 +4,9 @@ const TagModel = require("./tag/tag.model");
 const BeneficiariesModel = require("./beneficiaries/beneficiaries.model");
 const ProjectModel = require("./project/project.model");
 const VillageModel = require("./villages/villages.model");
+const VendorModel = require("./vendors/vendors.model");
+const ProjectBeneficiariesModel = require("./projectBeneficiaries/projectBeneficiaries.model");
+const ProjectVendorsModel = require("./projectVendors/projectVendors.model");
 
 let modelFactory = {
   TagModel: new TagModel().init(),
@@ -11,90 +14,115 @@ let modelFactory = {
   BeneficiariesModel: new BeneficiariesModel().init(),
   ProjectModel : new ProjectModel().init(),
   VillageModel : new VillageModel().init(),
+  VendorModel : new VendorModel().init(),
+  ProjectBeneficiariesModel : new ProjectBeneficiariesModel().init(),
+  ProjectVendorsModel : new ProjectVendorsModel().init(),
 };
 
 /**********************************************************
  * All the table associations belong here
  **********************************************************/
 const createAssociations = (models) => {
-  // Beneficiary+Project
-  models.BeneficiariesModel.belongsTo(models.ProjectModel, {
+      // Beneficiary + Project
+      models.BeneficiariesModel.belongsTo(models.ProjectModel, {
+          foreignKey: {
+          name: "projectId",
+          allowNull: false,
+        },
+        as: "project_details",
+        onDelete: "CASCADE",
+      });
+
+      models.ProjectModel.hasMany(models.BeneficiariesModel, {
+        foreignKey: {
+          name: "projectId",
+          allowNull: false,
+        },
+        as: "project_details",
+        onDelete: "CASCADE",
+      });
+
+      // Beneficiary + Village
+      models.BeneficiariesModel.belongsTo(models.VillageModel, {
+        foreignKey: {
+        name: "villageId",
+        allowNull: false,
+      },
+      as: "village_details",
+      onDelete: "CASCADE",
+    });
+
+      models.VillageModel.hasMany(models.BeneficiariesModel, {
       foreignKey: {
-      name: "projectId",
+        name: "villageId",
+        allowNull: false,
+      },
+      as: "village_details",
+      onDelete: "CASCADE",
+    });
+
+
+      // Users + Project
+    models.ProjectModel.belongsTo(models.UserModel, {
+        foreignKey: {
+        name: "owner",
+        allowNull: false,
+      },
+      as: "users",
+      onDelete: "CASCADE",
+    });
+
+    models.UserModel.hasMany(models.ProjectModel, {
+      foreignKey: {
+        name: "owner",
+        allowNull: false,
+      },
+      as: "users",
+      onDelete: "CASCADE",
+    });
+
+    // Vendors + Villages
+    models.VendorModel.belongsTo(models.VillageModel, {
+      foreignKey: {
+      name: "villageId",
       allowNull: false,
     },
-    as: "projects",
-    onDelete: "CASCADE",
-  });
+      as: "vendor_village_details",
+      onDelete: "CASCADE",
+    });
 
-  models.ProjectModel.hasMany(models.BeneficiariesModel, {
+    models.VillageModel.hasMany(models.VendorModel, {
     foreignKey: {
-      name: "projectId",
+      name: "villageId",
       allowNull: false,
     },
-    as: "projects",
-    onDelete: "CASCADE",
-  });
+      as: "vendor_village_details",
+      onDelete: "CASCADE",
+    });
 
-  // Beneficiary+Village
-  models.BeneficiariesModel.belongsTo(models.VillageModel, {
-    foreignKey: {
-    name: "villageId",
-    allowNull: false,
-  },
-  as: "villages",
-  onDelete: "CASCADE",
-});
+     // Project + Beneficiaries
+    models.ProjectModel.belongsToMany(models.BeneficiariesModel, {
+      through: models.ProjectBeneficiariesModel,
+      as: "beneficiary_details",
+      foreignKey: "beneficiaryId",
+    });
+    models.BeneficiariesModel.belongsToMany(models.ProjectModel, {
+      through: models.ProjectBeneficiariesModel,
+      as: "beneficiary_project_details",
+      foreignKey: "projectId",
+    });
 
-  models.VillageModel.hasMany(models.BeneficiariesModel, {
-  foreignKey: {
-    name: "villageId",
-    allowNull: false,
-  },
-  as: "villages",
-  onDelete: "CASCADE",
-});
-
-
-  // Users+Project
-models.ProjectModel.belongsTo(models.UserModel, {
-    foreignKey: {
-    name: "owner",
-    allowNull: false,
-  },
-  as: "users",
-  onDelete: "CASCADE",
-});
-
-models.UserModel.hasMany(models.ProjectModel, {
-  foreignKey: {
-    name: "owner",
-    allowNull: false,
-  },
-  as: "users",
-  onDelete: "CASCADE",
-});
-
- // Vendors+Villages
- models.BeneficiariesModel.belongsTo(models.ProjectModel, {
-  foreignKey: {
-  name: "projectId",
-  allowNull: false,
-},
-  as: "projects",
-  onDelete: "CASCADE",
-});
-
-models.ProjectModel.hasMany(models.BeneficiariesModel, {
-foreignKey: {
-  name: "projectId",
-  allowNull: false,
-},
-  as: "projects",
-  onDelete: "CASCADE",
-});
-
-
+     // Project + Vendors
+    models.ProjectModel.belongsToMany(models.VendorModel, {
+      through: models.ProjectVendorsModel,
+      as: "vendor_details",
+      foreignKey: "vendorId",
+    });
+    models.VendorModel.belongsToMany(models.ProjectModel, {
+      through: models.ProjectVendorsModel,
+      as: "project_vendor_details",
+      foreignKey: "projectId",
+    });
 
 
 };

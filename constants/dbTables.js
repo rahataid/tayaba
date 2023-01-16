@@ -7,5 +7,6 @@ module.exports = {
   PROJECTS: "tblProjects",
   VILLAGES : "tblVillages",
   PROJECT_BENEFECIARIES : "tblProjectBeneficiaries",
+  PROJECT_VENDORS : "tblProjectVendors",
   VENDOR : "tblVendors"
 };

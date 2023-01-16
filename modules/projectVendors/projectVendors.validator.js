@@ -4,8 +4,8 @@ const { AbstractValidator } = require("@rumsan/core/abstract");
 const validators = {
   add: {
     payload: Joi.object({
-      projectId: Joi.number().required().example(1).error(new Error("Invalid id")),
-      beneficiaryId: Joi.number().required().example(1).error(new Error("Invalid id")),
+      projectId: Joi.number().required().example(1).error(new Error("Invalid project id")),
+      vendorId: Joi.number().required().example(1).error(new Error("Invalid vendor id")),
     }),
 
   },
