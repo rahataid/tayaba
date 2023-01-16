@@ -77,15 +77,21 @@ const schema = {
   },
   hasInternetAccess: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   bankAccount: {
     type: Sequelize.STRING,
   },
   isBanked: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   hasPhone: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   bankAccountType: {
     type: Sequelize.ENUM(["current", "savings"]),

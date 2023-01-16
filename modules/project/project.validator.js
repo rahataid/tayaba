@@ -7,8 +7,9 @@ const validators = {
       name: Joi.string().required().error(new Error("Invalid name")),
       startDate: Joi.date().optional().error(new Error("Invalid Start Date")),
       endDate: Joi.date().optional().error(new Error("Invalid End Date")),
-      projectManager: Joi.string().optional().error(new Error("Invalid Project manager Name")),
-      location: Joi.string().optional().error(new Error("Invalid location")),
+      owner: Joi.number(),
+      budget : Joi.number().required().example(0),
+      disbursed : Joi.number().required().example(0),
     }),
 
   },

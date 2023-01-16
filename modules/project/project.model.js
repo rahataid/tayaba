@@ -5,19 +5,30 @@ const { PROJECTS } = require("../../constants/dbTables");
 const schema = {
   name: {
     type: DataTypes.STRING,
+    allowNull : false,
   },
   startDate: {
     type: DataTypes.DATE,
+    allowNull : false,
   },
   endDate: {
     type: DataTypes.DATE,
+    allowNull : false,
   },
-  projectManager: {
-    type: DataTypes.STRING,
+  owner: {
+    type: DataTypes.INTEGER,
+    allowNull : false,
   },
-  location: {
-    type: DataTypes.STRING,
+  budget : {
+    type: DataTypes.INTEGER,
+    allowNull : false,
+    defaultValue : 0
   },
+  disbursed : {
+    type: DataTypes.INTEGER,
+    allowNull : false,
+    defaultValue : 0
+  }
 };
 module.exports = class Project extends AbstractModel {
   schema = schema;
