@@ -28,6 +28,7 @@ const validators = {
       dailyDistanceCovered: Joi.string().example("azimsd"),
       dailyWaterConsumption: Joi.string().example("azimsd"),
       projectId: Joi.number().example(1),
+      villageId: Joi.number().example(1),
       isBanked: Joi.bool().required().example(false),
     }),
   },

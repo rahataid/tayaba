@@ -106,7 +106,10 @@ const schema = {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-
+  villageId : {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   extras: {
     type: Sequelize.JSON,
     set(v) {

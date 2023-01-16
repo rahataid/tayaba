@@ -4,12 +4,9 @@ const { AbstractValidator } = require("@rumsan/core/abstract");
 const validators = {
   add: {
     payload: Joi.object({
-      name: Joi.string().required().error(new Error("Invalid name")),
-      startDate: Joi.date().optional().error(new Error("Invalid Start Date")),
-      endDate: Joi.date().optional().error(new Error("Invalid End Date")),
-      owner: Joi.number().example(1),
-      budget : Joi.number().required().example(0),
-      disbursed : Joi.number().required().example(0),
+      name: Joi.string().required().example('aligadh').error(new Error("Invalid name")),
+      taluka : Joi.string().example('Faiz Ahmed'),
+      district : Joi.string().example('karachi')
     }),
 
   },
