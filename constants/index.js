@@ -25,7 +25,9 @@ module.exports = {
     PROJECT_DELETE: "project-delete",
     PROJECT_LIST: "project-list",
 
-    REPORT_READ : "report-read"
+    REPORT_READ: "report-read",
+
+    TRANSACTIONS_READ: "transactions_read",
   },
   EVENTS: {
     ...userConstants.EVENTS,
