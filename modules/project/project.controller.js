@@ -1,5 +1,5 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { ProjectModel, BeneficiariesModel, UserModel } = require("../models");
+const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -7,6 +7,7 @@ module.exports = class extends AbstractController {
     this.table = ProjectModel;
     this.beneficiariesTable = BeneficiariesModel;
     this.userTable = UserModel;
+    this.vendorTable = VendorModel;
   }
 
   registrations = {
@@ -35,9 +36,16 @@ module.exports = class extends AbstractController {
       include : [{
         model : this.beneficiariesTable,
         through : {
-          model : this.projectBeneficiaries
+          attributes: []
         },
         as : "beneficiary_details",
+      },
+      {
+        model : this.vendorTable,
+        through : {
+          attributes: []
+        },
+        as : "vendor_details",
       },
       {
         model : this.userTable,
@@ -50,9 +58,16 @@ module.exports = class extends AbstractController {
       include : [{
         model : this.beneficiariesTable,
         through : {
-          model : this.projectBeneficiaries
+          attributes: []
         },
         as : "beneficiary_details",
+      },
+      {
+        model : this.vendorTable,
+        through : {
+          attributes: []
+        },
+        as : "vendor_details",
       },
       {
         model : this.userTable,
