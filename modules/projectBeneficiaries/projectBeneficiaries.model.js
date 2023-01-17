@@ -3,6 +3,12 @@ const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
 const { AbstractModel } = require("@rumsan/core/abstract");
 const  { PROJECT_BENEFECIARIES } = require("../../constants/dbTables");
 const schema = {
+  id : {
+    type : DataTypes.INTEGER,
+    primaryKey: true,
+    allowNull : false,
+    autoIncrement : true,
+  },
   projectId: {
     type: DataTypes.INTEGER,
     allowNull : false,

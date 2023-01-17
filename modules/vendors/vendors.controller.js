@@ -1,10 +1,10 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { VendorsModel } = require("../models");
+const { VendorModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
-    this.table = VendorsModel;
+    this.table = VendorModel;
   }
 
   registrations = {
@@ -24,24 +24,14 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
+    try {
     let { limit, start, ...restQuery } = query;
-    if (!limit) limit = 50;
-    if (!start) start = 0;
-    // checkToken(req);
-    let { rows: list, count } = await this.table.findAndCountAll({
-      where: { ...restQuery },
-      limit: limit || 100,
-      offset: start || 0,
-      raw: true,
-    });
-    // const list = await this.table.findAll({});
-    return {
-      data: list,
-      count,
-      limit,
-      start,
-      totalPage: Math.ceil(count / limit),
-    };
+    return await this.table.findAll();
+    }
+    catch(err){
+      console.log(err);
+    }
+   
   }
 
   async getById(id) {
