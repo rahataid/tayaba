@@ -27,7 +27,6 @@ module.exports = {
     VENDOR_WRITE: "vendor-write",
     VENDOR_DELETE: "vendor-delete",
     VENDOR_LIST: "vendor-list",
-    REPORT_READ : "report-read"
     REPORT_READ: "report-read",
     TRANSACTIONS_READ: "transactions_read",
   },
