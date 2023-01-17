@@ -33,6 +33,13 @@ module.exports = class extends AbstractController {
 
     return await this.table.findByPk(id, {
       include : [{
+        model : this.beneficiariesTable,
+        through : {
+          model : this.projectBeneficiaries
+        },
+        as : "beneficiary_details",
+      },
+      {
         model : this.userTable,
         as : "users",
       }]
@@ -41,6 +48,13 @@ module.exports = class extends AbstractController {
   async list() {
     return this.table.findAll({
       include : [{
+        model : this.beneficiariesTable,
+        through : {
+          model : this.projectBeneficiaries
+        },
+        as : "beneficiary_details",
+      },
+      {
         model : this.userTable,
         as : "users",
       }]
