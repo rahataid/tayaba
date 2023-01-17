@@ -6,7 +6,7 @@ module.exports = class extends AbstractController {
     super(options);
     this.table = ProjectBeneficiariesModel;
     this.beneficiariesTable = BeneficiariesModel;
-    this.projectModel = ProjectModel;
+    this.projectTable = ProjectModel;
   }
 
   registrations = {

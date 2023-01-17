@@ -1,10 +1,11 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { VendorModel } = require("../models");
+const { VendorModel, VillageModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.table = VendorModel;
+    this.villageTable = VillageModel;
   }
 
   registrations = {
@@ -26,7 +27,12 @@ module.exports = class extends AbstractController {
   async list(query) {
     try {
     let { limit, start, ...restQuery } = query;
-    return await this.table.findAll();
+    return await this.table.findAll({
+      include : [{
+        model : this.villageTable,
+        as : 'vendor_village_details',
+      }]
+    });
     }
     catch(err){
       console.log(err);
@@ -35,7 +41,12 @@ module.exports = class extends AbstractController {
   }
 
   async getById(id) {
-    return await this.table.findByPk(id);
+    return await this.table.findByPk(id, {
+      include : [{
+        model : this.villageTable,
+        as : 'vendor_village_details',
+      }]
+    });
   }
 
   async update(id, payload) {

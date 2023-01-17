@@ -39,7 +39,12 @@ module.exports = class extends AbstractController {
     });
   }
   async list() {
-    return this.table.findAll();
+    return this.table.findAll({
+      include : [{
+        model : this.userTable,
+        as : "users",
+      }]
+    });
   }
   async delete({ id }) {
     return this.table.destroy({ where: { id } });

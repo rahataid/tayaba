@@ -4,7 +4,7 @@ const { AbstractValidator } = require("@rumsan/core/abstract");
 const validators = {
   add: {
     payload: Joi.object({
-      name: Joi.string().required().error(new Error("Invalid name")),
+      name: Joi.string().required().example('H20 Wheels').error(new Error("Invalid name")),
       startDate: Joi.date().optional().error(new Error("Invalid Start Date")),
       endDate: Joi.date().optional().error(new Error("Invalid End Date")),
       owner: Joi.number().example(1),

@@ -77,10 +77,6 @@ const schema = {
   dailyWaterConsumption: {
     type: Sequelize.INTEGER,
   },
-  projectId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
   villageId : {
     type: Sequelize.INTEGER,
     allowNull: false,

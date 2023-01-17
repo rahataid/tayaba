@@ -1,10 +1,13 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { TransactionsModel } = require("../models");
+const { TransactionsModel, VendorModel, ProjectModel, BeneficiariesModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.table = TransactionsModel;
+    this.vendorTable = VendorModel;
+    this.projectTable = ProjectModel;
+    this.beneficiaryTable = BeneficiariesModel;
   }
 
   registrations = {
@@ -19,21 +22,49 @@ module.exports = class extends AbstractController {
   };
 
   async list(query) {
-    let { limit, start, ...restQuery } = query;
-    if (!limit) limit = 10;
-    if (!start) start = 0;
-    let { rows: list, count } = await this.table.findAndCountAll({
-      where: { ...restQuery },
-      limit: limit,
-      offset: start,
-      raw: true,
-    });
-    return {
-      data: list,
-      count,
-      limit,
-      start,
-      totalPage: Math.ceil(count / limit),
-    };
+    // let { limit, start, ...restQuery } = query;
+    // if (!limit) limit = 10;
+    // if (!start) start = 0;
+    // let { rows: list, count } = await this.table.findAndCountAll({
+    //   include : [{
+    //     model : this.projectTable,
+    //     as : 'project_data',
+    //   },
+    //   {
+    //   model : this.beneficiaryTable,
+    //     as : 'beneficiary_data',
+    //   },
+    //   {
+    //     model : this.vendorTable,
+    //       as : 'vendor_data',
+    //     }
+    // ],
+    //   where: { ...restQuery },
+    //   limit: limit,
+    //   offset: start,
+    //   raw: true,
+    // });
+    // return {
+    //   data: list,
+    //   count,
+    //   limit,
+    //   start,
+    //   totalPage: Math.ceil(count / limit),
+    // };
+    return this.table.findAll({
+         include : [{
+        model : this.projectTable,
+        as : 'project_data',
+      },
+      {
+      model : this.beneficiaryTable,
+        as : 'beneficiary_data',
+      },
+      {
+        model : this.vendorTable,
+          as : 'vendor_data',
+        }
+    ],
+    })
   };
 };

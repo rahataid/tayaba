@@ -87,19 +87,19 @@ const createAssociations = (models) => {
       onDelete: "CASCADE",
     });
 
-     // Project + Beneficiaries
+     // Project + Beneficiaries (junction table)
     models.ProjectModel.belongsToMany(models.BeneficiariesModel, {
       through: models.ProjectBeneficiariesModel,
       as: "beneficiary_details",
-      foreignKey: "beneficiaryId",
+      foreignKey: "projectId",
     });
     models.BeneficiariesModel.belongsToMany(models.ProjectModel, {
       through: models.ProjectBeneficiariesModel,
       as: "beneficiary_project_details",
-      foreignKey: "projectId",
+      foreignKey: "beneficiaryId",
     });
 
-     // Project + Vendors
+     // Project + Vendors (junction table)
     models.ProjectModel.belongsToMany(models.VendorModel, {
       through: models.ProjectVendorsModel,
       as: "vendor_details",

@@ -1,11 +1,10 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { BeneficiariesModel, ProjectModel, VillageModel } = require("../models");
+const { BeneficiariesModel, VillageModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.table = BeneficiariesModel;
-    this.projectTable = ProjectModel;
     this.villageTable = VillageModel;
   }
 
@@ -18,7 +17,6 @@ module.exports = class extends AbstractController {
   };
 
   async add(payload) {
-    console.log("payload", payload);
     try {
       return await this.table.create(payload);
     } catch (err) {
@@ -27,34 +25,39 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    let { limit, start, ...restQuery } = query;
-    if (!limit) limit = 50;
-    if (!start) start = 0;
-    // checkToken(req);
-    let { rows: list, count } = await this.table.findAndCountAll({
-      where: { ...restQuery },
-      limit: limit || 100,
-      offset: start || 0,
-      raw: true,
-    });
-    // const list = await this.table.findAll({});
-    return {
-      data: list,
-      count,
-      limit,
-      start,
-      totalPage: Math.ceil(count / limit),
-    };
+    // let { limit, start, ...restQuery } = query;
+    // if (!limit) limit = 50;
+    // if (!start) start = 0;
+    // let { rows: list, count } = await this.table.findAndCountAll({
+    //   include : [{
+    //     model : this.villageTable,
+    //     as : 'village_details',
+    //   }],
+    //   where: { ...restQuery },
+    //   limit: limit || 100,
+    //   offset: start || 0,
+    //   raw: true,
+    // });
+
+    // return {
+    //   data: list,
+    //   count,
+    //   limit,
+    //   start,
+    //   totalPage: Math.ceil(count / limit),
+    // };
+
+    return await this.table.findAll({include : [{
+        model : this.villageTable,
+        as : 'village_details',
+      }]});
   }
 
   async getById(id) {
     return await this.table.findByPk(id, {
       include : [{
-        model : this.projectTable,
-        as : "projects",
-      }, {
         model : this.villageTable,
-        as : "villages",
+        as : "village_details",
       }]
     });
   }
