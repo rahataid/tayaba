@@ -14,7 +14,7 @@ module.exports = class extends AbstractRouter {
       method: "POST",
       path: "",
       description: "Add new project",
-      // permissions: [PERMISSIONS.PROJECT_WRITE],
+      permissions: [PERMISSIONS.PROJECT_WRITE],
     },
 
     list: {
