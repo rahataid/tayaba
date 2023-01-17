@@ -6,7 +6,9 @@ const validators = {
     payload: Joi.object({
       name: Joi.string().required().example('aligadh').error(new Error("Invalid name")),
       taluka : Joi.string().example('Faiz Ahmed'),
-      district : Joi.string().example('karachi')
+      district : Joi.string().example('karachi'),
+      latitude : Joi.number().example('33.6844'),
+      longitude : Joi.number().example('73.0479'),
     }),
 
   },

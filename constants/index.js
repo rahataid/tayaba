@@ -30,6 +30,8 @@ module.exports = {
     VENDOR_DELETE: "vendor-delete",
     VENDOR_LIST: "vendor-list",
 
+    TRANSACTIONS_READ: "transactions_read",
+
     REPORT_READ : "report-read"
   },
   EVENTS: {

@@ -12,7 +12,14 @@ const schema = {
   },
   district: {
     type: DataTypes.STRING,
-  }
+  },
+  latitude : {
+    type : DataTypes.FLOAT,
+  },
+  longitude : {
+    type : DataTypes.FLOAT,
+  },
+
 };
 module.exports = class Village extends AbstractModel {
   schema = schema;

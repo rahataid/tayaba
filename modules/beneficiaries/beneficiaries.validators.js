@@ -8,17 +8,10 @@ const validators = {
       gender: Joi.string().valid("M", "F", "O").example("M"),
       cnicNumber: Joi.string().example("12334"),
       phone: Joi.string().example("456345"),
-      walletAddress: Joi.string().example("0xABJWAN6666..."),
-      email: Joi.string().example("test@gmail.com"),
-      address: Joi.object({
-        taluka: Joi.string().example("azimsd"),
-        district: Joi.string().example("azimsd"),
-        village: Joi.string().example("azimsd"),
-      }),
-
-      phoneOwnedBy: Joi.string().example("azimsd"),
+      walletAddress: Joi.string().required().example("0xABJWAN6666..."),
+      phoneOwnedBy: Joi.string().required().example("azimsd"),
       simRegisteredUnder: Joi.string().example("azimsd"),
-      phoneType: Joi.string().example("smartphone"),
+      phoneType: Joi.string().valid("smartphone", "featurephone", "dumphone").example("smartphone"),
       phoneOwnerRelation: Joi.string().example("azimsd"),
       unionCouncil: Joi.string().example("azimsd"),
       relationship: Joi.string().example("azimsd"),
@@ -30,6 +23,7 @@ const validators = {
       projectId: Joi.number().example(1),
       villageId: Joi.number().example(1),
       isBanked: Joi.bool().required().example(false),
+      miscData: Joi.object({}),
     }),
   },
 
@@ -48,13 +42,7 @@ const validators = {
       gender: Joi.string().valid("male", "female", "others"),
       cnicNumber: Joi.string(),
       phone: Joi.string(),
-      walletAddress: Joi.string().example("0xABJWAN6666..."),
-      email: Joi.string(),
-      address: Joi.object({
-        taluka: Joi.string(),
-        district: Joi.string(),
-        village: Joi.string(),
-      }),
+      walletAddress: Joi.string().example("0xABJWAN6666..."),    
       extras: Joi.object({
         phoneOwnedBy: Joi.string(),
         simRegisteredUnder: Joi.string(),

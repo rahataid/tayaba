@@ -13,6 +13,7 @@ const ProjectBeneficiaries = require("./projectBeneficiaries");
 const ProjectVendors = require("./projectVendors");
 const _Reports = require("./reporting");
 const _Auth = require("./auth");
+const _Transacations = require("./transactions");
 const { EVENTS } = require("../constants");
 
 let Routes = {
@@ -34,6 +35,7 @@ let Routes = {
   ProjectBeneficiaries : new ProjectBeneficiaries(),
   ProjectVendors : new ProjectVendors(),
   Reports: new _Reports(),
+  Transactions: new _Transacations(),
 };
 
 module.exports = Routes;
