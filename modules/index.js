@@ -7,6 +7,7 @@ const { mailOtp } = require("./eventHandlers");
 
 const Beneficiaries = require("./beneficiaries");
 const Projects = require("./project");
+const Vendors = require("./vendors");
 const _Reports = require("./reporting");
 const _Auth = require("./auth");
 const _Transacations = require("./transactions");
@@ -27,6 +28,7 @@ let Routes = {
   AppSettings: AppSettings.Router(),
   Beneficiaries: new Beneficiaries(),
   Projects: new Projects(),
+  Vendors : new Vendors(),
   Reports: new _Reports(),
   Transactions: new _Transacations(),
   Misc: new _Misc(),

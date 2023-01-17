@@ -5,4 +5,5 @@ module.exports = {
   ROLE: "tblRoles",
   BENEFICIARIES: "tblBeneficiaries",
   PROJECTS: "tblProjects",
+  VENDORS : "tblVendors",
 };
