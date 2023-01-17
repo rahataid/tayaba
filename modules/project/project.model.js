@@ -9,6 +9,9 @@ const schema = {
   startDate: {
     type: DataTypes.DATE,
   },
+  description: {
+    type: DataTypes.STRING,
+  },
   endDate: {
     type: DataTypes.DATE,
   },

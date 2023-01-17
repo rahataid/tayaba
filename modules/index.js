@@ -10,6 +10,7 @@ const Projects = require("./project");
 const _Reports = require("./reporting");
 const _Auth = require("./auth");
 const _Transacations = require("./transactions");
+const _Misc = require("./misc");
 const { EVENTS } = require("../constants");
 
 let Routes = {
@@ -28,6 +29,7 @@ let Routes = {
   Projects: new Projects(),
   Reports: new _Reports(),
   Transactions: new _Transacations(),
+  Misc: new _Misc(),
 };
 
 module.exports = Routes;
