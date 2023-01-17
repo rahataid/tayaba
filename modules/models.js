@@ -4,6 +4,8 @@ const TagModel = require("./tag/tag.model");
 const BeneficiariesModel = require("./beneficiaries/beneficiaries.model");
 const ProjectModel = require("./project/project.model");
 const VendorsModel = require("./vendors/vendors.model");
+const TransactionsModel = require("./transactions/transactions.model");
+const MiscModel = require("./misc/misc.model");
 
 let modelFactory = {
   TagModel: new TagModel().init(),
@@ -11,6 +13,9 @@ let modelFactory = {
   BeneficiariesModel: new BeneficiariesModel().init(),
   ProjectModel : new ProjectModel().init(),
   VendorsModel : new VendorsModel().init(),
+  ProjectModel: new ProjectModel().init(),
+  TransactionsModel: new TransactionsModel().init(),
+  MiscModel: new MiscModel().init(),
 };
 
 /**********************************************************
