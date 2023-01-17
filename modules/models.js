@@ -103,12 +103,12 @@ const createAssociations = (models) => {
     models.ProjectModel.belongsToMany(models.VendorModel, {
       through: models.ProjectVendorsModel,
       as: "vendor_details",
-      foreignKey: "vendorId",
+      foreignKey: "projectId",
     });
     models.VendorModel.belongsToMany(models.ProjectModel, {
       through: models.ProjectVendorsModel,
-      as: "project_vendor_details",
-      foreignKey: "projectId",
+      as: "vendor_project_details",
+      foreignKey: "vendorId",
     });
 
 
