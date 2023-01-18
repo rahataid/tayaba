@@ -11,6 +11,7 @@ module.exports = class extends AbstractController {
   registrations = {
     add: (req) => this.add(req.params.name, req.payload, req),
     getByName: (req) => this.getByName(req.params.name, req),
+    getContracts: (req) => this.getContracts(),
   };
 
   async add(name, value) {

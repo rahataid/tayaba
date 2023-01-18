@@ -19,5 +19,10 @@ module.exports = class extends AbstractRouter {
       path: "/{name}",
       description: "Get data by id",
     },
+    getContracts: {
+      method: "GET",
+      path: "/contracts",
+      description: "Get erc20 contracts",
+    },
   };
 };
