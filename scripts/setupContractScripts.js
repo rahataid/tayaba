@@ -135,7 +135,7 @@ const setupContracts = async () => {
   };
   await AppSettings.init(db);
   await AppSettings.controller._add({
-    name: "Contract Address",
+    name: "Contract_Address",
     value: addresData,
     isReadOnly: true,
   });
