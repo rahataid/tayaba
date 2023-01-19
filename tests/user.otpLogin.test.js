@@ -15,8 +15,10 @@ const auth = new AuthController();
 
 describe.only("User OTP Tests", function () {
   let usrEmail = "tayaba@mailinator.com";
+
   it("should create login otp", async () => {
     let _authData = await auth.getOtpForService("email", usrEmail);
+    console.log("_authData", _authData);
 
     let userData = await user.loginUsingOtp(
       "email",

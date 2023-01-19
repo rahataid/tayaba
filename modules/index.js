@@ -1,7 +1,8 @@
 require("./services");
 const WSService = require("@rumsan/core/services/webSocket");
 const { AppSettings } = require("@rumsan/core");
-const { UserRouter, RoleRouter } = require("@rumsan/user");
+const { RoleRouter } = require("@rumsan/user");
+const UserRouter = require("./user");
 //const Tag = require("./tag");
 const { mailOtp } = require("./eventHandlers");
 
@@ -28,7 +29,7 @@ let Routes = {
   AppSettings: AppSettings.Router(),
   Beneficiaries: new Beneficiaries(),
   Projects: new Projects(),
-  Vendors : new Vendors(),
+  Vendors: new Vendors(),
   Reports: new _Reports(),
   Transactions: new _Transacations(),
   Misc: new _Misc(),

@@ -16,12 +16,5 @@ module.exports = class extends UserRouter {
     super({
       controller: new Controller(options),
     });
-    this.addRoutes({
-      test: {
-        method: "GET",
-        path: "/test",
-        description: "Add new Tag",
-      },
-    });
   }
 };
