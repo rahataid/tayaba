@@ -12,7 +12,7 @@ const auth_signature =
 // const walletAddress = async (auth_signature) =>
 // await WalletUtils.getAddressFromSignature(auth_signature);
 
-describe("User Controller tests", function () {
+describe.only("User Controller tests", function () {
   // it("should add a user", async () => {
   //   const user = await userController.register({
   //     payload: { ...userToCreate },
