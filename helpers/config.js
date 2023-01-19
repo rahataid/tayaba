@@ -1,6 +1,10 @@
 const config = require("config");
 
 const cfg = {
+  isDebug: process.env.NODE_ENV === "development" || process.env.NODE_ENV === "stage",
+  debug: {
+    discord: config.has("debug.discord") ? config.get("debug.discord") : null,
+  },
   app: {
     name: config.get("app.name"),
     port: config.get("app.port"),
@@ -9,9 +13,7 @@ const cfg = {
     jwtDuration: config.get("app.jwtDuration") || "20m",
     jwtDurationLong: config.get("app.jwtDurationLong") || "7m",
     otpValidateDuration: config.get("app.otpValidateDuration") || 300,
-    enablePasswordAuthentication: config.get(
-      "app.enablePasswordAuthentication"
-    ),
+    enablePasswordAuthentication: config.get("app.enablePasswordAuthentication"),
     autoUserApprove: config.get("app.autoUserApprove") || false,
   },
   db: {
