@@ -92,10 +92,6 @@ const schema = {
       return v ? JSON.parse(v) : {};
     },
   },
-
-  email: {
-    type: Sequelize.STRING,
-  },
 };
 module.exports = class Beneficiaries extends AbstractModel {
   schema = schema;

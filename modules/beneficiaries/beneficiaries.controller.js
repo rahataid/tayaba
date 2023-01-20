@@ -26,33 +26,15 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    // let { limit, start, ...restQuery } = query;
-    // if (!limit) limit = 50;
-    // if (!start) start = 0;
-    // let { rows: list, count } = await this.table.findAndCountAll({
-    //   include : [{
-    //     model : this.villageTable,
-    //     as : 'village_details',
-    //   }],
-    //   where: { ...restQuery },
-    //   limit: limit || 100,
-    //   offset: start || 0,
-    //   raw: true,
-    // });
-
-    // return {
-    //   data: list,
-    //   count,
-    //   limit,
-    //   start,
-    //   totalPage: Math.ceil(count / limit),
-    // };
-
-    return await this.table.findAll({include : [{
-      model : this.villageTable,
-      as : "village_details",
-    },
-      {
+    let { limit, start, ...restQuery } = query;
+    if (!limit) limit = 50;
+    if (!start) start = 0;
+    let { rows: list, count } = await this.table.findAndCountAll({
+      include : [{
+        model : this.villageTable,
+        as : 'village_details',
+      },
+       {
         model : this.projectTable,
         through : {
           attributes: []
@@ -60,7 +42,34 @@ module.exports = class extends AbstractController {
         },
         as : "beneficiary_project_details",
       },
-    ]});
+  ],
+      where: { ...restQuery },
+      limit: limit || 100,
+      offset: start || 0,
+      raw: true,
+    });
+
+    return {
+      data: list,
+      count,
+      limit,
+      start,
+      totalPage: Math.ceil(count / limit),
+    };
+
+    // return await this.table.findAll({include : [{
+    //   model : this.villageTable,
+    //   as : "village_details",
+    // },
+    //   {
+    //     model : this.projectTable,
+    //     through : {
+    //       attributes: []
+
+    //     },
+    //     as : "beneficiary_project_details",
+    //   },
+    // ]});
   }
 
   async getById(id) {
