@@ -21,7 +21,7 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "",
       description: "List all vendor",
-      permissions: [PERMISSIONS.VENDOR_LIST],
+      //permissions: [PERMISSIONS.VENDOR_LIST],
     },
 
     update: {
@@ -43,6 +43,12 @@ module.exports = class extends AbstractRouter {
       path: "/{id}",
       description: "get vendor By Id",
       permissions: [PERMISSIONS.VENDOR_READ],
+    },
+
+    register: {
+      method: "GET",
+      path: "/register",
+      description: "register vendor",
     },
   };
 };
