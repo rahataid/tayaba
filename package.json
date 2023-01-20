@@ -13,9 +13,9 @@
     "migrate:create": "npx sequelize-cli db:create",
     "migrate:up": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo",
-    "test": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles ./tests",
-    "test:one": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles ./tests/user.otpLogin.test.js",
-    "test:watch": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles --watch ./tests"
+    "test": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles ./tests",
+    "test:one": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles ./tests/user.otpLogin.test.js",
+    "test:watch": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles --watch ./tests"
   },
   "author": {
     "email": "team@rumsan.com",

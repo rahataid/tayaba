@@ -1,7 +1,7 @@
 const config = require("config");
 
 const cfg = {
-  isDebug: process.env.NODE_ENV === "development" || process.env.NODE_ENV === "stage",
+  isDebug: process.env.ENV_TYPE === "development" || process.env.ENV_TYPE === "stage",
   debug: {
     discord: config.has("debug.discord") ? config.get("debug.discord") : null,
   },
