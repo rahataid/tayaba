@@ -36,28 +36,22 @@ module.exports = class extends AbstractController {
   }
 
   async getBeneficiaryPerVillage() {
-    const dataValues = await this.tblBeneficiaries.findAll();
-    const beneficiaryVillageIds = dataValues.map((b) => b.villageId);
-    const villageData = await this.tblVillages.findAndCountAll({
-      where: {
-        id: {
-          [Op.in]: beneficiaryVillageIds,
-        },
-      },
-      // attributes: ["name", "phone"],
-      raw: true,
-    });
-    console.log("benef data", dataValues);
-    console.log("village Data",villageData);
-    // const villageSet = new Set(dataValues.map(el => JSON.parse(el.address).village))
-    // const villages = Array.from(villageSet);
-    // const beneficiaryPerVillage = villageData.map((village) => {
-    //   const benInVillage = dataValues.filter(ben => ben. === village.name)
-    //   return { label: village, count: benInVillage.length }
-    // }
-    // )
-    return beneficiaryPerVillage
-  }
+    const villages = await this.tblVillages.findAll();
+    const beneficiaryCounts= await this.tblBeneficiaries.findAll({
+      attributes: [
+         'villageId',
+         [this.db.Sequelize.fn('COUNT', this.db.Sequelize.col('villageId')), 'count']
+       ],
+      group: 'villageId',
+      raw:true
+     })
+    const data = beneficiaryCounts.map(el =>{
+    const vlg = villages.find((village)=>village.id === el.villageId);
+    return {label: vlg.name,...el}
+     })
+   return {data};
+
+  };
 
   async _getPiechartDataByVillage(type, village,projectId){
     const query={
