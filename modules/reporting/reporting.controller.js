@@ -1,12 +1,13 @@
 const { AbstractController } = require("@rumsan/core/abstract");
 const sequelize = require("sequelize");
 const {Op} = sequelize;
-const { BeneficiariesModel } = require("../models");
+const { BeneficiariesModel, VillageModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.tblBeneficiaries = BeneficiariesModel;
+    this.tblVillages = VillageModel;
   }
 
   registrations = {
@@ -35,15 +36,26 @@ module.exports = class extends AbstractController {
   }
 
   async getBeneficiaryPerVillage() {
-    const data = await this.tblBeneficiaries.findAll();
-    const dataValues = data.map((el) => el.dataValues);
-    const villageSet = new Set(dataValues.map(el => JSON.parse(el.address).village))
-    const villages = Array.from(villageSet);
-    const beneficiaryPerVillage = villages.map((village) => {
-      const benInVillage = dataValues.filter(ben => JSON.parse(ben.address).village === village)
-      return { label: village, count: benInVillage.length }
-    }
-    )
+    const dataValues = await this.tblBeneficiaries.findAll();
+    const beneficiaryVillageIds = dataValues.map((b) => b.villageId);
+    const villageData = await this.tblVillages.findAndCountAll({
+      where: {
+        id: {
+          [Op.in]: beneficiaryVillageIds,
+        },
+      },
+      // attributes: ["name", "phone"],
+      raw: true,
+    });
+    console.log("benef data", dataValues);
+    console.log("village Data",villageData);
+    // const villageSet = new Set(dataValues.map(el => JSON.parse(el.address).village))
+    // const villages = Array.from(villageSet);
+    // const beneficiaryPerVillage = villageData.map((village) => {
+    //   const benInVillage = dataValues.filter(ben => ben. === village.name)
+    //   return { label: village, count: benInVillage.length }
+    // }
+    // )
     return beneficiaryPerVillage
   }
 
