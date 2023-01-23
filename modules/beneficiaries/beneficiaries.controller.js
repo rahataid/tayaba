@@ -1,5 +1,5 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { BeneficiariesModel, VillageModel, ProjectModel } = require("../models");
+const { BeneficiariesModel, VillageModel, ProjectModel,ProjectBeneficiariesModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -10,7 +10,7 @@ module.exports = class extends AbstractController {
   }
 
   registrations = {
-    add: (req) => this.add(req.payload),
+    add: (req) => this.add(req.payload),  
     list: (req) => this.list(req.query),
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
@@ -19,7 +19,11 @@ module.exports = class extends AbstractController {
 
   async add(payload) {
     try {
-      return await this.table.create(payload);
+      const benData =  await this.table.create(payload);
+      const {dataValues:{id:beneficiaryId}} = benData;
+      await ProjectBeneficiariesModel.create({beneficiaryId, projectId:payload.projectId});
+      return benData;
+
     } catch (err) {
       console.log(err);
     }

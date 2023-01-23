@@ -1,5 +1,5 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { VendorModel, VillageModel } = require("../models");
+const { VendorModel, VillageModel, ProjectVendorsModel } = require("../models");
 const {
   WalletUtils: { validateSignature },
 } = require("@rumsan/core/utils");
@@ -34,7 +34,11 @@ module.exports = class extends AbstractController {
 
   async add(payload) {
     try {
-      return await this.table.create(payload);
+      const venData = await this.table.create(payload);
+      const {dataValues:{id:vendorId}} = venData;
+      await ProjectVendorsModel.create({vendorId, projectId:payload.projectId});
+      return venData;
+
     } catch (err) {
       console.log(err);
     }

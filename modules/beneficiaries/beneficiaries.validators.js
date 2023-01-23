@@ -23,6 +23,7 @@ const validators = {
       dailyWaterConsumption: Joi.number().example(4),
       villageId: Joi.number().example(1),
       isBanked: Joi.bool().required().example(false),
+      projectId: Joi.number().example(1),
       miscData: Joi.object({}),
     }),
   },
