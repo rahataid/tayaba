@@ -45,12 +45,11 @@ module.exports = class extends AbstractController {
       group: 'villageId',
       raw:true
      })
-    const data = beneficiaryCounts.map(el =>{
+    const beneficiaryPerVillage = beneficiaryCounts.map(el =>{
     const vlg = villages.find((village)=>village.id === el.villageId);
     return {label: vlg.name,...el}
      })
-   return {data};
-
+   return beneficiaryPerVillage;
   };
 
   async _getPiechartDataByVillage(type, village,projectId){
