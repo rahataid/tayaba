@@ -18,6 +18,7 @@ const validators = {
       relativeName: Joi.string().example("azimsd"),
       hasInternetAccess: Joi.bool().required().example(false),
       bankAccount: Joi.string().example("azimsd").optional(),
+      bankAccountType : Joi.valid("current", "savings").optional().example("savings"),
       dailyDistanceCovered: Joi.number().example(10),
       dailyWaterConsumption: Joi.number().example(4),
       villageId: Joi.number().example(1),

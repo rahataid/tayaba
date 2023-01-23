@@ -30,6 +30,7 @@ module.exports = class extends AbstractController {
       attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "total"]],
     });
     const beneficiaryPerVillage = await this.getBeneficiaryPerVillage()
+
     return { count, rows, beneficiaryPerVillage };
   }
 

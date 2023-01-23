@@ -16,7 +16,7 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "/demographics/summary",
       description: "Get Beneficiary Demographics Summary",
-      permissions : [PERMISSIONS.REPORT_READ]
+      // permissions : [PERMISSIONS.REPORT_READ]
     },
 
     // #region Piechart
