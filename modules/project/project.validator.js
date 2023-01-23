@@ -11,12 +11,10 @@ const validators = {
       budget : Joi.number().required().example(0),
       disbursed : Joi.number().required().example(0),
     }),
-
   },
   delete: {
     params: Joi.object({
       id: Joi.number().required(),
-
     }),
   },
   getById: {
@@ -28,7 +26,7 @@ const validators = {
     params: Joi.object({
       id: Joi.number().required(),
     }),
-  }
+  },
 };
 
 module.exports = class extends AbstractValidator {

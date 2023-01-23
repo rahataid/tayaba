@@ -1,5 +1,20 @@
 const { AbstractController } = require("@rumsan/core/abstract");
 const { VendorModel, VillageModel } = require("../models");
+const {
+  WalletUtils: { validateSignature },
+} = require("@rumsan/core/utils");
+const { RSConfig } = require("@rumsan/core");
+
+const checkVendorWallet = (req) => {
+  const { address } = validateSignature(req.headers.signature, req.headers.signpayload, {
+    ip: req.info.clientIpAddress,
+    secret: RSConfig.get("secret"),
+  });
+  return {
+    success: true,
+    address,
+  };
+};
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -14,6 +29,7 @@ module.exports = class extends AbstractController {
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
     delete: (req) => this.delete(req.params.id),
+    register: (req) => this.register(req),
   };
 
   async add(payload) {
@@ -59,5 +75,10 @@ module.exports = class extends AbstractController {
 
   async delete(id) {
     return this.table.destroy({ where: { id } });
+  }
+
+  register(req) {
+    const { success, address } = checkVendorWallet(req);
+    console.log("address", address);
   }
 };

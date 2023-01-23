@@ -9,6 +9,7 @@ const ProjectBeneficiariesModel = require("./projectBeneficiaries/projectBenefic
 const ProjectVendorsModel = require("./projectVendors/projectVendors.model");
 const TransactionsModel = require("./transactions/transactions.model");
 
+const MiscModel = require("./misc/misc.model");
 
 let modelFactory = {
   TagModel: new TagModel().init(),
@@ -16,12 +17,11 @@ let modelFactory = {
   BeneficiariesModel: new BeneficiariesModel().init(),
   ProjectModel : new ProjectModel().init(),
   VillageModel : new VillageModel().init(),
-  VendorModel : new VendorModel().init(),
   ProjectBeneficiariesModel : new ProjectBeneficiariesModel().init(),
   ProjectVendorsModel : new ProjectVendorsModel().init(),
   TransactionsModel: new TransactionsModel().init(),
-
-  
+  VendorModel : new VendorModel().init(),
+  MiscModel: new MiscModel().init(),
 };
 
 /**********************************************************

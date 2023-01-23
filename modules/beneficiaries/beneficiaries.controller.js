@@ -29,6 +29,7 @@ module.exports = class extends AbstractController {
     let { limit, start, ...restQuery } = query;
     if (!limit) limit = 50;
     if (!start) start = 0;
+
     let { rows: list, count } = await this.table.findAndCountAll({
       include : [{
         model : this.villageTable,
@@ -46,7 +47,6 @@ module.exports = class extends AbstractController {
       where: { ...restQuery },
       limit: limit || 100,
       offset: start || 0,
-      raw: true,
     });
 
     return {
