@@ -10,6 +10,7 @@ const validators = {
       walletAddress: Joi.string().example("0xABJWAN6666..."),
       contractAddress: Joi.string().example("0xDBJWAN6667..."),
       villageId: Joi.number().example(1),
+      projectId: Joi.number().example(1),
       
     }),
   },

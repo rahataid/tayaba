@@ -8,10 +8,13 @@ const { mailOtp } = require("./eventHandlers");
 
 const Beneficiaries = require("./beneficiaries");
 const Projects = require("./project");
+const Villages = require("./villages");
 const Vendors = require("./vendors");
+const ProjectBeneficiaries = require("./projectBeneficiaries");
+const ProjectVendors = require("./projectVendors");
+const _Transacations = require("./transactions");
 const _Reports = require("./reporting");
 const _Auth = require("./auth");
-const _Transacations = require("./transactions");
 const _Misc = require("./misc");
 const { EVENTS } = require("../constants");
 
@@ -29,9 +32,12 @@ let Routes = {
   AppSettings: AppSettings.Router(),
   Beneficiaries: new Beneficiaries(),
   Projects: new Projects(),
+  Villages : new Villages(),
+  ProjectBeneficiaries : new ProjectBeneficiaries(),
+  ProjectVendors : new ProjectVendors(),
+  Transactions: new _Transacations(),
   Vendors: new Vendors(),
   Reports: new _Reports(),
-  Transactions: new _Transacations(),
   Misc: new _Misc(),
 };
 

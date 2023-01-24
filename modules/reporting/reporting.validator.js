@@ -11,11 +11,7 @@ const validators = {
       village:Joi.string().optional().error(new Error("Invalid Village")),
     }),
   },
-  getBeneficiaryDemographicsSummary: {
-    query: Joi.object({
-      projectId: Joi.number().error(new Error("Invalid project id")),
-    }),
-  }
+  
 };
 
 module.exports = class extends AbstractValidator {

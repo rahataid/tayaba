@@ -21,7 +21,6 @@ module.exports = class extends AbstractRouter {
       method: "GET",
       path: "",
       description: "List all Transactions",
-      permissions: [PERMISSIONS.TRANSACTIONS_READ],
     },
   };
 };
