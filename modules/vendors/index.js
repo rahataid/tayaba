@@ -51,5 +51,11 @@ module.exports = class extends AbstractRouter {
       description: "update vendor approval status",
       // permissions: [PERMISSIONS.VENDOR_WRITE],
     },
+
+    register: {
+      method: "GET",
+      path: "/register",
+      description: "register vendor",
+    },
   };
 };

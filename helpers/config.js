@@ -1,7 +1,7 @@
 const config = require("config");
 
 const cfg = {
-  isDebug: process.env.ENV_TYPE === "development" || process.env.ENV_TYPE === "stage",
+  isDebug: process.env.NODE_ENV === "development" || process.env.NODE_ENV === "stage",
   debug: {
     discord: config.has("debug.discord") ? config.get("debug.discord") : null,
   },
@@ -24,7 +24,7 @@ const cfg = {
     database: config.get("db.database") || "backend-seed",
     host: config.get("db.host") || "localhost",
   },
-  cors: config.get("cors")[process.env.ENV_TYPE],
+  cors: config.get("cors")[process.env.NODE_ENV],
 };
 
 module.exports = cfg;

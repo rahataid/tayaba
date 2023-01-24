@@ -7,15 +7,15 @@
     "lint": "eslint .",
     "lintfix": "eslint --fix .",
     "pretty": "prettier --write **/*.js",
-    "start": "cross-env ENV_TYPE=development nodemon .",
-    "production": "ENV_TYPE=production node .",
+    "start": "cross-env NODE_ENV=development nodemon .",
+    "production": "NODE_ENV=production node .",
     "setup": "yarn install",
     "migrate:create": "npx sequelize-cli db:create",
     "migrate:up": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo",
-    "test": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles ./tests",
-    "test:one": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles ./tests/user.otpLogin.test.js",
-    "test:watch": "cross-env ENV_TYPE=development jest --runInBand --detectOpenHandles --watch ./tests"
+    "test": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles ./tests",
+    "test:one": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles --watch ./tests/vendor.test.js",
+    "test:watch": "cross-env NODE_ENV=development jest --runInBand --detectOpenHandles --watch ./tests"
   },
   "author": {
     "email": "team@rumsan.com",
@@ -76,6 +76,7 @@
     "nodemon": "^2.0.20",
     "prettier": "^2.1.1",
     "prettier-plugin-solidity": "^1.0.0-alpha.57",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "supertest": "^6.3.3"
   }
 }
