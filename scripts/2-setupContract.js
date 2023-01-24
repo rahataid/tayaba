@@ -14,9 +14,7 @@ const deploymentData = {
   tokenDecimals: 0,
 };
 
-const {
-  privateKey: deployerPrivateKey,
-} = require("../config/privateKeys/deployer.json");
+const { privateKey: deployerPrivateKey } = require("../config/privateKeys/deployer.json");
 const {
   address: adminAddress,
   privateKey: adminPrivateKey,
@@ -33,11 +31,7 @@ const provider = new ethers.providers.JsonRpcProvider(network);
 
 const lib = {
   getContractArtifacts(contract) {
-    const {
-      contractName,
-      bytecode,
-      abi,
-    } = require(`../constants/contracts/${contract}.json`);
+    const { contractName, bytecode, abi } = require(`../constants/contracts/${contract}.json`);
     return { contractName, bytecode, abi };
   },
   async deployContract(abi, bytecode, args) {
@@ -72,36 +66,23 @@ const setupContracts = async () => {
   const donorWallet = lib.getWalletFromPrivateKey(donorPrivateKey);
 
   console.log("1/4 DEPLOYING RAHAT Donor");
-  const rahatDonor = await lib.deployContract(
-    RahatDonorAbi,
-    RahatDonorBytecode,
-    [donorAddress]
-  );
+  const rahatDonor = await lib.deployContract(RahatDonorAbi, RahatDonorBytecode, [donorAddress]);
 
   console.log("2/4 DEPLOYING RAHAT CLAIM");
-  const rahatClaim = await lib.deployContract(
-    RahatClaimAbi,
-    RahatClaimBytecode,
-    []
-  );
+  const rahatClaim = await lib.deployContract(RahatClaimAbi, RahatClaimBytecode, []);
 
   console.log("3/4 DEPLOYING RAHAT COMMUNITY");
-  const rahatCommunity = await lib.deployContract(
-    RahatCommunityAbi,
-    RahatCommunityBytecode,
-    [deploymentData.communityName, adminAddress]
-  );
+  const rahatCommunity = await lib.deployContract(RahatCommunityAbi, RahatCommunityBytecode, [
+    deploymentData.communityName,
+    adminAddress,
+  ]);
 
-  const rahatToken = await lib.deployContract(
-    RahatTokenAbi,
-    RahatTokenBytecode,
-    [
-      deploymentData.tokenName,
-      deploymentData.tokenSymbol,
-      rahatDonor.address,
-      deploymentData.tokenDecimals,
-    ]
-  );
+  const rahatToken = await lib.deployContract(RahatTokenAbi, RahatTokenBytecode, [
+    deploymentData.tokenName,
+    deploymentData.tokenSymbol,
+    rahatDonor.address,
+    deploymentData.tokenDecimals,
+  ]);
 
   ///@notice create token through donor contract
   // const tx = await rahatDonor.connect(donorWallet).createToken(deploymentData.tokenName, deploymentData.tokenSymbol, deploymentData.tokenDecimals);
@@ -110,17 +91,13 @@ const setupContracts = async () => {
   // const tokenAddress = tokenCreationEvent.args.tokenAddress
 
   console.log("4/4 DEPLOYING CVA Project");
-  const cvaProject = await lib.deployContract(
-    CVAProjectAbi,
-    CVAProjectBytecode,
-    [
-      deploymentData.projectName,
-      rahatToken.address,
-      rahatClaim.address,
-      serverAddress,
-      rahatCommunity.address,
-    ]
-  );
+  const cvaProject = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
+    deploymentData.projectName,
+    rahatToken.address,
+    rahatClaim.address,
+    serverAddress,
+    rahatCommunity.address,
+  ]);
 
   //Add project to Community
   console.log("Adding project to community");
@@ -133,16 +110,25 @@ const setupContracts = async () => {
     rahatCommunity: rahatCommunity.address,
     cvaProject: cvaProject.address,
   };
-  console.log({ addresData })
-  console.log("Updating App Settings")
+  console.log({ addresData });
+  console.log("Updating App Settings");
   await AppSettings.init(db);
   const d = await AppSettings.controller._add({
     name: "Contract_Address",
     value: addresData,
     isReadOnly: true,
-    isPrivate: false
+    isPrivate: false,
   });
-  console.log({ d })
+  await AppSettings.controller._add({
+    name: "blockchain",
+    value: {
+      networkUrl: config.get("blockchain.httpProvider"),
+      chainWebSocket: config.get("blockchain.webSocketProvider"),
+    },
+    isReadOnly: true,
+    isPrivate: false,
+  });
+  console.log({ d });
   await AppSettings.refresh();
 };
 
