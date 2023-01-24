@@ -1,13 +1,14 @@
 const { AbstractController } = require("@rumsan/core/abstract");
 const sequelize = require("sequelize");
 const {Op} = sequelize;
-const { BeneficiariesModel, VillageModel } = require("../models");
+const { BeneficiariesModel, VillageModel, ProjectModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.tblBeneficiaries = BeneficiariesModel;
     this.tblVillages = VillageModel;
+    this.tblProjects = ProjectModel;
   }
 
   registrations = {
@@ -24,7 +25,7 @@ module.exports = class extends AbstractController {
   };
 
   async getBeneficiaryDemographicsSummary(query) {
-    const { count, rows } = await this.tblBeneficiaries.findAndCountAll({
+    const { count : totalBeneficiaries } = await this.tblBeneficiaries.findAndCountAll({
       where: {
         ...query,
       },
@@ -32,7 +33,25 @@ module.exports = class extends AbstractController {
     });
     const beneficiaryPerVillage = await this.getBeneficiaryPerVillage()
 
-    return { count, rows, beneficiaryPerVillage };
+    const {count : totalProjects , rows } = await this.tblProjects.findAndCountAll({
+      where: {
+        ...query,
+      },
+      raw : true,
+      attributes: [[sequelize.fn("SUM", sequelize.col("disbursed")), "totalH20Disbursed"]],
+      group : ['disbursed']
+    });
+
+    const totalH20Disbursed = rows.reduce((a,b) =>  +a + +b.totalH20Disbursed, 0);
+
+    const {count : totalVillages} = await this.tblVillages.findAndCountAll({
+      where: {
+        ...query,
+      },
+    });
+
+  
+    return { totalBeneficiaries, beneficiaryPerVillage, totalProjects : totalProjects.length, totalVillages, totalH20Disbursed };
   }
 
   async getBeneficiaryPerVillage() {
@@ -55,12 +74,14 @@ module.exports = class extends AbstractController {
   async _getPiechartDataByVillage(type, village,projectId){
     const query={
       where:{
-        projectId
-      }
+        projectId,
+      },
+      raw : true
     }
     const data = await this.tblBeneficiaries.findAll(query);
+    console.log("piechart", data);
     const dataValues = data.map((el) => el.dataValues);
-    const benInVillage = dataValues.filter(ben => JSON.parse(ben.address).village === village)
+    const benInVillage = dataValues.filter(ben => ben?.village_details === village)
     const typeSet = new Set(dataValues.map(el => el[type]));
     const typeArr = Array.from(typeSet);
     const beneficiaryPerVillageByType = typeArr.map((el) => {
