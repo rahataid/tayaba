@@ -8,7 +8,7 @@ on:
     branches:
       - "stage"
 
-jobs:  
+jobs:
   deploy:
     name: build docker image and push to docker hub
     runs-on: ubuntu-latest
@@ -36,3 +36,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: esatya/tayaba:stage
+          build-args: |
+            NODE_ENV=stage
