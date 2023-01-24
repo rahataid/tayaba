@@ -13,6 +13,8 @@ module.exports = class extends AbstractController {
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
     delete: (req) => this.delete(req.params.id),
+    updateVendorApprovalStatus: (req) =>
+      this.updateVendorApprovalStatus(req.params.id, req.payload),
   };
 
   async add(payload) {
@@ -51,6 +53,19 @@ module.exports = class extends AbstractController {
   async update(id, payload) {
     try {
       return await this.table.update(payload, { where: { id } });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateVendorApprovalStatus(id, payload) {
+    try {
+      return await this.table.update(
+        {
+          isApproved: payload.isApproved,
+        },
+        { where: { id } }
+      );
     } catch (err) {
       console.log(err);
     }

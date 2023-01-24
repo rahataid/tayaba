@@ -14,6 +14,9 @@ const schema = {
   phone: {
     type: Sequelize.STRING,
   },
+  email: {
+    type: Sequelize.STRING,
+  },
   walletAddress: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -25,6 +28,10 @@ const schema = {
   villageId: {
     type: Sequelize.INTEGER,
     allowNull: false,
+  },
+  isApproved: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
   },
 
   miscData: {
