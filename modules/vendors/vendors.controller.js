@@ -6,10 +6,14 @@ const {
 const { RSConfig } = require("@rumsan/core");
 
 const checkVendorWallet = (req) => {
-  const { address } = validateSignature(req.headers.signature, req.headers.signpayload, {
-    ip: req.info.clientIpAddress,
-    secret: RSConfig.get("secret"),
-  });
+  const { address } = validateSignature(
+    req.headers.signature,
+    req.headers.signpayload,
+    {
+      ip: req.info.clientIpAddress,
+      secret: RSConfig.get("secret"),
+    }
+  );
   return {
     success: true,
     address,
@@ -29,16 +33,24 @@ module.exports = class extends AbstractController {
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
     delete: (req) => this.delete(req.params.id),
+    updateVendorApprovalStatus: (req) =>
+      this.updateVendorApprovalStatus(req.params.id, req.payload),
     register: (req) => this.register(req),
   };
 
   async add(payload) {
     try {
       const venData = await this.table.create(payload);
-      const {dataValues:{id:vendorId}} = venData;
-      await ProjectVendorsModel.create({vendorId, projectId:payload.projectId});
-      return venData;
 
+      // TODO :refactor this code
+      const {
+        dataValues: { id: vendorId },
+      } = venData;
+      await ProjectVendorsModel.create({
+        vendorId,
+        projectId: payload.projectId,
+      });
+      return venData;
     } catch (err) {
       console.log(err);
     }
@@ -46,32 +58,47 @@ module.exports = class extends AbstractController {
 
   async list(query) {
     try {
-    let { limit, start, ...restQuery } = query;
-    return await this.table.findAll({
-      include : [{
-        model : this.villageTable,
-        as : 'vendor_village_details',
-      }]
-    });
-    }
-    catch(err){
+      let { limit, start, ...restQuery } = query;
+      return this.table.findAll({
+        include: [
+          {
+            model: this.villageTable,
+            as: "vendor_village_details",
+          },
+        ],
+      });
+    } catch (err) {
       console.log(err);
     }
-   
   }
 
   async getById(id) {
     return await this.table.findByPk(id, {
-      include : [{
-        model : this.villageTable,
-        as : 'vendor_village_details',
-      }]
+      include: [
+        {
+          model: this.villageTable,
+          as: "vendor_village_details",
+        },
+      ],
     });
   }
 
   async update(id, payload) {
     try {
       return await this.table.update(payload, { where: { id } });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateVendorApprovalStatus(id, payload) {
+    try {
+      return await this.table.update(
+        {
+          isApproved: payload.isApproved,
+        },
+        { where: { id } }
+      );
     } catch (err) {
       console.log(err);
     }

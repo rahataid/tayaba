@@ -14,35 +14,42 @@ module.exports = class extends AbstractRouter {
       method: "POST",
       path: "",
       description: "Add new vendor",
-      permissions: [PERMISSIONS.VENDOR_WRITE],
+      // permissions: [PERMISSIONS.VENDOR_WRITE],
     },
 
     list: {
       method: "GET",
       path: "",
       description: "List all vendor",
-      permissions: [PERMISSIONS.VENDOR_LIST],
+      // permissions: [PERMISSIONS.VENDOR_LIST],
     },
 
     update: {
       method: "PUT",
       path: "/{id}",
       description: "update vendor",
-      permissions: [PERMISSIONS.VENDOR_WRITE],
+      // permissions: [PERMISSIONS.VENDOR_WRITE],
     },
 
     delete: {
       method: "DELETE",
       path: "/{id}",
       description: "delete vendor",
-      permissions: [PERMISSIONS.VENDOR_DELETE],
+      // permissions: [PERMISSIONS.VENDOR_DELETE],
     },
 
     getById: {
       method: "GET",
       path: "/{id}",
       description: "get vendor By Id",
-      permissions: [PERMISSIONS.VENDOR_READ],
+      // permissions: [PERMISSIONS.VENDOR_READ],
+    },
+
+    updateVendorApprovalStatus: {
+      method: "PUT",
+      path: "/{id}/approval",
+      description: "update vendor approval status",
+      // permissions: [PERMISSIONS.VENDOR_WRITE],
     },
   };
 };
