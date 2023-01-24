@@ -67,7 +67,7 @@ WSService.init({
 
 const swaggerOptions = {
   info: {
-    title: "Rumsan API Service",
+    title: `Rumsan API Service ${config.debug ? "[Debug]" : ""}`,
     version: process.env.npm_package_version,
     description: process.env.npm_package_description,
   },
@@ -126,9 +126,7 @@ async function startServer() {
   });
   await server.start();
   logger.info(`Server running at: ${server.info.uri}`);
-  logger.info(
-    `SwaggerAPI Documentation running at: ${server.info.uri}/documentation`
-  );
+  logger.info(`SwaggerAPI Documentation running at: ${server.info.uri}/documentation`);
 }
 
 // eslint-disable-next-line no-shadow, no-unused-vars
@@ -149,9 +147,7 @@ async function shutDown() {
   if (!isStopping) {
     logger.info("shutDown...");
     isStopping = true;
-    const lapse = process.env.STOP_SERVER_WAIT_SECONDS
-      ? process.env.STOP_SERVER_WAIT_SECONDS
-      : 5;
+    const lapse = process.env.STOP_SERVER_WAIT_SECONDS ? process.env.STOP_SERVER_WAIT_SECONDS : 5;
     await server.stop({
       timeout: lapse * 1000,
     });
