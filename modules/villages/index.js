@@ -44,5 +44,11 @@ module.exports = class extends AbstractRouter {
       description: "get Village By Id",
       permissions: [PERMISSIONS.PROJECT_READ],
     },
+    getByName: {
+      method: "GET",
+      path: "/name/{name}",
+      description: "get Village By Name",
+      permissions: [PERMISSIONS.PROJECT_READ],
+    },
   };
 };
