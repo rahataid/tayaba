@@ -138,6 +138,7 @@ const setupContracts = async () => {
     name: "Contract_Address",
     value: addresData,
     isReadOnly: true,
+    isPrivate: false,
   });
   await AppSettings.refresh();
 };

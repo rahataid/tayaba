@@ -1,5 +1,5 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { VendorsModel } = require("../models");
+const { VendorModel, VillageModel, ProjectVendorsModel } = require("../models");
 const {
   WalletUtils: { validateSignature },
 } = require("@rumsan/core/utils");
@@ -23,7 +23,8 @@ const checkVendorWallet = (req) => {
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
-    this.table = VendorsModel;
+    this.table = VendorModel;
+    this.villageTable = VillageModel;
   }
 
   registrations = {
@@ -39,35 +40,47 @@ module.exports = class extends AbstractController {
 
   async add(payload) {
     try {
-      return await this.table.create(payload);
+      const venData = await this.table.create(payload);
+
+      // TODO :refactor this code
+      const {
+        dataValues: { id: vendorId },
+      } = venData;
+      await ProjectVendorsModel.create({
+        vendorId,
+        projectId: payload.projectId,
+      });
+      return venData;
     } catch (err) {
       console.log(err);
     }
   }
 
   async list(query) {
-    let { limit, start, ...restQuery } = query;
-    if (!limit) limit = 50;
-    if (!start) start = 0;
-    // checkToken(req);
-    let { rows: list, count } = await this.table.findAndCountAll({
-      where: { ...restQuery },
-      limit: limit || 100,
-      offset: start || 0,
-      raw: true,
-    });
-    // const list = await this.table.findAll({});
-    return {
-      data: list,
-      count,
-      limit,
-      start,
-      totalPage: Math.ceil(count / limit),
-    };
+    try {
+      let { limit, start, ...restQuery } = query;
+      return this.table.findAll({
+        include: [
+          {
+            model: this.villageTable,
+            as: "vendor_village_details",
+          },
+        ],
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async getById(id) {
-    return await this.table.findByPk(id);
+    return await this.table.findByPk(id, {
+      include: [
+        {
+          model: this.villageTable,
+          as: "vendor_village_details",
+        },
+      ],
+    });
   }
 
   async update(id, payload) {

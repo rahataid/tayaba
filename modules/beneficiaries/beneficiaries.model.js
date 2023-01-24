@@ -7,7 +7,6 @@ const schema = {
     type: Sequelize.STRING,
     allowNull: false,
   },
-
   gender: {
     type: Sequelize.ENUM(["M", "F", "O", "U"]),
     defaultValue: "U",
@@ -17,36 +16,12 @@ const schema = {
   },
   walletAddress: {
     type: Sequelize.STRING,
+    allowNull: false,
   },
   cnicNumber: {
     type: Sequelize.STRING,
     unique: true,
     allowNull: false,
-  },
-  address: {
-    type: Sequelize.JSONB,
-    set(v) {
-      if (
-        !(
-          v.hasOwnProperty("taluka") &&
-          v.hasOwnProperty("district") &&
-          v.hasOwnProperty("village")
-        )
-      ) {
-        throw new Error("district, talika and village is required");
-      }
-
-      return this.setDataValue("address", JSON.stringify(v));
-    },
-    get() {
-      const v = this.getDataValue("address");
-      return v ? JSON.parse(v) : {};
-    },
-    defaultValue: JSON.stringify({
-      taluka: "",
-      district: "",
-      village: "",
-    }),
   },
   phoneOwnedBy: {
     type: Sequelize.STRING,
@@ -77,57 +52,45 @@ const schema = {
   },
   hasInternetAccess: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   bankAccount: {
     type: Sequelize.STRING,
   },
   isBanked: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   hasPhone: {
     type: Sequelize.BOOLEAN,
+    allowNull : false,
+    defaultValue : false
   },
   bankAccountType: {
     type: Sequelize.ENUM(["current", "savings"]),
   },
   dailyDistanceCovered: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
   },
   dailyWaterConsumption: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
   },
-  projectId: {
+  villageId : {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-
-  extras: {
+  miscData: {
     type: Sequelize.JSON,
     set(v) {
       v = JSON.stringify(v);
-      this.setDataValue("extras", v);
+      this.setDataValue("miscData", v);
     },
     get() {
-      const v = this.getDataValue("extras");
+      const v = this.getDataValue("miscData");
       return v ? JSON.parse(v) : {};
     },
-    // defaultValue: JSON.stringify({
-    //   phoneOwnedBy: "",
-    //   simRegisteredUnder: "",
-    //   phoneType: "",
-    //   phoneOwnerRelation: "",
-    //   unionCouncil: "",
-    //   relationship: "",
-    //   relativeName: "",
-    //   hasInternetAccess: null,
-    //   bankAccount: "",
-    //   dailyDistanceCovered: "",
-    //   dailyWaterConsumption: "",
-    // }),
-  },
-
-  email: {
-    type: Sequelize.STRING,
   },
 };
 module.exports = class Beneficiaries extends AbstractModel {

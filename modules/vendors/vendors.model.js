@@ -1,6 +1,7 @@
 const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
 
 const { AbstractModel } = require("@rumsan/core/abstract");
+const { VENDOR } = require("../../constants/dbTables");
 
 const schema = {
   name: {
@@ -49,6 +50,6 @@ const schema = {
 module.exports = class Vendors extends AbstractModel {
   schema = schema;
   constructor() {
-    super({ tableName: "tblVendors" });
+    super({ tableName: VENDOR });
   }
 };

@@ -1,13 +1,12 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require("../models");
+const { ProjectModel, BeneficiariesModel, ProjectBeneficiariesModel} = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
-    this.table = ProjectModel;
+    this.table = ProjectBeneficiariesModel;
     this.beneficiariesTable = BeneficiariesModel;
-    this.userTable = UserModel;
-    this.vendorTable = VendorModel;
+    this.projectTable = ProjectModel;
   }
 
   registrations = {
@@ -32,48 +31,10 @@ module.exports = class extends AbstractController {
 
     // return dataValues;
 
-    return await this.table.findByPk(id, {
-      include : [{
-        model : this.beneficiariesTable,
-        through : {
-          attributes: []
-        },
-        as : "beneficiary_details",
-      },
-      {
-        model : this.vendorTable,
-        through : {
-          attributes: []
-        },
-        as : "vendor_details",
-      },
-      {
-        model : this.userTable,
-        as : "users",
-      }]
-    });
+    return await this.table.findByPk(id);
   }
   async list() {
-    return this.table.findAll({
-      include : [{
-        model : this.beneficiariesTable,
-        through : {
-          attributes: []
-        },
-        as : "beneficiary_details",
-      },
-      {
-        model : this.vendorTable,
-        through : {
-          attributes: []
-        },
-        as : "vendor_details",
-      },
-      {
-        model : this.userTable,
-        as : "users",
-      }]
-    });
+    return this.table.findAll();
   }
   async delete({ id }) {
     return this.table.destroy({ where: { id } });

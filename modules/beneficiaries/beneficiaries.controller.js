@@ -1,14 +1,16 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { BeneficiariesModel } = require("../models");
+const { BeneficiariesModel, VillageModel, ProjectModel,ProjectBeneficiariesModel } = require("../models");
 
 module.exports = class extends AbstractController {
   constructor(options) {
     super(options);
     this.table = BeneficiariesModel;
+    this.villageTable = VillageModel;
+    this.projectTable = ProjectModel;
   }
 
   registrations = {
-    add: (req) => this.add(req.payload),
+    add: (req) => this.add(req.payload),  
     list: (req) => this.list(req.query),
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
@@ -16,9 +18,12 @@ module.exports = class extends AbstractController {
   };
 
   async add(payload) {
-    console.log("payload", payload);
     try {
-      return await this.table.create(payload);
+      const benData =  await this.table.create(payload);
+      const {dataValues:{id:beneficiaryId}} = benData;
+      await ProjectBeneficiariesModel.create({beneficiaryId, projectId:payload.projectId});
+      return benData;
+
     } catch (err) {
       console.log(err);
     }
@@ -30,10 +35,22 @@ module.exports = class extends AbstractController {
     if (!start) start = 0;
 
     let { rows: list, count } = await this.table.findAndCountAll({
+      include : [{
+        model : this.villageTable,
+        as : 'village_details',
+      },
+       {
+        model : this.projectTable,
+        through : {
+          attributes: []
+
+        },
+        as : "beneficiary_project_details",
+      },
+  ],
       where: { ...restQuery },
       limit: limit || 100,
       offset: start || 0,
-      raw: true,
     });
 
     return {
@@ -43,10 +60,37 @@ module.exports = class extends AbstractController {
       start,
       totalPage: Math.ceil(count / limit),
     };
+
+    // return await this.table.findAll({include : [{
+    //   model : this.villageTable,
+    //   as : "village_details",
+    // },
+    //   {
+    //     model : this.projectTable,
+    //     through : {
+    //       attributes: []
+
+    //     },
+    //     as : "beneficiary_project_details",
+    //   },
+    // ]});
   }
 
   async getById(id) {
-    return await this.table.findByPk(id);
+    return await this.table.findByPk(id, {
+      include : [{
+        model : this.projectTable,
+        through : {
+          attributes: []
+
+        },
+        as : "beneficiary_project_details",
+      },
+      {
+        model : this.villageTable,
+        as : "village_details",
+      }]
+    });
   }
 
   async update(id, payload) {
