@@ -67,7 +67,7 @@ WSService.init({
 
 const swaggerOptions = {
   info: {
-    title: `Rumsan API Service ${config.debug ? "[Debug]" : ""}`,
+    title: `Rumsan API Service${config.isDebug ? "[Debug Mode]" : ""}`,
     version: process.env.npm_package_version,
     description: process.env.npm_package_description,
   },
