@@ -2,6 +2,8 @@ FROM node:18.12.1-alpine3.17
 #set working directory
 WORKDIR /usr/src/app
 COPY . .
+ARG NODE_ENV
+ENV env=$NODE_ENV
 #make script executable
 # RUN chmod +x wait-for-it.sh
 RUN chmod +x start-server.sh

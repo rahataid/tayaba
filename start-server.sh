@@ -1,6 +1,6 @@
 #! /bin/bash
  
-if [ "$NODE_ENV" = "stage" ]; then
+if [ "$env" = "stage" ]; then
     echo "Running Stage Mode";
     yarn stage;
 else
