@@ -1,9 +1,9 @@
-require("../modules/services");
-const config = require("config");
-const { username, password, database } = config.get("db");
-const SequelizeDB = require("@rumsan/core").SequelizeDB;
-SequelizeDB.init(database, username, password, config.get("db"));
-const controller = require("../modules/misc/misc.controller");
+require('../modules/services');
+const config = require('config');
+const { username, password, database } = config.get('db');
+const SequelizeDB = require('@rumsan/core').SequelizeDB;
+SequelizeDB.init(database, username, password, config.get('db'));
+const controller = require('../modules/misc/misc.controller');
 
 //const ethers = require("ethers");
 
@@ -16,49 +16,49 @@ const controller = require("../modules/misc/misc.controller");
 // } = require("./_cronCommon");
 const cashTrackData = {
   tayaba: {
-    name: "tayaba",
-    label: "Tayaba ",
+    name: 'tayaba',
+    label: 'Tayaba ',
     isActive: false,
     budget: 10000,
     balance: 2000,
     timestamp: 0,
-    txHash: "",
+    txHash: '',
   },
   srso: {
-    name: "srso",
-    label: "SRSO",
+    name: 'srso',
+    label: 'SRSO',
     isActive: false,
     received: 10,
     balance: 4,
     timestamp: 0,
-    txHash: "",
+    txHash: '',
   },
   local_rep: {
-    name: "local_rep",
-    label: "Local Rep",
+    name: 'local_rep',
+    label: 'Local Rep',
     isActive: false,
     received: 0,
     balance: 0,
     timestamp: 0,
-    txHash: "",
+    txHash: '',
   },
   village_rep: {
-    name: "village_rep",
-    label: "Village Rep",
+    name: 'village_rep',
+    label: 'Village Rep',
     isActive: false,
     received: 0,
     disbursed: 0,
     timestamp: 0,
-    txHash: "",
+    txHash: '',
   },
   beneficiaries: {
-    name: "beneficiaries",
-    label: "Beneficiaries",
+    name: 'beneficiaries',
+    label: 'Beneficiaries',
     isActive: false,
     claims: 19,
     received: 45,
     timestamp: 0,
-    txHash: "",
+    txHash: '',
   },
 };
 
@@ -228,5 +228,5 @@ const scr = {
 /*Remove in prouction*/
 (async () => {
   let misc = new controller();
-  await misc.add("inventory-tracker", cashTrackData);
+  await misc.add('inventory-tracker', cashTrackData);
 })();

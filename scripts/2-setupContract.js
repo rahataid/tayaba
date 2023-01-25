@@ -1,32 +1,32 @@
-const config = require("config");
-const { username, password, database } = config.get("db");
-const SequelizeDB = require("@rumsan/core").SequelizeDB;
-SequelizeDB.init(database, username, password, config.get("db"));
+const config = require('config');
+const { username, password, database } = config.get('db');
+const SequelizeDB = require('@rumsan/core').SequelizeDB;
+SequelizeDB.init(database, username, password, config.get('db'));
 const { db } = SequelizeDB;
-const AppSettings = require("@rumsan/core").AppSettings;
-require("@rumsan/core/appSettings/model")();
+const AppSettings = require('@rumsan/core').AppSettings;
+require('@rumsan/core/appSettings/model')();
 
 const deploymentData = {
-  communityName: "Tayaba",
-  projectName: "H20 Wheels",
-  tokenName: "H20Wheel",
-  tokenSymbol: "H20",
+  communityName: 'Tayaba',
+  projectName: 'H20 Wheels',
+  tokenName: 'H20Wheel',
+  tokenSymbol: 'H20',
   tokenDecimals: 0,
 };
 
-const { privateKey: deployerPrivateKey } = require("../config/privateKeys/deployer.json");
+const { privateKey: deployerPrivateKey } = require('../config/privateKeys/deployer.json');
 const {
   address: adminAddress,
   privateKey: adminPrivateKey,
-} = require("../config/privateKeys/admin.json");
-const { address: serverAddress } = require("../config/privateKeys/server.json");
+} = require('../config/privateKeys/admin.json');
+const { address: serverAddress } = require('../config/privateKeys/server.json');
 const {
   address: donorAddress,
   privateKey: donorPrivateKey,
-} = require("../config/privateKeys/donor.json");
-const ethers = require("ethers");
+} = require('../config/privateKeys/donor.json');
+const ethers = require('ethers');
 
-const network = config.get("blockchain.httpProvider");
+const network = config.get('blockchain.httpProvider');
 const provider = new ethers.providers.JsonRpcProvider(network);
 
 const lib = {
@@ -53,25 +53,25 @@ const lib = {
 
 const setupContracts = async () => {
   const { abi: RahatDonorAbi, bytecode: RahatDonorBytecode } =
-    lib.getContractArtifacts("RahatDonor");
+    lib.getContractArtifacts('RahatDonor');
   const { abi: RahatClaimAbi, bytecode: RahatClaimBytecode } =
-    lib.getContractArtifacts("RahatClaim");
+    lib.getContractArtifacts('RahatClaim');
   const { abi: RahatCommunityAbi, bytecode: RahatCommunityBytecode } =
-    lib.getContractArtifacts("RahatCommunity");
+    lib.getContractArtifacts('RahatCommunity');
   const { abi: CVAProjectAbi, bytecode: CVAProjectBytecode } =
-    lib.getContractArtifacts("CVAProject");
+    lib.getContractArtifacts('CVAProject');
   const { abi: RahatTokenAbi, bytecode: RahatTokenBytecode } =
-    lib.getContractArtifacts("RahatToken");
+    lib.getContractArtifacts('RahatToken');
   const adminWallet = lib.getWalletFromPrivateKey(adminPrivateKey);
   const donorWallet = lib.getWalletFromPrivateKey(donorPrivateKey);
 
-  console.log("1/4 DEPLOYING RAHAT Donor");
+  console.log('1/4 DEPLOYING RAHAT Donor');
   const rahatDonor = await lib.deployContract(RahatDonorAbi, RahatDonorBytecode, [donorAddress]);
 
-  console.log("2/4 DEPLOYING RAHAT CLAIM");
+  console.log('2/4 DEPLOYING RAHAT CLAIM');
   const rahatClaim = await lib.deployContract(RahatClaimAbi, RahatClaimBytecode, []);
 
-  console.log("3/4 DEPLOYING RAHAT COMMUNITY");
+  console.log('3/4 DEPLOYING RAHAT COMMUNITY');
   const rahatCommunity = await lib.deployContract(RahatCommunityAbi, RahatCommunityBytecode, [
     deploymentData.communityName,
     adminAddress,
@@ -90,7 +90,7 @@ const setupContracts = async () => {
   // const tokenCreationEvent = receipt.events.find((el) => el.event === 'TokenCreated')
   // const tokenAddress = tokenCreationEvent.args.tokenAddress
 
-  console.log("4/4 DEPLOYING CVA Project");
+  console.log('4/4 DEPLOYING CVA Project');
   const cvaProject = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
     deploymentData.projectName,
     rahatToken.address,
@@ -100,30 +100,30 @@ const setupContracts = async () => {
   ]);
 
   //Add project to Community
-  console.log("Adding project to community");
+  console.log('Adding project to community');
   await rahatCommunity.connect(adminWallet).addProject(cvaProject.address);
 
   const addresData = {
-    rahatDonor: rahatDonor.address,
-    rahatClaim: rahatClaim.address,
-    rahatToken: rahatToken.address,
-    rahatCommunity: rahatCommunity.address,
-    cvaProject: cvaProject.address,
+    RahatDonor: rahatDonor.address,
+    RahatClaim: rahatClaim.address,
+    RahatToken: rahatToken.address,
+    RahatCommunity: rahatCommunity.address,
+    CVAProject: cvaProject.address,
   };
   console.log({ addresData });
-  console.log("Updating App Settings");
+  console.log('Updating App Settings');
   await AppSettings.init(db);
   const d = await AppSettings.controller._add({
-    name: "Contract_Address",
+    name: 'Contract_Address',
     value: addresData,
     isReadOnly: true,
     isPrivate: false,
   });
   await AppSettings.controller._add({
-    name: "blockchain",
+    name: 'blockchain',
     value: {
-      networkUrl: config.get("blockchain.httpProvider"),
-      chainWebSocket: config.get("blockchain.webSocketProvider"),
+      networkUrl: config.get('blockchain.httpProvider'),
+      chainWebSocket: config.get('blockchain.webSocketProvider'),
     },
     isReadOnly: true,
     isPrivate: false,
