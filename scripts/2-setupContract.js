@@ -101,8 +101,7 @@ const setupContracts = async () => {
 
   //Add project to Community
   console.log('Adding project to community');
-  await rahatCommunity.connect(adminWallet).addProject(cvaProject.address);
-
+  await rahatCommunity.connect(adminWallet).approveProject(cvaProject.address);
   const addresData = {
     RahatDonor: rahatDonor.address,
     RahatClaim: rahatClaim.address,
