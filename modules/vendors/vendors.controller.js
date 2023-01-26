@@ -1,16 +1,21 @@
 const { AbstractController } = require("@rumsan/core/abstract");
-const { VendorModel, VillageModel, ProjectVendorsModel } = require("../models");
+const {
+  VendorModel,
+  VillageModel,
+  ProjectVendorsModel,
+  BeneficiariesModel,
+} = require("../models");
 const {
   WalletUtils: { validateSignature },
 } = require("@rumsan/core/utils");
 const { RSConfig } = require("@rumsan/core");
 
-const checkVendorWallet = (req) => {
+const checkVendorWallet = (signPayload) => {
   const { address } = validateSignature(
-    req.headers.signature,
-    req.headers.signpayload,
+    signPayload.signature,
+    signPayload.signPayload,
     {
-      ip: req.info.clientIpAddress,
+      ip: "127.0.0.1",
       secret: RSConfig.get("secret"),
     }
   );
@@ -25,6 +30,8 @@ module.exports = class extends AbstractController {
     super(options);
     this.table = VendorModel;
     this.villageTable = VillageModel;
+    this.tblProjectVendors = ProjectVendorsModel;
+    this.tblBeneficiaries = BeneficiariesModel;
   }
 
   registrations = {
@@ -35,20 +42,20 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params.id),
     updateVendorApprovalStatus: (req) =>
       this.updateVendorApprovalStatus(req.params.id, req.payload),
-    register: (req) => this.register(req),
+    register: (req) => this.register(req.payload, req),
+    checkIfBeneficiaryExists: (req) =>
+      this.checkIfBeneficiaryExists(req.payload.walletAddress),
   };
 
   async add(payload) {
     try {
-      const venData = await this.table.create(payload);
+      const venData = await this.table.create(payload, {
+        raw: true,
+      });
 
-      // TODO :refactor this code
-      const {
-        dataValues: { id: vendorId },
-      } = venData;
-      await ProjectVendorsModel.create({
-        vendorId,
+      await this.tblProjectVendors.create({
         projectId: payload.projectId,
+        vendorId: venData.id,
       });
       return venData;
     } catch (err) {
@@ -108,8 +115,57 @@ module.exports = class extends AbstractController {
     return this.table.destroy({ where: { id } });
   }
 
-  register(req) {
-    const { success, address } = checkVendorWallet(req);
-    console.log("address", address);
+  async findVendorByAddress(walletAddress) {
+    return this.table.findOne({ where: { walletAddress } });
+  }
+
+  async register(payload, req) {
+    const { signData, vendorData: vendorPayload } = payload;
+
+    try {
+      const { success, address } = checkVendorWallet(signData);
+
+      if (address) {
+        const vendor = await this.findVendorByAddress(address);
+
+        if (!vendor) {
+          const vendorData = {
+            walletAddress: address,
+            name: vendorPayload.name,
+            villageId: vendorPayload.villageId,
+            phone: vendorPayload.phone,
+          };
+          const vendor = await this.table.create(vendorData, {
+            raw: true,
+          });
+
+          return {
+            success,
+            message: "Vendor registered successfully",
+            data: vendor,
+          };
+        } else {
+          return {
+            success,
+            message: "Vendor already registered",
+          };
+        }
+      }
+    } catch (err) {
+      console.log("err", err);
+      throw new Error({
+        success: false,
+        message: "Something went wrong",
+        error: err,
+      });
+    }
+  }
+
+  async checkIfBeneficiaryExists(walletAddress) {
+    const beneficiary = await this.tblBeneficiaries.findOne({
+      where: { walletAddress },
+    });
+    console.log("beneficiary", beneficiary);
+    return Boolean(beneficiary);
   }
 };
