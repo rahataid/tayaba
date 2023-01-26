@@ -1,21 +1,21 @@
 //backend-see setup
 // node ./play/setup.js
-require("../modules/services");
-const config = require("config");
+require('../modules/services');
+const config = require('config');
 
-const { username, password, database } = config.get("db");
-const SequelizeDB = require("@rumsan/core").SequelizeDB;
-SequelizeDB.init(database, username, password, config.get("db"));
+const { username, password, database } = config.get('db');
+const SequelizeDB = require('@rumsan/core').SequelizeDB;
+SequelizeDB.init(database, username, password, config.get('db'));
 const { db } = SequelizeDB;
-const { UserController, RoleController } = require("@rumsan/user");
+const { UserController, RoleController } = require('@rumsan/user');
 
 const User = new UserController();
 const Role = new RoleController();
 
-const AppSettings = require("@rumsan/core").AppSettings;
+const AppSettings = require('@rumsan/core').AppSettings;
 
-require("@rumsan/core/appSettings/model")();
-require("../modules/models");
+require('@rumsan/core/appSettings/model')();
+require('../modules/models');
 
 const dropTables = `
   DROP TABLE IF EXISTS "tblAppSettings";
@@ -32,32 +32,32 @@ const dropTables = `
 `;
 
 const settingsData = {
-    publicExample: {
-        value: { appName: "My App Name", walletAddress: "0x00" },
-        isPrivate: false,
-    },
-    privateExample: {
-        value: { api_key: "2dsfds234", url: "https://test.com" },
-    },
-    simpleExample: "test data",
+  publicExample: {
+    value: { appName: 'My App Name', walletAddress: '0x00' },
+    isPrivate: false,
+  },
+  privateExample: {
+    value: { api_key: '2dsfds234', url: 'https://test.com' },
+  },
+  simpleExample: 'test data',
 };
 
 db.authenticate()
-    .then(async () => {
-        console.log("Database connected...");
-        await db.query(dropTables);
-        await db.sync();
-        console.log("Setup complete...");
-        await addSettings();
-        console.log("Done");
-        process.exit(0);
-    })
-    .catch((err) => {
-        console.log("Error: " + err);
-    });
+  .then(async () => {
+    console.log('Database connected...');
+    await db.query(dropTables);
+    await db.sync();
+    console.log('Setup complete...');
+    await addSettings();
+    console.log('Done');
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.log('Error: ' + err);
+  });
 
 const addSettings = async () => {
-    await AppSettings.init(db);
-    await AppSettings.controller._addBulk(settingsData);
-    await AppSettings.refresh();
+  await AppSettings.init(db);
+  await AppSettings.controller._addBulk(settingsData);
+  await AppSettings.refresh();
 };
