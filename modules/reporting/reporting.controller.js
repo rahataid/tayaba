@@ -1,12 +1,12 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const sequelize = require("sequelize");
+const { AbstractController } = require('@rumsan/core/abstract');
+const sequelize = require('sequelize');
 const { Op, fn } = sequelize;
 const {
   BeneficiariesModel,
   VillageModel,
   ProjectModel,
   ProjectBeneficiariesModel,
-} = require("../models");
+} = require('../models');
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -18,48 +18,33 @@ module.exports = class extends AbstractController {
   }
 
   registrations = {
-    getBeneficiaryDemographicsSummary: (req) =>
-      this.getBeneficiaryDemographicsSummary(req.query),
+    getBeneficiaryDemographicsSummary: (req) => this.getBeneficiaryDemographicsSummary(req.query),
 
     getBeneficiaryPiechartByProject: (req) =>
-      this.getBeneficiaryPiechartByProject(
-        req.params.type,
-        req.query.village,
-        req.query.projectId
-      ),
-    getBeneficiaryPerVillage: (req) =>
-      this.getBeneficiaryPerVillage(req.params.id),
+      this.getBeneficiaryPiechartByProject(req.params.type, req.query.village, req.query.projectId),
+    getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id),
+    getGeoMapData: (req) => this.getGeoMapData(req),
   };
 
   async getBeneficiaryDemographicsSummary(query) {
-    const { count: totalBeneficiaries } =
-      await this.tblBeneficiaries.findAndCountAll({
-        where: {
-          ...query,
-        },
-        attributes: [[sequelize.fn("COUNT", sequelize.col("id")), "total"]],
-      });
+    const { count: totalBeneficiaries } = await this.tblBeneficiaries.findAndCountAll({
+      where: {
+        ...query,
+      },
+      attributes: [[sequelize.fn('COUNT', sequelize.col('id')), 'total']],
+    });
     const beneficiaryPerVillage = await this.getBeneficiaryPerVillage();
 
-    const { count: totalProjects, rows } =
-      await this.tblProjects.findAndCountAll({
-        where: {
-          ...query,
-        },
-        raw: true,
-        attributes: [
-          [
-            sequelize.fn("SUM", sequelize.col("disbursed")),
-            "totalH20Disbursed",
-          ],
-        ],
-        group: ["disbursed"],
-      });
+    const { count: totalProjects, rows } = await this.tblProjects.findAndCountAll({
+      where: {
+        ...query,
+      },
+      raw: true,
+      attributes: [[sequelize.fn('SUM', sequelize.col('disbursed')), 'totalH20Disbursed']],
+      group: ['disbursed'],
+    });
 
-    const totalH20Disbursed = rows.reduce(
-      (a, b) => +a + +b.totalH20Disbursed,
-      0
-    );
+    const totalH20Disbursed = rows.reduce((a, b) => +a + +b.totalH20Disbursed, 0);
 
     const { count: totalVillages } = await this.tblVillages.findAndCountAll({
       where: {
@@ -80,13 +65,10 @@ module.exports = class extends AbstractController {
     const villages = await this.tblVillages.findAll();
     const beneficiaryCounts = await this.tblBeneficiaries.findAll({
       attributes: [
-        "villageId",
-        [
-          this.db.Sequelize.fn("COUNT", this.db.Sequelize.col("villageId")),
-          "count",
-        ],
+        'villageId',
+        [this.db.Sequelize.fn('COUNT', this.db.Sequelize.col('villageId')), 'count'],
       ],
-      group: "villageId",
+      group: 'villageId',
       raw: true,
     });
     const beneficiaryPerVillage = beneficiaryCounts.map((el) => {
@@ -105,8 +87,8 @@ module.exports = class extends AbstractController {
       include: [
         {
           model: this.tblVillages,
-          as: "village_details",
-          attributes: ["name"],
+          as: 'village_details',
+          attributes: ['name'],
           where: {
             name: village,
           },
@@ -115,11 +97,7 @@ module.exports = class extends AbstractController {
     };
     const dataValues = await this.tblBeneficiaries.findAll(query);
 
-    console.log("dataValues", dataValues);
-
-    const benInVillage = dataValues.filter(
-      (ben) => ben?.village_details === village
-    );
+    const benInVillage = dataValues.filter((ben) => ben?.village_details === village);
 
     const typeSet = new Set(dataValues.map((el) => el[type]));
 
@@ -146,30 +124,24 @@ module.exports = class extends AbstractController {
       raw: true,
     });
 
-    const beneficiaryIdsInProject = involdedProject.map(
-      (el) => el.beneficiaryId
-    );
+    const beneficiaryIdsInProject = involdedProject.map((el) => el.beneficiaryId);
 
-    const { count: countValue, rows } =
-      await this.tblBeneficiaries.findAndCountAll({
-        where: {
-          id: {
-            [Op.in]: beneficiaryIdsInProject,
-          },
+    const { count: countValue, rows } = await this.tblBeneficiaries.findAndCountAll({
+      where: {
+        id: {
+          [Op.in]: beneficiaryIdsInProject,
         },
-        attributes: [type, [fn("COUNT", sequelize.col(type)), "count"]],
-        group: type,
-        raw: true,
-      });
-
-    console.log("rows", rows);
+      },
+      attributes: [type, [fn('COUNT', sequelize.col(type)), 'count']],
+      group: type,
+      raw: true,
+    });
 
     return { countValue, rows };
   }
 
   async getBeneficiaryPiechartByProject(type, village, projectId) {
-    if (village)
-      return await this._getPiechartDataByVillage(type, village, projectId);
+    if (village) return await this._getPiechartDataByVillage(type, village, projectId);
     else {
       const { countValue, rows } = await this._getPiechartData(type, projectId);
       return rows.map((row) => ({
@@ -177,5 +149,13 @@ module.exports = class extends AbstractController {
         count: +row.count,
       }));
     }
+  }
+
+  async getGeoMapData(req) {
+    const mapInfo = await this.tblVillages.findAll({
+      attributes: ['longitude', 'latitude', 'name'],
+      group: ['name', 'longitude', 'latitude'],
+    });
+    return mapInfo;
   }
 };

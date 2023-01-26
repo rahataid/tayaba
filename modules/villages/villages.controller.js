@@ -1,5 +1,5 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const { VillageModel, BeneficiariesModel } = require("../models");
+const { AbstractController } = require('@rumsan/core/abstract');
+const { VillageModel, BeneficiariesModel } = require('../models');
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -13,9 +13,9 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(),
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
+    updateGeoLocation: (req) => this.updateGeoLocation(req.payload, req.params),
     getById: (req) => this.getById(req.params.id),
-    getByName: (req) => this.getByName(req.params.name)
-
+    getByName: (req) => this.getByName(req.params.name),
   };
 
   async add(payload) {
@@ -35,5 +35,8 @@ module.exports = class extends AbstractController {
   }
   async update(payload, param) {
     return this.table.update(payload, { where: { id: param.id } });
+  }
+  async updateGeoLocation(payload, param) {
+    return this.table.update(payload, { where: { name: param.name } });
   }
 };
