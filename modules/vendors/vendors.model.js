@@ -22,9 +22,8 @@ const schema = {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  contractAddress: {
+  walletContract: {
     type: Sequelize.STRING,
-    allowNull: false,
   },
   villageId: {
     type: Sequelize.INTEGER,
