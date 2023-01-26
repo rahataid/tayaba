@@ -1,13 +1,10 @@
-//TODO Send fund to project
-//TODO accept tokens
-
 const env = 'local';
 const {
   app: { url: tayaba_apiUrl },
-} = require(`../../config/${env}.json`);
+} = require(`../config/${env}.json`);
 
-const { privateKey: donor_pk } = require('../../config/privateKeys/donor.json');
-const { privateKey: admin_pk } = require('../../config/privateKeys/admin.json');
+const { privateKey: donor_pk } = require('../config/privateKeys/donor.json');
+const { privateKey: admin_pk } = require('../config/privateKeys/admin.json');
 const ethers = require('ethers');
 const axios = require('axios');
 let networkUrl, contracts;
@@ -24,6 +21,7 @@ const contractLib = {
     } = await axios.get(`${tayaba_apiUrl}/api/v1/settings`);
     networkUrl = _networkUrl;
     contracts = _contracts;
+    console.log({ contracts, networkUrl });
     return { contracts, networkUrl };
   },
 
@@ -107,43 +105,24 @@ const contractLib = {
   //   },
 };
 
-const tokenMintAmount = 1000;
-
-const sendFundToProject = async () => {
+const lockProject = async () => {
   const donorWallet = await contractLib.getDonorWallet();
-  const donorContract = await contractLib.getRahatDonorContract(donorWallet);
-  await donorContract.mintTokenAndApprove(
-    contracts.RahatToken,
-    contracts.CVAProject,
-    tokenMintAmount
-  );
-};
-
-const acceptFund = async () => {
-  const srsoWallet = await contractLib.getAdminWallet();
-  const cvaProjectContract = await contractLib.getCvaProjectContract(srsoWallet);
-  await cvaProjectContract.acceptToken(contracts.RahatDonor, tokenMintAmount);
+  const cvaProject = await contractLib.getCvaProjectContract();
+  await cvaProject.connect(donorWallet).lockProject();
+  const isLocked = await cvaProject.isLocked();
+  console.log({ isLocked });
 };
 
 const checkBalance = async () => {
-  const tokenContract = await contractLib.getErc20Contract();
-  const balance = await tokenContract.balanceOf(contracts.CVAProject);
-  console.log(balance.toNumber());
+  const rahatToken = await contractLib.getErc20Contract();
+  const balance = (await rahatToken.balanceOf(contracts.CVAProject)).toNumber();
+  console.log({ balance });
 };
 
-const run = async () => {
-  console.log('checking Initial balance');
-  await checkBalance();
-  console.log('Sending Fund to project');
-  await sendFundToProject();
-  console.log('Accept Fund to project');
-  await acceptFund();
-  console.log('Checking Final Balance');
-  await checkBalance();
+const OTPServerAddress = async () => {
+  const cvaProject = await contractLib.getCvaProjectContract();
+  const serverAddress = await cvaProject.otpServerAddress();
+  console.log({ serverAddress });
 };
 
-//sendFundToProject();
-//acceptFund();
-//checkBalance();
-
-run();
+checkBalance();
