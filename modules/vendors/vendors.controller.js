@@ -1,24 +1,15 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const {
-  VendorModel,
-  VillageModel,
-  ProjectVendorsModel,
-  BeneficiariesModel,
-} = require("../models");
+const { AbstractController } = require('@rumsan/core/abstract');
+const { VendorModel, VillageModel, ProjectVendorsModel, BeneficiariesModel } = require('../models');
 const {
   WalletUtils: { validateSignature },
-} = require("@rumsan/core/utils");
-const { RSConfig } = require("@rumsan/core");
+} = require('@rumsan/core/utils');
+const { RSConfig } = require('@rumsan/core');
 
-const checkVendorWallet = (signPayload) => {
-  const { address } = validateSignature(
-    signPayload.signature,
-    signPayload.signPayload,
-    {
-      ip: "127.0.0.1",
-      secret: RSConfig.get("secret"),
-    }
-  );
+const checkVendorWallet = (signPayload, req) => {
+  const { address } = validateSignature(signPayload.signature, signPayload.signPayload, {
+    ip: req.info.clientIpAddress,
+    secret: RSConfig.get('secret'),
+  });
   return {
     success: true,
     address,
@@ -43,8 +34,7 @@ module.exports = class extends AbstractController {
     updateVendorApprovalStatus: (req) =>
       this.updateVendorApprovalStatus(req.params.id, req.payload),
     register: (req) => this.register(req.payload, req),
-    checkIfBeneficiaryExists: (req) =>
-      this.checkIfBeneficiaryExists(req.payload.walletAddress),
+    checkIfBeneficiaryExists: (req) => this.checkIfBeneficiaryExists(req.payload.walletAddress),
   };
 
   async add(payload) {
@@ -70,7 +60,7 @@ module.exports = class extends AbstractController {
         include: [
           {
             model: this.villageTable,
-            as: "vendor_village_details",
+            as: 'vendor_village_details',
           },
         ],
       });
@@ -84,7 +74,7 @@ module.exports = class extends AbstractController {
       include: [
         {
           model: this.villageTable,
-          as: "vendor_village_details",
+          as: 'vendor_village_details',
         },
       ],
     });
@@ -123,7 +113,7 @@ module.exports = class extends AbstractController {
     const { signData, vendorData: vendorPayload } = payload;
 
     try {
-      const { success, address } = checkVendorWallet(signData);
+      const { success, address } = checkVendorWallet(signData, req);
 
       if (address) {
         const vendor = await this.findVendorByAddress(address);
@@ -141,21 +131,21 @@ module.exports = class extends AbstractController {
 
           return {
             success,
-            message: "Vendor registered successfully",
+            message: 'Vendor registered successfully',
             data: vendor,
           };
         } else {
           return {
             success,
-            message: "Vendor already registered",
+            message: 'Vendor already registered',
           };
         }
       }
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw new Error({
         success: false,
-        message: "Something went wrong",
+        message: 'Something went wrong',
         error: err,
       });
     }
@@ -165,7 +155,7 @@ module.exports = class extends AbstractController {
     const beneficiary = await this.tblBeneficiaries.findOne({
       where: { walletAddress },
     });
-    console.log("beneficiary", beneficiary);
+    console.log('beneficiary', beneficiary);
     return Boolean(beneficiary);
   }
 };
