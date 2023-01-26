@@ -32,7 +32,7 @@ module.exports = class extends AbstractController {
     update: (req) => this.update(req.params.id, req.payload),
     delete: (req) => this.delete(req.params.id),
     updateVendorApprovalStatus: (req) =>
-      this.updateVendorApprovalStatus(req.params.id, req.payload),
+      this.updateVendorApprovalStatus(req.params.walletAddress, req.payload),
     register: (req) => this.register(req.payload, req),
     checkIfBeneficiaryExists: (req) => this.checkIfBeneficiaryExists(req.payload.walletAddress),
   };
@@ -88,13 +88,13 @@ module.exports = class extends AbstractController {
     }
   }
 
-  async updateVendorApprovalStatus(id, payload) {
+  async updateVendorApprovalStatus(walletAddress, payload) {
     try {
       return await this.table.update(
         {
           isApproved: payload.isApproved,
         },
-        { where: { id } }
+        { where: { walletAddress } }
       );
     } catch (err) {
       console.log(err);
