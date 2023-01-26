@@ -155,7 +155,6 @@ module.exports = class extends AbstractController {
     const beneficiary = await this.tblBeneficiaries.findOne({
       where: { walletAddress },
     });
-    console.log('beneficiary', beneficiary);
     return Boolean(beneficiary);
   }
 };
