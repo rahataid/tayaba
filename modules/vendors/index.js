@@ -65,5 +65,12 @@ module.exports = class extends AbstractRouter {
       description: 'check if beneficiary exists',
       // permissions: [PERMISSIONS.VENDOR_WRITE],
     },
+
+    getSingleVendor: {
+      method: 'GET',
+      path: '/getSingleVendor',
+      description: 'get single vendor',
+      // permissions: [PERMISSIONS.VENDOR_READ],
+    },
   };
 };

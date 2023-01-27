@@ -35,6 +35,7 @@ module.exports = class extends AbstractController {
       this.updateVendorApprovalStatus(req.params.walletAddress, req.payload),
     register: (req) => this.register(req.payload, req),
     checkIfBeneficiaryExists: (req) => this.checkIfBeneficiaryExists(req.payload.walletAddress),
+    getSingleVendor: (req) => this.getSingleVendor(req.params),
   };
 
   async add(payload) {
@@ -156,5 +157,23 @@ module.exports = class extends AbstractController {
       where: { walletAddress },
     });
     return Boolean(beneficiary);
+  }
+
+  async getSingleVendor(params) {
+    const vendor = await this.table.findOne(
+      {
+        where: params,
+      },
+      {
+        include: [
+          {
+            model: this.villageTable,
+            as: 'vendor_village_details',
+          },
+        ],
+      }
+    );
+
+    return vendor;
   }
 };
