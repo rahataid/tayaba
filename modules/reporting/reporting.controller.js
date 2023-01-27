@@ -24,6 +24,7 @@ module.exports = class extends AbstractController {
       this.getBeneficiaryPiechartByProject(req.params.type, req.query.village, req.query.projectId),
     getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id),
     getGeoMapData: (req) => this.getGeoMapData(req),
+
   };
 
   async getBeneficiaryDemographicsSummary(query) {

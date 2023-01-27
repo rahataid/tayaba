@@ -1,5 +1,10 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const { BeneficiariesModel, VillageModel, ProjectModel, ProjectBeneficiariesModel } = require("../models");
+const { AbstractController } = require('@rumsan/core/abstract');
+const {
+  BeneficiariesModel,
+  VillageModel,
+  ProjectModel,
+  ProjectBeneficiariesModel,
+} = require('../models');
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -20,7 +25,9 @@ module.exports = class extends AbstractController {
   async add(payload) {
     try {
       const benData = await this.table.create(payload);
-      const { dataValues: { id: beneficiaryId } } = benData;
+      const {
+        dataValues: { id: beneficiaryId },
+      } = benData;
       await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
       return benData;
     } catch (err) {
@@ -29,23 +36,27 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    let { limit, start, ...restQuery } = query;
+    let { limit, start, projectId, ...restQuery } = query;
     if (!limit) limit = 50;
     if (!start) start = 0;
 
-    let { rows: list, count } = await this.table.findAndCountAll({
-      include: [{
-        model: this.villageTable,
-        as: 'village_details',
-      },
-      {
-        model: this.projectTable,
-        through: {
-          attributes: []
+    const projectQuery = {};
 
+    if (projectId) {
+      projectQuery.id = projectId;
+    }
+
+    let { rows: list, count } = await this.table.findAndCountAll({
+      include: [
+        {
+          model: this.villageTable,
+          as: 'village_details',
         },
-        as: "beneficiary_project_details",
-      },
+        {
+          model: this.projectTable,
+          where: projectQuery,
+          as: 'beneficiary_project_details',
+        },
       ],
       where: { ...restQuery },
       limit: limit || 100,
@@ -77,18 +88,19 @@ module.exports = class extends AbstractController {
 
   async getById(id) {
     return await this.table.findByPk(id, {
-      include: [{
-        model: this.projectTable,
-        through: {
-          attributes: []
-
+      include: [
+        {
+          model: this.projectTable,
+          through: {
+            attributes: [],
+          },
+          as: 'beneficiary_project_details',
         },
-        as: "beneficiary_project_details",
-      },
-      {
-        model: this.villageTable,
-        as: "village_details",
-      }]
+        {
+          model: this.villageTable,
+          as: 'village_details',
+        },
+      ],
     });
   }
 
