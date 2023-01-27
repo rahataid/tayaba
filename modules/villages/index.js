@@ -21,7 +21,7 @@ module.exports = class extends AbstractRouter {
       method: 'GET',
       path: '',
       description: 'List all villages',
-      permissions: [PERMISSIONS.PROJECT_LIST],
+      // permissions: [PERMISSIONS.PROJECT_LIST],
     },
 
     update: {
