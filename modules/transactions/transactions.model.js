@@ -1,47 +1,47 @@
-const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
+const { DataTypes, Sequelize } = require('@rumsan/core').SequelizeDB;
 
-const { AbstractModel } = require("@rumsan/core/abstract");
+const { AbstractModel } = require('@rumsan/core/abstract');
 
 const schema = {
   txHash: {
     type: Sequelize.STRING,
   },
-  contractAddress : {
+  contractAddress: {
     type: Sequelize.STRING,
-    allowNull : false,
+    allowNull: false,
   },
-  timestamp : {
-    type : Sequelize.BIGINT,
-    allowNull : false,
+  timestamp: {
+    type: Sequelize.BIGINT,
+    allowNull: false,
   },
   beneficiaryId: {
     type: Sequelize.INTEGER,
-    allowNull : false,
+    allowNull: false,
   },
   vendorId: {
     type: Sequelize.INTEGER,
-    allowNull : false,
+    allowNull: false,
   },
   projectId: {
     type: Sequelize.INTEGER,
-    allowNull : false,
+    allowNull: false,
   },
   amount: {
     type: Sequelize.INTEGER,
-    allowNull : false,
+    allowNull: false,
   },
-  isOffline : {
+  isOffline: {
     type: Sequelize.BOOLEAN,
-    allowNull : false,
-    defaultValue : false,
+    allowNull: false,
+    defaultValue: false,
   },
   txType: {
-    type: Sequelize.ENUM(["sms", "qr", "wallet"]),
+    type: Sequelize.ENUM(['sms', 'qr', 'wallet']),
   },
 };
 module.exports = class TransactionsModel extends AbstractModel {
   schema = schema;
   constructor() {
-    super({ tableName: "tblTransactions" });
+    super({ tableName: 'tblTransactions' });
   }
 };
