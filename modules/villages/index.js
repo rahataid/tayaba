@@ -1,53 +1,60 @@
-const Controller = require("./villages.controller");
-const { AbstractRouter } = require("@rumsan/core/abstract");
-const Validator = require("./villages.validator");
-const { PERMISSIONS } = require("../../constants");
+const Controller = require('./villages.controller');
+const { AbstractRouter } = require('@rumsan/core/abstract');
+const Validator = require('./villages.validator');
+const { PERMISSIONS } = require('../../constants');
 module.exports = class extends AbstractRouter {
   constructor(options = {}) {
-    options.name = options.name || "villages";
+    options.name = options.name || 'villages';
     options.controller = new Controller(options);
     options.validator = new Validator(options);
     super(options);
   }
   routes = {
     add: {
-      method: "POST",
-      path: "",
-      description: "Add new villages",
+      method: 'POST',
+      path: '',
+      description: 'Add new villages',
       permissions: [PERMISSIONS.PROJECT_WRITE],
     },
 
     list: {
-      method: "GET",
-      path: "",
-      description: "List all villages",
+      method: 'GET',
+      path: '',
+      description: 'List all villages',
       permissions: [PERMISSIONS.PROJECT_LIST],
     },
 
     update: {
-      method: "PUT",
-      path: "/{id}",
-      description: "update  villages",
+      method: 'PUT',
+      path: '/{id}',
+      description: 'update  villages',
+      permissions: [PERMISSIONS.PROJECT_WRITE],
+    },
+
+    updateGeoLocation: {
+      method: 'PUT',
+      path: '/update-geo-location/{name}',
+      description: 'update geo Location of villages',
       permissions: [PERMISSIONS.PROJECT_WRITE],
     },
 
     delete: {
-      method: "DELETE",
-      path: "/{id}",
-      description: "delete villge",
+      method: 'DELETE',
+      path: '/{id}',
+      description: 'delete villge',
       permissions: [PERMISSIONS.PROJECT_DELETE],
     },
 
     getById: {
-      method: "GET",
-      path: "/{id}",
-      description: "get Village By Id",
+      method: 'GET',
+      path: '/{id}',
+      description: 'get Village By Id',
       permissions: [PERMISSIONS.PROJECT_READ],
     },
     getByName: {
-      method: "GET",
-      path: "/name/{name}",
-      description: "get Village By Name",
+      method: 'GET',
+      path: '/name/{name}',
+      description: 'get Village By Name',
       permissions: [PERMISSIONS.PROJECT_READ],
     },
   };

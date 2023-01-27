@@ -23,6 +23,8 @@ module.exports = class extends AbstractController {
     getBeneficiaryPiechartByProject: (req) =>
       this.getBeneficiaryPiechartByProject(req.params.type, req.query.village, req.query.projectId),
     getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id),
+    getGeoMapData: (req) => this.getGeoMapData(req),
+
   };
 
   async getBeneficiaryDemographicsSummary(query) {
@@ -148,5 +150,13 @@ module.exports = class extends AbstractController {
         count: +row.count,
       }));
     }
+  }
+
+  async getGeoMapData(req) {
+    const mapInfo = await this.tblVillages.findAll({
+      attributes: ['longitude', 'latitude', 'name'],
+      group: ['name', 'longitude', 'latitude'],
+    });
+    return mapInfo;
   }
 };
