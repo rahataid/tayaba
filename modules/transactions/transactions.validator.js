@@ -13,7 +13,7 @@ const validators = {
       amount: Joi.number().required().example(1),
       isOffline: Joi.boolean().required().example(false),
       txType: Joi.string().valid('sms', 'qr', 'wallet'),
-      event: Joi.string().required().example('Beneficiary Claim'),
+      event: Joi.string().example('Beneficiary Claim'),
     }),
   },
 };
