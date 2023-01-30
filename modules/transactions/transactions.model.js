@@ -38,9 +38,9 @@ const schema = {
   txType: {
     type: Sequelize.ENUM(['sms', 'qr', 'wallet']),
   },
-  event: {
-    type: Sequelize.STRING,
-  },
+  // event: {
+  //   type: Sequelize.STRING,
+  // },
 };
 module.exports = class TransactionsModel extends AbstractModel {
   schema = schema;
