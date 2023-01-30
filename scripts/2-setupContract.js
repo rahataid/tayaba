@@ -123,12 +123,14 @@ const setupContracts = async () => {
     value: {
       networkUrl: config.get('blockchain.httpProvider'),
       chainWebSocket: config.get('blockchain.webSocketProvider'),
+      chainId: config.get('blockchain.chainId'),
     },
     isReadOnly: true,
     isPrivate: false,
   });
   console.log({ d });
   await AppSettings.refresh();
+  process.exit(0);
 };
 
 setupContracts();
