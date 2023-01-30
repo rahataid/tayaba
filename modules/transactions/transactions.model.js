@@ -40,7 +40,6 @@ const schema = {
   },
   event: {
     type: Sequelize.STRING,
-    allowNull: false,
   },
 };
 module.exports = class TransactionsModel extends AbstractModel {
