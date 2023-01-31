@@ -48,7 +48,7 @@ db.authenticate()
     await db.query(dropTables);
     await db.sync();
     console.log('Setup complete...');
-    await addSettings();
+    //await addSettings();
     console.log('Done');
     process.exit(0);
   })

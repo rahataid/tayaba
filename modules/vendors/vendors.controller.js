@@ -160,7 +160,6 @@ module.exports = class extends AbstractController {
   }
 
   async getSingleVendor(params) {
-    console.log('params', params);
     const vendor = await this.table.findOne(
       {
         where: params,
@@ -174,8 +173,6 @@ module.exports = class extends AbstractController {
         ],
       }
     );
-
-    console.log('vendor', vendor);
 
     return vendor;
   }
