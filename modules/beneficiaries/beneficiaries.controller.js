@@ -20,6 +20,7 @@ module.exports = class extends AbstractController {
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
     delete: (req) => this.delete(req.params.id),
+    getVillagesName: (req) => this.getVillagesName(),
   };
 
   async add(payload) {
@@ -36,7 +37,7 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    let { limit, start, projectId, ...restQuery } = query;
+    let { limit, start, projectId, id: beneficiaryId, ...restQuery } = query;
     if (!limit) limit = 50;
     if (!start) start = 0;
 
@@ -50,6 +51,7 @@ module.exports = class extends AbstractController {
       include: [
         {
           model: this.villageTable,
+          where: beneficiaryId,
           as: 'village_details',
         },
         {
@@ -70,20 +72,6 @@ module.exports = class extends AbstractController {
       start,
       totalPage: Math.ceil(count / limit),
     };
-
-    // return await this.table.findAll({include : [{
-    //   model : this.villageTable,
-    //   as : "village_details",
-    // },
-    //   {
-    //     model : this.projectTable,
-    //     through : {
-    //       attributes: []
-
-    //     },
-    //     as : "beneficiary_project_details",
-    //   },
-    // ]});
   }
 
   async getById(id) {
@@ -114,5 +102,18 @@ module.exports = class extends AbstractController {
 
   async delete(id) {
     return this.table.destroy({ where: { id } });
+  }
+
+  async getVillagesName() {
+    const villageData = await this.table.findAll({
+      include: [
+        {
+          model: this.villageTable,
+          as: 'village_details',
+        },
+      ],
+    });
+    const uniqueVillages = [...new Set(villageData.map((item) => item?.village_details.name))];
+    return uniqueVillages;
   }
 };
