@@ -67,15 +67,15 @@ module.exports = class extends AbstractController {
       villageQuery.name = village;
     }
 
-    if (tokensAssigned) {
+    if (tokensAssigned === 'true') {
       tokensAssignedQuery.tokensAssigned = {
-        [Sequelize.Op.ne]: tokensAssigned,
+        [Sequelize.Op.gt]: 0,
       };
     }
 
-    if (tokensClaimed) {
+    if (tokensClaimed === 'true') {
       tokensClaimedQuery.tokensClaimed = {
-        [Sequelize.Op.ne]: tokensClaimed,
+        [Sequelize.Op.gt]: 0,
       };
     }
 
