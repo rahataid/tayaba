@@ -17,6 +17,7 @@ const {
 const ethers = require('ethers');
 const axios = require('axios');
 let networkUrl, contracts;
+const networkGasLimit = 8000000;
 
 const contractLib = {
   async getSettings() {
@@ -103,27 +104,24 @@ const contractLib = {
     return iface.encodeFunctionData(functionName, params);
   },
 
-  //   multicall: {
-  //     async send(callData) {
-  //       const wallet = await contractLib.getAdminWallet();
-  //       const rahatRegistryContract = await contractLib.getRahatRegistryContract(wallet);
-  //       console.log('++++Sending Transaction++++');
-  //       estimatedGas = await rahatRegistryContract.estimateGas.multicall(callData);
-  //       const gasLimit = estimatedGas.toNumber() + 10000;
-  //       if (estimatedGas.toNumber() > networkGasLimit)
-  //         throw new Error('Gas Usage too high! Transaction will fail');
-  //       const tx = await rahatRegistryContract.multicall(callData, { gasLimit });
-  //       const receipt = await tx.wait();
-  //       console.log({ receipt });
-  //       if (receipt.status) console.log('++++Transaction Success++++');
-  //       else console.log('++++Transaction Failed++++');
-  //     },
-  //     async call(callData) {
-  //       const rahatRegistryContract = await contractLib.getRahatRegistryContract();
-  //       console.log('++++Calling Contract++++');
-  //       return rahatRegistryContract.callStatic.multicall(callData);
-  //     },
-  //   },
+  multicall: {
+    async send(callData, contract) {
+      console.log('++++Sending Transaction++++');
+      estimatedGas = await contract.estimateGas.multicall(callData);
+      const gasLimit = estimatedGas.toNumber() + 10000;
+      if (estimatedGas.toNumber() > networkGasLimit)
+        throw new Error('Gas Usage too high! Transaction will fail');
+      const tx = await contract.multicall(callData, { gasLimit });
+      const receipt = await tx.wait();
+      console.log({ receipt });
+      if (receipt.status) console.log('++++Transaction Success++++');
+      else console.log('++++Transaction Failed++++');
+    },
+    async call(callData, contract) {
+      console.log('++++Calling Contract++++');
+      return contract.callStatic.multicall(callData);
+    },
+  },
 };
 
 const beneficiaries = [
@@ -139,12 +137,61 @@ const addBeneficiaryToCommunity = async (beneficiary) => {
   console.log({ isBeneficiary });
 };
 
+const bulkAddBeneficiariesToCommunity = async (beneficiaries) => {
+  const adminWallet = await contractLib.getAdminWallet();
+  const communityContract = await contractLib.getCommunityContract(adminWallet);
+  const abi = await contractLib.getAbi('RahatCommunity');
+  const callData = [];
+  for (const beneficiary of beneficiaries) {
+    const data = contractLib.generateMultiCallData(abi, 'addBeneficiary', [beneficiary]);
+
+    callData.push(data);
+  }
+  await contractLib.multicall.send(callData, communityContract);
+};
+
 const assignClaimsToBeneficiary = async (beneficiary, claimAmount) => {
   const adminWallet = await contractLib.getAdminWallet();
   const cvaProject = await contractLib.getCvaProjectContract(adminWallet);
   await cvaProject.assignClaims(beneficiary, claimAmount);
   const beneficiaryClaims = await cvaProject.beneficiaryClaims(beneficiary);
   console.log({ beneficiaryClaims: beneficiaryClaims.toNumber() });
+};
+
+const bulkAssignClaimsToBeneficiaries = async (beneficiaries, tokens) => {
+  const adminWallet = await contractLib.getAdminWallet();
+  const cvaProjectContract = await contractLib.getCvaProjectContract(adminWallet);
+  const abi = await contractLib.getAbi('CVAProject');
+  const callData = [];
+  for (const beneficiary of beneficiaries) {
+    const data = contractLib.generateMultiCallData(abi, 'assignClaims', [beneficiary, tokens]);
+
+    callData.push(data);
+  }
+  await contractLib.multicall.send(callData, cvaProjectContract);
+};
+
+const bulkGetBeneficiaryClaims = async (beneficiaries) => {
+  const adminWallet = await contractLib.getAdminWallet();
+  const cvaProjectContract = await contractLib.getCvaProjectContract(adminWallet);
+  const abi = await contractLib.getAbi('CVAProject');
+  const callData = [];
+  for (const beneficiary of beneficiaries) {
+    const data = contractLib.generateMultiCallData(abi, 'beneficiaryClaims', [beneficiary]);
+
+    callData.push(data);
+  }
+  const result = await contractLib.multicall.call(callData, cvaProjectContract);
+  const iface = new ethers.utils.Interface(abi);
+  const decodedData = result.map((el) => iface.decodeFunctionResult('beneficiaryClaims', el));
+  const claimsIssued = decodedData.map((el, index) => ({
+    beneficiary: beneficiaries[index],
+    claims: el[index] ? el[index].toNumber() : '0',
+  }));
+
+  console.log({ claimsIssued });
+
+  return claimsIssued;
 };
 
 const lockProject = async () => {
@@ -175,12 +222,20 @@ const unlockProject = async () => {
   console.log({ isLocked });
 };
 
-const run = async () => {
-  console.log('add beneficiary to community');
-  await addBeneficiaryToCommunity(beneficiaries[0]);
-  console.log('assign Claim to beneficiary');
-  await assignClaimsToBeneficiary(beneficiaries[0], 10);
+const getBenClaimBalance = async (address) => {
+  const cvaProject = await contractLib.getCvaProjectContract();
+  console.log((await cvaProject.beneficiaryClaims(address)).toNumber());
 };
+// const run = async () => {
+//   console.log('add beneficiary to community');
+//   await addBeneficiaryToCommunity(beneficiaries[0]);
+//   console.log('assign Claim to beneficiary');
+//   await assignClaimsToBeneficiary(beneficiaries[0], 10);
+// };
 //run();
-//lockProject();
-//unlockProject();
+// assignClaimsToBeneficiary('0xE777774bC1Eb6243F5E2d0FE1F2fE11745417CfB', 500);
+// getBenClaimBalance('0x96ba52b8Bb7f55c41ba9b16A43B34F304e132919');
+// unlockProject();
+// bulkAddBeneficiariesToCommunity(beneficiaries);
+bulkAssignClaimsToBeneficiaries(beneficiaries, 1);
+// bulkGetBeneficiaryClaims(beneficiaries);
