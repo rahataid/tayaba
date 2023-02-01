@@ -35,7 +35,7 @@ module.exports = class extends AbstractController {
       this.updateVendorApprovalStatus(req.params.walletAddress, req.payload),
     register: (req) => this.register(req.payload, req),
     checkIfBeneficiaryExists: (req) => this.checkIfBeneficiaryExists(req.payload.walletAddress),
-    getSingleVendor: (req) => this.getSingleVendor(req.params),
+    getSingleVendor: (req) => this.getSingleVendor(req.query),
   };
 
   async add(payload) {
