@@ -1,3 +1,4 @@
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
 const { AbstractController } = require('@rumsan/core/abstract');
 const {
   BeneficiariesModel,
@@ -39,21 +40,50 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    let { limit, start, projectId, id: beneficiaryId, ...restQuery } = query;
+    let {
+      limit,
+      start,
+      projectId,
+      id: beneficiaryId,
+      village,
+      tokensAssigned,
+      tokensClaimed,
+      ...restQuery
+    } = query;
+
     if (!limit) limit = 50;
     if (!start) start = 0;
 
     const projectQuery = {};
+    const villageQuery = {};
+    const tokensAssignedQuery = {};
+    const tokensClaimedQuery = {};
 
     if (projectId) {
       projectQuery.id = projectId;
+    }
+
+    if (village) {
+      villageQuery.name = village;
+    }
+
+    if (tokensAssigned) {
+      tokensAssignedQuery.tokensAssigned = {
+        [Sequelize.Op.ne]: tokensAssigned,
+      };
+    }
+
+    if (tokensClaimed) {
+      tokensClaimedQuery.tokensClaimed = {
+        [Sequelize.Op.ne]: tokensClaimed,
+      };
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
       include: [
         {
           model: this.villageTable,
-          where: beneficiaryId,
+          where: villageQuery,
           as: 'village_details',
         },
         {
@@ -62,7 +92,7 @@ module.exports = class extends AbstractController {
           as: 'beneficiary_project_details',
         },
       ],
-      where: { ...restQuery },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
       order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
