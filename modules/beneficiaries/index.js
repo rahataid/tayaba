@@ -45,5 +45,12 @@ module.exports = class extends AbstractRouter {
       description: 'delete beneficiaries by id',
       permissions: [PERMISSIONS.BENEFICIARY_DELETE],
     },
+
+    getVillagesName: {
+      method: 'GET',
+      path: '/get-villages',
+      description: 'List all beneficiary villages',
+      permissions: [PERMISSIONS.BENEFICIARY_LIST],
+    },
   };
 };
