@@ -38,6 +38,7 @@ module.exports = class extends AbstractController {
           as: 'vendor_data',
         },
       ],
+      order: [['timestamp', 'DESC']],
       where: { ...restQuery },
       limit: limit,
       offset: start,
