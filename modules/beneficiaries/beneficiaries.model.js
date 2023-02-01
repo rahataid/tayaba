@@ -1,6 +1,6 @@
-const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
+const { DataTypes, Sequelize } = require('@rumsan/core').SequelizeDB;
 
-const { AbstractModel } = require("@rumsan/core/abstract");
+const { AbstractModel } = require('@rumsan/core/abstract');
 
 const schema = {
   name: {
@@ -8,8 +8,8 @@ const schema = {
     allowNull: false,
   },
   gender: {
-    type: Sequelize.ENUM(["M", "F", "O", "U"]),
-    defaultValue: "U",
+    type: Sequelize.ENUM(['M', 'F', 'O', 'U']),
+    defaultValue: 'U',
   },
   phone: {
     type: Sequelize.STRING,
@@ -30,12 +30,12 @@ const schema = {
     type: Sequelize.STRING,
   },
   phoneType: {
-    type: Sequelize.ENUM(["smartphone", "featurephone", "dumbphone"]),
+    type: Sequelize.ENUM(['smartphone', 'featurephone', 'dumbphone']),
     set(v) {
       if (v) {
-        this.setDataValue("hasPhone", true);
+        this.setDataValue('hasPhone', true);
       }
-      this.setDataValue("phoneType", v);
+      this.setDataValue('phoneType', v);
     },
   },
   phoneOwnerRelation: {
@@ -52,24 +52,24 @@ const schema = {
   },
   hasInternetAccess: {
     type: Sequelize.BOOLEAN,
-    allowNull : false,
-    defaultValue : false
+    allowNull: false,
+    defaultValue: false,
   },
   bankAccount: {
     type: Sequelize.STRING,
   },
   isBanked: {
     type: Sequelize.BOOLEAN,
-    allowNull : false,
-    defaultValue : false
+    allowNull: false,
+    defaultValue: false,
   },
   hasPhone: {
     type: Sequelize.BOOLEAN,
-    allowNull : false,
-    defaultValue : false
+    allowNull: false,
+    defaultValue: false,
   },
   bankAccountType: {
-    type: Sequelize.ENUM(["current", "savings"]),
+    type: Sequelize.ENUM(['current', 'savings']),
   },
   dailyDistanceCovered: {
     type: Sequelize.INTEGER,
@@ -77,7 +77,7 @@ const schema = {
   dailyWaterConsumption: {
     type: Sequelize.INTEGER,
   },
-  villageId : {
+  villageId: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
@@ -85,17 +85,32 @@ const schema = {
     type: Sequelize.JSON,
     set(v) {
       v = JSON.stringify(v);
-      this.setDataValue("miscData", v);
+      this.setDataValue('miscData', v);
     },
     get() {
-      const v = this.getDataValue("miscData");
+      const v = this.getDataValue('miscData');
       return v ? JSON.parse(v) : {};
     },
+  },
+  isActivated: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  tokensAssigned: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+  tokensClaimed: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
   },
 };
 module.exports = class Beneficiaries extends AbstractModel {
   schema = schema;
   constructor() {
-    super({ tableName: "tblBeneficiaries" });
+    super({ tableName: 'tblBeneficiaries' });
   }
 };

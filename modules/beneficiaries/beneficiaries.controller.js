@@ -19,6 +19,8 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(req.query),
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
+    updateUsingWalletAddress: (req) =>
+      this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     delete: (req) => this.delete(req.params.id),
     getVillagesName: (req) => this.getVillagesName(),
   };
@@ -61,6 +63,7 @@ module.exports = class extends AbstractController {
         },
       ],
       where: { ...restQuery },
+      order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
     });
@@ -95,6 +98,20 @@ module.exports = class extends AbstractController {
   async update(id, payload) {
     try {
       return await this.table.update(payload, { where: { id } });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateUsingWalletAddress(walletAddress, payload) {
+    try {
+      const update = await this.table.update(payload, {
+        where: { walletAddress },
+        returning: true,
+        raw: true,
+      });
+      console.log('update', update);
+      return update;
     } catch (err) {
       console.log(err);
     }
