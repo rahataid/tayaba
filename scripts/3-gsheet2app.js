@@ -27,7 +27,7 @@ const lib = {
     const sheet = doc.sheetsByTitle[SHEET_NAME];
     let rows = await sheet.getRows();
     const villageNames = Array.from(new Set(rows.map((el) => el.villageName)));
-    benwalletData = JSON.parse(fs.readFileSync(beneficiaryWalletPath));
+    //benwalletData = JSON.parse(fs.readFileSync(beneficiaryWalletPath));
 
     const villageData = villageNames.map((villageName) => {
       console.log(villageName);
@@ -90,7 +90,7 @@ const lib = {
 
     return {
       name: d.name?.trim(),
-      walletAddress: benwalletData.find((el) => el.cnicNo === Number(d.cnicNumber)).walletAddress,
+      walletAddress: ethers.Wallet.createRandom().address, // benwalletData.find((el) => el.cnicNo === Number(d.cnicNumber)).walletAddress,
       gender: this.cleanGender(d.gender),
       phone: phone,
       cnicNumber: d.cnicNumber,
