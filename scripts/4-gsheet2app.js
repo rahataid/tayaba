@@ -9,7 +9,7 @@ const {
 const SHEET_NAME = 'beneficiaries';
 const path = require('path');
 const fs = require('fs');
-const beneficiaryWalletPath = path.resolve(__dirname, '../play/output/beneficiaryWallets.json');
+const beneficiaryWalletPath = path.resolve(__dirname, '../outputs/beneficiaryWallets.json');
 
 const ethers = require('ethers');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
@@ -90,8 +90,7 @@ const lib = {
 
     return {
       name: d.name?.trim(),
-      walletAddress: benwalletData.find((el) => el.cnicNo === Number(d.cnicNumber))
-        .walletAddress,
+      walletAddress: benwalletData.find((el) => el.cnicNo === Number(d.cnicNumber)).walletAddress,
       gender: this.cleanGender(d.gender),
       phone: phone,
       cnicNumber: d.cnicNumber,
