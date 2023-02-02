@@ -110,6 +110,12 @@ const setupContracts = async () => {
     CVAProject: cvaProject.address,
   };
   console.log({ addresData });
+  console.log('Sending ETH to Community for vendors');
+  await adminWallet.sendTransaction({
+    to: rahatCommunity.address,
+    value: ethers.utils.parseEther('1.0'),
+  });
+
   console.log('Updating App Settings');
   await AppSettings.init(db);
   const d = await AppSettings.controller._add({

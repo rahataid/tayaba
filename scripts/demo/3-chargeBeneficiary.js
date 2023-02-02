@@ -139,10 +139,9 @@ const requestTokenFromBeneficiary = async (beneficiary, chargeAmount) => {
   const cvaProject = await contractLib.getCvaProjectContract(vendorWallet);
   const rahatClaim = await contractLib.getClaimContract();
 
-  const tx = await cvaProject['requestTokenFromBeneficiary(address,uint256,address)'](
+  const tx = await cvaProject['requestTokenFromBeneficiary(address,uint256)'](
     beneficiary,
-    chargeAmount,
-    serverAddress
+    chargeAmount
   );
 
   const receipt = await tx.wait();
@@ -192,4 +191,5 @@ const run = async () => {
   await processTokenRequest(beneficiaries[0], otp);
 };
 
-run();
+//run();
+requestTokenFromBeneficiary(beneficiaries[0], 1);
