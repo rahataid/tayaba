@@ -11,9 +11,7 @@ const googleCreds = require('../config/google.json');
 const { Worker } = require('worker_threads');
 const fs = require('fs');
 const path = require('path');
-const beneficiaryWalletPath = path.resolve(__dirname, '../play/output/beneficiaryWallets.json');
-
-//Generates wallets and create a json in output dir
+const outputPath = path.resolve(__dirname, '../outputs');
 
 const lib = {
   splitArrayToChunks(arrayData, chunkSize) {
@@ -40,7 +38,11 @@ const lib = {
 
   getSavedWallets() {
     try {
-      return JSON.parse(fs.readFileSync(beneficiaryWalletPath));
+      if (!fs.existsSync(outputPath)) {
+        console.log('creating Dir');
+        fs.mkdirSync(outputPath);
+      }
+      return JSON.parse(fs.readFileSync(`${outputPath}/beneficiaryWallets.json`));
     } catch (error) {
       return [];
     }
@@ -49,7 +51,7 @@ const lib = {
   appendToSavedWallets(wallets) {
     const savedWallets = this.getSavedWallets();
     savedWallets.push(...wallets);
-    fs.writeFileSync(beneficiaryWalletPath, JSON.stringify(savedWallets));
+    fs.writeFileSync(`${outputPath}/beneficiaryWallets.json`, JSON.stringify(savedWallets));
   },
 
   filterCnicNosWithoutWallet(cnic) {
@@ -74,7 +76,7 @@ const generateWalletInBulk = (cnicNos) =>
           resolve(wallets);
         }
       });
-      worker.on('error', () => {
+      worker.on('error', (e) => {
         reject();
       });
     }
@@ -83,7 +85,6 @@ const generateWalletInBulk = (cnicNos) =>
 const run = async () => {
   const { cnicNo } = await lib.getBenCnicNumber();
   console.log(cnicNo);
-
   const filteredCnicNos = lib.filterCnicNosWithoutWallet(cnicNo);
   const cnicNosGroups = lib.splitArrayToChunks(filteredCnicNos, 20);
   console.log(cnicNosGroups);
@@ -96,6 +97,7 @@ const run = async () => {
     const wallets = await generateWalletInBulk(el);
     lib.appendToSavedWallets(wallets);
   }
+  console.log('DONE!');
 };
 
 run();
