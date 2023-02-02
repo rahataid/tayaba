@@ -42,5 +42,17 @@ module.exports = class extends AbstractRouter {
       description: 'Get geo location of Beneficiary',
       permissions: [PERMISSIONS.REPORT_READ],
     },
+    getBeneficaryClaimsByVillage: {
+      method: 'GET',
+      path: '/beneficiaries/claim-distribution-by-village',
+      description: 'Get geo location of Beneficiary',
+      permissions: [PERMISSIONS.REPORT_READ],
+    },
+    getBarChartDataByTypeInVillages: {
+      method: 'GET',
+      path: '/beneficiaries/claim-distribution-by-type',
+      description: 'Get geo location of Beneficiary',
+      permissions: [PERMISSIONS.REPORT_READ],
+    },
   };
 };

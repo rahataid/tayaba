@@ -24,7 +24,8 @@ module.exports = class extends AbstractController {
       this.getBeneficiaryPiechartByProject(req.params.type, req.query.village, req.query.projectId),
     getBeneficiaryPerVillage: (req) => this.getBeneficiaryPerVillage(req.params.id),
     getGeoMapData: (req) => this.getGeoMapData(req),
-
+    getBeneficaryClaimsByVillage: (req) => this.getBeneficaryClaimsByVillage(req.query),
+    getBarChartDataByTypeInVillages: (req) => this.getBarChartDataByTypeInVillages(req.query),
   };
 
   async getBeneficiaryDemographicsSummary(query) {
@@ -158,5 +159,65 @@ module.exports = class extends AbstractController {
       group: ['name', 'longitude', 'latitude'],
     });
     return mapInfo;
+  }
+
+  // CLAIMED COUNTS //
+  async getBeneficaryClaimsByVillage() {
+    let data = await this.tblVillages.findAll({
+      include: [
+        {
+          model: this.tblBeneficiaries,
+          as: 'village_details',
+          raw: true,
+        },
+      ],
+    });
+    let newArr = data.map((element, index) => {
+      let claimed = 0,
+        assigned = 0;
+      element.village_details.forEach((ben) => {
+        claimed += ben.tokensClaimed;
+        assigned += ben.tokensAssigned;
+      });
+      return {
+        id: element.id,
+        name: element.name,
+        claimed,
+        assigned,
+      };
+    });
+
+    return newArr;
+  }
+
+  async getBarChartDataByTypeInVillages({ type = 'phoneType', villageId = '2' }) {
+    const data = await this.tblBeneficiaries.findAll({
+      where: {
+        villageId: villageId,
+      },
+    });
+    const typeSet = new Set(data.map((el) => el[type]));
+    console.log(typeSet);
+
+    const typeArr = Array.from(typeSet);
+
+    const beneficiaryPerVillageByType = typeArr.map((el) => {
+      const elTypeArr = data.filter((ben) => ben[type] === el);
+      let claimed = 0,
+        assigned = 0;
+      elTypeArr.forEach((ben) => {
+        claimed += ben.tokensClaimed;
+        assigned += ben.tokensAssigned;
+      });
+
+      return {
+        [type]: el,
+        data: {
+          claimed,
+          assigned,
+        },
+      };
+    });
+    return beneficiaryPerVillageByType;
   }
 };
