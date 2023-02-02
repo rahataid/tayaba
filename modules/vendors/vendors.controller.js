@@ -58,6 +58,7 @@ module.exports = class extends AbstractController {
     try {
       let { limit, start, ...restQuery } = query;
       return this.table.findAll({
+        where: restQuery,
         include: [
           {
             model: this.villageTable,
