@@ -39,6 +39,13 @@ module.exports = class extends AbstractRouter {
       permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
+    updateUsingWalletAddress: {
+      method: 'PATCH',
+      path: '/wallet-address/{walletAddress}',
+      description: 'update beneficiaries by wallet address',
+      permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
+
     delete: {
       method: 'DELETE',
       path: '/{id}',

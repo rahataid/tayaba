@@ -1,7 +1,7 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const { MiscModel } = require("../models");
-const Path = require("path");
-const fs = require("fs");
+const { AbstractController } = require('@rumsan/core/abstract');
+const { MiscModel } = require('../models');
+const Path = require('path');
+const fs = require('fs');
 
 module.exports = class extends AbstractController {
   constructor(options = {}) {
@@ -17,7 +17,20 @@ module.exports = class extends AbstractController {
   };
 
   async add(name, value) {
-    return await this.table.create({ name, value });
+    if (name === 'inventory-tracker') {
+      const update = await this.table.update(
+        { value },
+        {
+          where: { name },
+          returning: true,
+          raw: true,
+        }
+      );
+      if (update[0] === 1) {
+        return update[1][0];
+      }
+    }
+    return this.table.create({ name, value });
   }
 
   async getByName(name) {
@@ -29,7 +42,7 @@ module.exports = class extends AbstractController {
   async getContracts(param) {
     const path = `/../../constants/contracts/${param}.json`;
     const dir = Path.join(__dirname + path);
-    const rawData = await fs.readFileSync(dir, "utf8");
+    const rawData = await fs.readFileSync(dir, 'utf8');
     const data = JSON.parse(rawData);
     return { abi: data.abi };
   }
