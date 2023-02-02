@@ -52,7 +52,7 @@ const getTayabaBalance = async () => {
   contracts = _settings.contracts;
 
   // Get all the logs of the transfer event
-  const parsedTransferLogs = await LogSource.getLogs('provider', {
+  const parsedTransferLogs = await LogSource.getLogs('chain', {
     contract: tokenContract,
     eventName: 'Transfer',
   });
@@ -70,12 +70,12 @@ const getTayabaBalance = async () => {
   // Get the current balance of the Tayaba project
   const tayabaBalance = (await tokenContract.balanceOf(_settings.contracts.RahatDonor))?.toNumber();
 
-  const latestTransactionHash = parsedTransferLogs[0].transactionHash;
+  const latestTransactionHash = parsedTransferLogs[0]?.transactionHash;
 
   // Save the data to the inventory track object
   inventoryTrackData.tayaba.budget = budget;
   inventoryTrackData.tayaba.balance = tayabaBalance;
-  inventoryTrackData.tayaba.timestamp = parsedTransferLogs[0].timestamp;
+  inventoryTrackData.tayaba.timestamp = parsedTransferLogs[0]?.timestamp;
   inventoryTrackData.tayaba.txHash = latestTransactionHash;
 
   if (tayabaBudget > 0) {
@@ -116,7 +116,7 @@ const getDistributorBalance = async () => {
 
   let tokenContractAbi = await contractsLib.getAbi('RahatToken');
 
-  const parsedTransferLogs = await LogSource.getLogs('provider', {
+  const parsedTransferLogs = await LogSource.getLogs('chain', {
     contract: cvaProject,
     eventName: 'VendorAllowanceAccept',
   });
@@ -148,8 +148,8 @@ const getDistributorBalance = async () => {
     return acc + log[0]?.toNumber();
   }, 0);
 
-  inventoryTrackData.village_rep.timestamp = parsedTransferLogs[0].timestamp;
-  inventoryTrackData.village_rep.txHash = parsedTransferLogs[0].transactionHash;
+  inventoryTrackData.village_rep.timestamp = parsedTransferLogs[0]?.timestamp;
+  inventoryTrackData.village_rep.txHash = parsedTransferLogs[0]?.transactionHash;
   inventoryTrackData.village_rep.allowance = allowance;
   inventoryTrackData.village_rep.disbursed = disbursed;
 
@@ -174,7 +174,7 @@ const updateReportDB = async () => {
 
     const updated = await backendApi.post(`/misc/inventory-tracker`, inventoryTrackData);
     if (updated.data.success) {
-      console.log('updated', JSON.parse(updated.data.data.value));
+      console.log('updated', updated.data);
     }
 
     return updated;

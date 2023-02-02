@@ -1,7 +1,7 @@
 const ethers = require('ethers');
 const { default: axios } = require('axios');
 
-const ENV = 'local';
+const ENV = 'stage';
 
 const config = require(`../config/${ENV}.json`);
 
@@ -155,7 +155,7 @@ const LogSource = {
       case 'explorer':
         return LogSource._getExplorerLogs({ topic0, ...params });
       // If the sourceType is 'contract' then the LogSource._getContractLogs function is called
-      case 'provider':
+      case 'chain':
         return LogSource._getContractLogs({ contract, eventName, ...params });
       // If the sourceType is not 'explorer' or 'contract' then the function throws an error
       default:
