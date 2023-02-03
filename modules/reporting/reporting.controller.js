@@ -207,7 +207,6 @@ module.exports = class extends AbstractController {
       const elTypeArr = data.filter((ben) => ben[type] === el);
       let claimed = 0,
         assigned = 0;
-      console.log(i);
       elTypeArr.forEach((ben) => {
         claimed += ben.tokensClaimed;
         assigned += ben.tokensAssigned;
