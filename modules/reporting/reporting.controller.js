@@ -190,34 +190,51 @@ module.exports = class extends AbstractController {
     return newArr;
   }
 
-  async getBarChartDataByTypeInVillages({ type = 'phoneType', villageId = '2' }) {
+  async getBarChartDataByTypeInVillages({ type, village }) {
+    const { id: villageId } = await this.tblVillages.findOne({
+      where: {
+        name: village,
+      },
+    });
     const data = await this.tblBeneficiaries.findAll({
       where: {
         villageId: villageId,
       },
     });
     const typeSet = new Set(data.map((el) => el[type]));
-    console.log(typeSet);
-
     const typeArr = Array.from(typeSet);
-
-    const beneficiaryPerVillageByType = typeArr.map((el) => {
+    const beneficiaryPerVillageByType = typeArr.map((el, i) => {
       const elTypeArr = data.filter((ben) => ben[type] === el);
       let claimed = 0,
         assigned = 0;
+      console.log(i);
       elTypeArr.forEach((ben) => {
         claimed += ben.tokensClaimed;
         assigned += ben.tokensAssigned;
       });
-
+      if (typeof el == 'boolean') {
+        el ? (typeArr[i] = 'Yes') : (typeArr[i] = 'No');
+      }
       return {
-        [type]: el,
         data: {
           claimed,
           assigned,
         },
       };
     });
-    return beneficiaryPerVillageByType;
+    const chartData = [
+      {
+        name: 'Claimed',
+        data: beneficiaryPerVillageByType.map((d) => d.claimed),
+      },
+      {
+        name: 'Assigned',
+        data: beneficiaryPerVillageByType.map((d) => d.assigned),
+      },
+    ];
+    return {
+      chartLabel: typeArr,
+      chartData,
+    };
   }
 };
