@@ -1,12 +1,19 @@
 const ethers = require('ethers');
 const { default: axios } = require('axios');
 
-const ENV = 'stage';
+const ENV = 'local';
 
 const config = require(`../config/${ENV}.json`);
 
 const { app } = config;
 let networkUrl, contracts;
+
+const { privateKey: donor_pk } = require('../config/privateKeys/donor.json');
+const { privateKey: admin_pk } = require('../config/privateKeys/admin.json');
+const {
+  address: vendorAddress,
+  privateKey: vendor_pk,
+} = require('../config/privateKeys/vendor.json');
 
 const Lib = {
   async getSettings() {

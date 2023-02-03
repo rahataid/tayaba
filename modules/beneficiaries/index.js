@@ -22,7 +22,7 @@ module.exports = class extends AbstractRouter {
       method: 'GET',
       path: '',
       description: 'List all beneficiaries',
-      permissions: [PERMISSIONS.BENEFICIARY_LIST],
+      // permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
 
     getById: {

@@ -159,12 +159,57 @@ const getDistributorBalance = async () => {
 
   return {
     allowance,
+    disbursed,
+  };
+};
+
+const getBeneficiaryBalance = async () => {
+  const beneficiaries = await backendApi.get(`/beneficiaries`);
+  const beneficiariesWalletAddresses = beneficiaries.data.data.data.map(
+    (beneficiary) => beneficiary.walletAddress
+  );
+
+  console.log('beneficiariesWalletAddresses', beneficiariesWalletAddresses);
+  const tokenContract = await contractsLib.getErc20Contract();
+  let tokenContractAbi = await contractsLib.getAbi('RahatToken');
+
+  let multicallData = [];
+  for (const beneficiaryWalletAddress of beneficiariesWalletAddresses) {
+    const data = contractsLib.generateMultiCallData(tokenContractAbi, 'balanceOf', [
+      beneficiaryWalletAddress,
+    ]);
+
+    multicallData.push(data);
+  }
+
+  const result = await contractsLib.multicall.call(multicallData, tokenContract);
+
+  const iface = new ethers.utils.Interface(tokenContractAbi);
+  const decodedData = result.map((data) => iface.decodeFunctionResult('balanceOf', data));
+
+  const totalBeneficiaryBalance = decodedData.reduce((acc, log) => {
+    console.log('log', log);
+    return acc + log[0]?.toNumber();
+  }, 0);
+
+  const { disbursed } = await getDistributorBalance();
+
+  inventoryTrackData.beneficiaries.claims = totalBeneficiaryBalance;
+  inventoryTrackData.beneficiaries.received = disbursed;
+
+  if (disbursed > 0) {
+    inventoryTrackData.beneficiaries.isActive = true;
+  }
+
+  return {
+    totalBeneficiaryBalance,
   };
 };
 
 const getBalance = async () => {
   await getTayabaBalance();
   await getSrsoBalance();
+  await getBeneficiaryBalance();
 };
 
 const updateReportDB = async () => {
