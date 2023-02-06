@@ -191,6 +191,7 @@ module.exports = class extends AbstractController {
   }
 
   async getBarChartDataByTypeInVillages({ type, village }) {
+    if (!village) return;
     const { id: villageId } = await this.tblVillages.findOne({
       where: {
         name: village,
@@ -215,10 +216,8 @@ module.exports = class extends AbstractController {
         el ? (typeArr[i] = 'Yes') : (typeArr[i] = 'No');
       }
       return {
-        data: {
-          claimed,
-          assigned,
-        },
+        claimed,
+        assigned,
       };
     });
     const chartData = [
