@@ -169,26 +169,24 @@ const getBeneficiaryBalance = async () => {
     (beneficiary) => beneficiary.walletAddress
   );
 
-  console.log('beneficiariesWalletAddresses', beneficiariesWalletAddresses);
-  const tokenContract = await contractsLib.getErc20Contract();
-  let tokenContractAbi = await contractsLib.getAbi('RahatToken');
+  const cvaProjectContract = await contractsLib.getCvaProjectContract();
+  let cvaProjectContractAbi = await contractsLib.getAbi('CVAProject');
 
   let multicallData = [];
   for (const beneficiaryWalletAddress of beneficiariesWalletAddresses) {
-    const data = contractsLib.generateMultiCallData(tokenContractAbi, 'balanceOf', [
+    const data = contractsLib.generateMultiCallData(cvaProjectContractAbi, 'beneficiaryClaims', [
       beneficiaryWalletAddress,
     ]);
 
     multicallData.push(data);
   }
 
-  const result = await contractsLib.multicall.call(multicallData, tokenContract);
+  const result = await contractsLib.multicall.call(multicallData, cvaProjectContract);
 
-  const iface = new ethers.utils.Interface(tokenContractAbi);
-  const decodedData = result.map((data) => iface.decodeFunctionResult('balanceOf', data));
+  const iface = new ethers.utils.Interface(cvaProjectContractAbi);
+  const decodedData = result.map((data) => iface.decodeFunctionResult('beneficiaryClaims', data));
 
   const totalBeneficiaryBalance = decodedData.reduce((acc, log) => {
-    console.log('log', log);
     return acc + log[0]?.toNumber();
   }, 0);
 

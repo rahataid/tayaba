@@ -140,7 +140,6 @@ module.exports = class extends AbstractController {
         returning: true,
         raw: true,
       });
-      console.log('update', update);
       return update;
     } catch (err) {
       console.log(err);

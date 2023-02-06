@@ -3,22 +3,29 @@ const { backendApi, contractsLib, LogSource } = require('./_common');
 
 const script = {
   async bulkGetBeneficiaryClaims(beneficiaries) {
-    const adminWallet = await contractsLib.getAdminWallet();
-    const cvaProjectContract = await contractsLib.getCvaProjectContract(adminWallet);
-    const abi = await contractsLib.getAbi('CVAProject');
-    const callData = [];
-    for (const beneficiary of beneficiaries) {
-      const data = contractsLib.generateMultiCallData(abi, 'beneficiaryClaims', [beneficiary]);
+    const claimContract = await contractsLib.getClaimContract();
+    const claimAbi = await contractsLib.getAbi('RahatClaim');
 
-      callData.push(data);
-    }
-    const result = await contractsLib.multicall.call(callData, cvaProjectContract);
-    const iface = new ethers.utils.Interface(abi);
-    const decodedData = result.map((el) => iface.decodeFunctionResult('beneficiaryClaims', el));
-    const claimsIssued = decodedData.map((el, index) => {
+    const claimCount = await claimContract.claimCount();
+
+    const callData = Array(claimCount)
+      .fill(0)
+      .map((el, index) => {
+        const data = contractsLib.generateMultiCallData(claimAbi, 'claims', [index + 1]);
+
+        return data;
+      });
+
+    const result = await contractsLib.multicall.call(callData, claimContract);
+
+    const iface = new ethers.utils.Interface(claimAbi);
+    const decodedData = result.map((el) => iface.decodeFunctionResult('claims', el));
+
+    const claimsIssued = beneficiaries.map((beneficiary) => {
+      const claim = decodedData.find((el) => el['claimeeAddress'] === beneficiary);
       return {
-        beneficiary: beneficiaries[index],
-        tokensClaimed: el[index] ? el[index].toNumber() : '0',
+        beneficiary,
+        tokensClaimed: claim ? claim['amount'].toNumber() : 0,
       };
     });
 
@@ -71,7 +78,6 @@ const script = {
 
   async updateBeneficiaryTokenDB() {
     const tokenInfo = await script.getBeneficiaryTokenInfo();
-    console.log('tokenInfo', tokenInfo);
 
     for (const token of tokenInfo) {
       try {
@@ -81,12 +87,12 @@ const script = {
           tokensClaimed,
           isActivated,
         };
-        console.log('data', data);
 
         const updated = await backendApi.patch(
           `/beneficiaries/wallet-address/${beneficiary}`,
           data
         );
+        return updated;
       } catch (err) {
         console.log(err);
       }
