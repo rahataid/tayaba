@@ -8,7 +8,7 @@ let inventoryTrackData = {
     name: 'tayaba',
     label: 'Tayaba',
     isActive: false,
-    budget: 2000,
+    budget: 0,
     balance: 0,
     timestamp: 0,
     txHash: '',

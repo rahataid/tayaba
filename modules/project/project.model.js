@@ -1,34 +1,35 @@
-const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
+const { DataTypes, Sequelize } = require('@rumsan/core').SequelizeDB;
 
-const { AbstractModel } = require("@rumsan/core/abstract");
-const { PROJECTS } = require("../../constants/dbTables");
+const { AbstractModel } = require('@rumsan/core/abstract');
+const { PROJECTS } = require('../../constants/dbTables');
+
 const schema = {
   name: {
     type: DataTypes.STRING,
-    allowNull : false,
+    allowNull: false,
   },
   startDate: {
     type: DataTypes.DATE,
-    allowNull : false,
+    allowNull: false,
   },
   endDate: {
     type: DataTypes.DATE,
-    allowNull : false,
+    allowNull: false,
   },
   owner: {
     type: DataTypes.INTEGER,
-    allowNull : false,
+    allowNull: false,
   },
-  budget : {
+  budget: {
     type: DataTypes.INTEGER,
-    allowNull : false,
-    defaultValue : 0
+    allowNull: false,
+    defaultValue: 0,
   },
-  disbursed : {
+  disbursed: {
     type: DataTypes.INTEGER,
-    allowNull : false,
-    defaultValue : 0
-  }
+    allowNull: false,
+    defaultValue: 0,
+  },
 };
 module.exports = class Project extends AbstractModel {
   schema = schema;
