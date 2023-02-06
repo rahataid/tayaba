@@ -1,3 +1,4 @@
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
 const { AbstractController } = require('@rumsan/core/abstract');
 const {
   BeneficiariesModel,
@@ -19,6 +20,8 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(req.query),
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
+    updateUsingWalletAddress: (req) =>
+      this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     delete: (req) => this.delete(req.params.id),
     getVillagesName: (req) => this.getVillagesName(),
   };
@@ -37,21 +40,50 @@ module.exports = class extends AbstractController {
   }
 
   async list(query) {
-    let { limit, start, projectId, id: beneficiaryId, ...restQuery } = query;
+    let {
+      limit,
+      start,
+      projectId,
+      id: beneficiaryId,
+      village,
+      tokensAssigned,
+      tokensClaimed,
+      ...restQuery
+    } = query;
+
     if (!limit) limit = 50;
     if (!start) start = 0;
 
     const projectQuery = {};
+    const villageQuery = {};
+    const tokensAssignedQuery = {};
+    const tokensClaimedQuery = {};
 
     if (projectId) {
       projectQuery.id = projectId;
+    }
+
+    if (village) {
+      villageQuery.name = village;
+    }
+
+    if (tokensAssigned === 'true') {
+      tokensAssignedQuery.tokensAssigned = {
+        [Sequelize.Op.gt]: 0,
+      };
+    }
+
+    if (tokensClaimed === 'true') {
+      tokensClaimedQuery.tokensClaimed = {
+        [Sequelize.Op.gt]: 0,
+      };
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
       include: [
         {
           model: this.villageTable,
-          where: beneficiaryId,
+          where: villageQuery,
           as: 'village_details',
         },
         {
@@ -60,7 +92,8 @@ module.exports = class extends AbstractController {
           as: 'beneficiary_project_details',
         },
       ],
-      where: { ...restQuery },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
+      order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
     });
@@ -95,6 +128,20 @@ module.exports = class extends AbstractController {
   async update(id, payload) {
     try {
       return await this.table.update(payload, { where: { id } });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async updateUsingWalletAddress(walletAddress, payload) {
+    try {
+      const update = await this.table.update(payload, {
+        where: { walletAddress },
+        returning: true,
+        raw: true,
+      });
+      console.log('update', update);
+      return update;
     } catch (err) {
       console.log(err);
     }

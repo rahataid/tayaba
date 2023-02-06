@@ -22,7 +22,7 @@ module.exports = class extends AbstractRouter {
       method: 'GET',
       path: '',
       description: 'List all beneficiaries',
-      permissions: [PERMISSIONS.BENEFICIARY_LIST],
+      // permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
 
     getById: {
@@ -36,6 +36,13 @@ module.exports = class extends AbstractRouter {
       method: 'PATCH',
       path: '/{id}',
       description: 'update beneficiaries by id',
+      permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
+
+    updateUsingWalletAddress: {
+      method: 'PATCH',
+      path: '/wallet-address/{walletAddress}',
+      description: 'update beneficiaries by wallet address',
       permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
