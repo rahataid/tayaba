@@ -1,26 +1,15 @@
-require('../modules/services');
-const config = require('config');
-const { username, password, database } = config.get('db');
-const SequelizeDB = require('@rumsan/core').SequelizeDB;
-SequelizeDB.init(database, username, password, config.get('db'));
-const controller = require('../modules/misc/misc.controller');
+const { ethers } = require('ethers');
+const { backendApi, contractsLib, LogSource } = require('./_common');
 
-//const ethers = require("ethers");
+let contracts;
 
-// const {
-//   config,
-//   scripts,
-//   reportApi,
-//   explorerApi,
-//   explorerEsatyaUrl,
-// } = require("./_cronCommon");
-const cashTrackData = {
+let inventoryTrackData = {
   tayaba: {
     name: 'tayaba',
-    label: 'Tayaba ',
+    label: 'Tayaba',
     isActive: false,
-    budget: 10000,
-    balance: 2000,
+    budget: 2000,
+    balance: 0,
     timestamp: 0,
     txHash: '',
   },
@@ -28,25 +17,17 @@ const cashTrackData = {
     name: 'srso',
     label: 'SRSO',
     isActive: false,
-    received: 10,
-    balance: 4,
-    timestamp: 0,
-    txHash: '',
-  },
-  local_rep: {
-    name: 'local_rep',
-    label: 'Local Rep',
-    isActive: false,
     received: 0,
     balance: 0,
     timestamp: 0,
     txHash: '',
   },
+
   village_rep: {
     name: 'village_rep',
-    label: 'Village Rep',
+    label: 'Distributors',
     isActive: false,
-    received: 0,
+    allowance: 0,
     disbursed: 0,
     timestamp: 0,
     txHash: '',
@@ -55,178 +36,198 @@ const cashTrackData = {
     name: 'beneficiaries',
     label: 'Beneficiaries',
     isActive: false,
-    claims: 19,
-    received: 45,
+    claims: 0,
+    received: 0,
     timestamp: 0,
     txHash: '',
   },
 };
 
-/* uncomment in Production moving to scripts repo */
+const getTayabaBalance = async () => {
+  // Get the ERC20 token contract instance
+  const tokenContract = await contractsLib.getErc20Contract();
+  // Get the current settings
+  const _settings = await contractsLib.getSettings();
+  // Get the list of contracts
+  contracts = _settings.contracts;
 
-/*
-const EthExplorer = {
-  getLogs: async ({ topic0, ...params }) => {
-    const response = await explorerApi.get("", {
-      params: {
-        module: "logs",
-        action: "getLogs",
-        fromBlock: 0,
-        toBlock: "latest",
-        topic0: ethers.utils.id(topic0),
-        ...params,
-      },
-    });
-    return response.data;
-  },
+  // Get all the logs of the transfer event
+  const parsedTransferLogs = await LogSource.getLogs('chain', {
+    contract: tokenContract,
+    eventName: 'Transfer',
+  });
+
+  // Get the total amount of tokens that were transferred to the Tayaba project
+  const tayabaBudget = parsedTransferLogs.reduce((acc, log) => {
+    if (log.args.to === _settings.contracts.CVAProject) {
+      return acc + log.args.value?.toNumber();
+    }
+    return acc;
+  }, 0);
+
+  // Convert the total amount of tokens to a readable format
+  const budget = ethers.utils.formatUnits(tayabaBudget, 0);
+  // Get the current balance of the Tayaba project
+  const tayabaBalance = (await tokenContract.balanceOf(_settings.contracts.RahatDonor))?.toNumber();
+
+  const latestTransactionHash = parsedTransferLogs[0]?.transactionHash;
+
+  // Save the data to the inventory track object
+  inventoryTrackData.tayaba.budget = budget;
+  inventoryTrackData.tayaba.balance = tayabaBalance;
+  inventoryTrackData.tayaba.timestamp = parsedTransferLogs[0]?.timestamp;
+  inventoryTrackData.tayaba.txHash = latestTransactionHash;
+
+  if (tayabaBudget > 0) {
+    inventoryTrackData.tayaba.isActive = true;
+  }
+
+  return {
+    budget,
+    tayabaBalance,
+  };
 };
 
-const scr = {
-  async getBlockData(blockNumber) {
-    const blockData = await explorerEsatyaUrl.get(`api`, {
-      params: {
-        module: "block",
-        action: "getblockreward",
-        blockno: blockNumber,
-      },
-    });
-  },
+// This function gets the balance of the SRSO (CVAProject) by getting the project budget from the Tayaba smart contract, and the SRSO balance from the CVAToken smart contract.
 
-  async getTokenTransferLogs(sender, receiver, RahatCash) {
-    let logOptions = {};
-    if (sender) {
-      logOptions = {
-        fromBlock: 0,
-        topic0: "Transfer(address,address,uint256)",
-        topic1: RahatCash?.interface._abiCoder.encode(["address"], [sender]),
-        topic0_1_opr: "and",
-      };
-    } else {
-      logOptions = {
-        fromBlock: 0,
-        topic0: "Transfer(address,address,uint256)",
-        topic2: RahatCash?.interface._abiCoder.encode(["address"], [receiver]),
-        topic0_2_opr: "and",
-      };
-    }
+const getSrsoBalance = async () => {
+  // Get the budget from the Tayaba contract
+  const { budget: projectBudget } = await getTayabaBalance();
+  const tokenContract = await contractsLib.getErc20Contract();
+  // Get the balance from the CVAProject contract
+  const srsoBalance = (await tokenContract.balanceOf(contracts.CVAProject))?.toNumber() || 0;
 
-    const response = await EthExplorer.getLogs(logOptions);
+  const { allowance: distributorAllowance } = await getDistributorBalance();
 
-    let logs = response?.result.filter(
-      (d) => d.address.toLowerCase() === RahatCash.address.toLowerCase()
-    );
+  let remainingSrsoBalance = srsoBalance - distributorAllowance;
 
-    let logData = logs.map((d) => {
-      const _topics = d.topics.filter((d) => d !== null);
-      let log = RahatCash?.interface.parseLog({
-        data: d.data,
-        topics: _topics,
-      });
-      return {
-        from: log.args.from,
-        to: log.args.to,
-        value: log.args.value?.toNumber(), //test
-      };
-    });
+  // Update the inventory track data
+  inventoryTrackData.srso.received = projectBudget;
+  inventoryTrackData.srso.balance = remainingSrsoBalance;
 
-    return {
-      value: logData.reduce((a, b) => a + b.value, 0),
-      timestamp: parseInt(logs[0]?.timeStamp),
-      txHash: logs[0]?.transactionHash,
-    };
-  },
-
-  async getDataFromChain() {
-    console.log("===> Getting Data from chain");
-    const { contracts, srso } = await scripts.getSettings();
-
-    const RahatCash = await scripts.getContract("rahat_cash");
-    const Rahat = await scripts.getContract("rahat");
-    //tayaba
-    let tayabaHash = await scr.getTokenTransferLogs(
-      ethers.constants.AddressZero,
-      null,
-      RahatCash
-    );
-    cashTrackData.tayaba.timestamp = tayabaHash.timestamp;
-    cashTrackData.tayaba.txHash = tayabaHash.txHash;
-    cashTrackData.tayaba.budget = (await RahatCash.totalSupply()).toNumber();
-    cashTrackData.tayaba.balance = (
-      await RahatCash.balanceOf(contracts.rahat_tayaba)
-    ).toNumber();
-    if (cashTrackData.tayaba.budget > 0) cashTrackData.tayaba.isActive = true;
-
-    //srso
-    let srsoReceived = await scr.getTokenTransferLogs(
-      null,
-      contracts.rahat_admin,
-      RahatCash
-    );
-    cashTrackData.srso.received = srsoReceived.value;
-    cashTrackData.srso.timestamp = srsoReceived?.timestamp;
-    cashTrackData.srso.txHash = srsoReceived?.txHash;
-
-    cashTrackData.srso.balance = (
-      await RahatCash.balanceOf(contracts.rahat_admin)
-    ).toNumber();
-    if (cashTrackData.srso.received > 0) cashTrackData.srso.isActive = true;
-
-    //local_rep
-    let local_repReceived = await scr.getTokenTransferLogs(
-      null,
-      contracts.rahat,
-      RahatCash
-    );
-    cashTrackData.local_rep.received = local_repReceived.value;
-    cashTrackData.local_rep.timestamp = local_repReceived?.timestamp;
-    cashTrackData.local_rep.txHash = local_repReceived?.txHash;
-    cashTrackData.local_rep.balance = (
-      await RahatCash.balanceOf(contracts.rahat)
-    ).toNumber();
-    if (cashTrackData.local_rep.received > 0)
-      cashTrackData.local_rep.isActive = true;
-
-    //village_rep
-
-    if (cashTrackData.village_rep.received > 0)
-      cashTrackData.village_rep.isActive = true;
-
-    //beneficiaries
-    const projectBalanceData = await Rahat?.projectBalance(
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(config.project_id)),
-      contracts["rahat_admin"]
-    );
-
-    cashTrackData.beneficiaries.claims =
-      projectBalanceData?.totalBudget?.toNumber() -
-      projectBalanceData?.tokenBalance?.toNumber();
-    //if (cashTrackData.beneficiaries.received > 0)
-    cashTrackData.beneficiaries.isActive = true;
-  },
-
-  async updateReportDB() {
-    try {
-      await scr.getDataFromChain();
-      console.log("===> Updating Reporting DB");
-
-      console.log(cashTrackData);
-
-      await reportApi.post(`/misc/inventory-tracker`, cashTrackData);
-    } catch (err) {
-      console.log(err);
-    }
-  },
+  if (projectBudget > 0) {
+    inventoryTrackData.srso.isActive = true;
+  }
 };
 
+const getDistributorBalance = async () => {
+  const cvaProject = await contractsLib.getCvaProjectContract();
+  const tokenContract = await contractsLib.getErc20Contract();
+
+  let tokenContractAbi = await contractsLib.getAbi('RahatToken');
+
+  const parsedTransferLogs = await LogSource.getLogs('chain', {
+    contract: cvaProject,
+    eventName: 'VendorAllowanceAccept',
+  });
+
+  const allowance = parsedTransferLogs.reduce((acc, log) => {
+    return acc + log.args.amount?.toNumber();
+  }, 0);
+
+  // TODO:get vendors by project
+  const distributors = await backendApi.get(`/vendors`);
+  const disbribitorWalletAddresses = distributors.data.data.map(
+    (distributor) => distributor.walletAddress
+  );
+
+  let multicallData = [];
+  for (const distributorWalletAddress of disbribitorWalletAddresses) {
+    const data = contractsLib.generateMultiCallData(tokenContractAbi, 'balanceOf', [
+      distributorWalletAddress,
+    ]);
+
+    multicallData.push(data);
+  }
+
+  const result = await contractsLib.multicall.call(multicallData, tokenContract);
+  const iface = new ethers.utils.Interface(tokenContractAbi);
+  const decodedData = result.map((data) => iface.decodeFunctionResult('balanceOf', data));
+
+  const disbursed = decodedData.reduce((acc, log) => {
+    return acc + log[0]?.toNumber();
+  }, 0);
+
+  inventoryTrackData.village_rep.timestamp = parsedTransferLogs[0]?.timestamp;
+  inventoryTrackData.village_rep.txHash = parsedTransferLogs[0]?.transactionHash;
+  inventoryTrackData.village_rep.allowance = allowance;
+  inventoryTrackData.village_rep.disbursed = disbursed;
+
+  if (allowance > 0) {
+    inventoryTrackData.village_rep.isActive = true;
+  }
+
+  return {
+    allowance,
+    disbursed,
+  };
+};
+
+const getBeneficiaryBalance = async () => {
+  const beneficiaries = await backendApi.get(`/beneficiaries`);
+  const beneficiariesWalletAddresses = beneficiaries.data.data.data.map(
+    (beneficiary) => beneficiary.walletAddress
+  );
+
+  console.log('beneficiariesWalletAddresses', beneficiariesWalletAddresses);
+  const tokenContract = await contractsLib.getErc20Contract();
+  let tokenContractAbi = await contractsLib.getAbi('RahatToken');
+
+  let multicallData = [];
+  for (const beneficiaryWalletAddress of beneficiariesWalletAddresses) {
+    const data = contractsLib.generateMultiCallData(tokenContractAbi, 'balanceOf', [
+      beneficiaryWalletAddress,
+    ]);
+
+    multicallData.push(data);
+  }
+
+  const result = await contractsLib.multicall.call(multicallData, tokenContract);
+
+  const iface = new ethers.utils.Interface(tokenContractAbi);
+  const decodedData = result.map((data) => iface.decodeFunctionResult('balanceOf', data));
+
+  const totalBeneficiaryBalance = decodedData.reduce((acc, log) => {
+    console.log('log', log);
+    return acc + log[0]?.toNumber();
+  }, 0);
+
+  const { disbursed } = await getDistributorBalance();
+
+  inventoryTrackData.beneficiaries.claims = totalBeneficiaryBalance;
+  inventoryTrackData.beneficiaries.received = disbursed;
+
+  if (disbursed > 0) {
+    inventoryTrackData.beneficiaries.isActive = true;
+  }
+
+  return {
+    totalBeneficiaryBalance,
+  };
+};
+
+const getBalance = async () => {
+  await getTayabaBalance();
+  await getSrsoBalance();
+  await getBeneficiaryBalance();
+};
+
+const updateReportDB = async () => {
+  try {
+    // await scr.getDataFromChain();
+    console.log('===> Updating Reporting DB');
+
+    const updated = await backendApi.post(`/misc/inventory-tracker`, inventoryTrackData);
+    if (updated.data.success) {
+      console.log('updated', updated.data);
+    }
+
+    return updated;
+  } catch (err) {
+    console.log(err);
+  }
+};
 (async () => {
-  await scr.updateReportDB();
-})();
-
-
-*/
-
-/*Remove in prouction*/
-(async () => {
-  let misc = new controller();
-  await misc.add('inventory-tracker', cashTrackData);
+  await getBalance();
+  await updateReportDB();
 })();

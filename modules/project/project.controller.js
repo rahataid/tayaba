@@ -1,5 +1,5 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require("../models");
+const { AbstractController } = require('@rumsan/core/abstract');
+const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require('../models');
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -12,10 +12,10 @@ module.exports = class extends AbstractController {
 
   registrations = {
     add: (req) => this.add(req.payload),
-    list: (req) => this.list(),
+    list: (req) => this.list(req.query),
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
-    getById: (req) => this.getById(req.params.id)
+    getById: (req) => this.getById(req.params.id),
   };
 
   async add(payload) {
@@ -33,46 +33,51 @@ module.exports = class extends AbstractController {
     // return dataValues;
 
     return await this.table.findByPk(id, {
-      include : [{
-        model : this.beneficiariesTable,
-        through : {
-          attributes: []
+      include: [
+        {
+          model: this.beneficiariesTable,
+          through: {
+            attributes: [],
+          },
+          as: 'beneficiary_details',
         },
-        as : "beneficiary_details",
-      },
-      {
-        model : this.vendorTable,
-        through : {
-          attributes: []
+        {
+          model: this.vendorTable,
+          through: {
+            attributes: [],
+          },
+          as: 'vendor_details',
         },
-        as : "vendor_details",
-      },
-      {
-        model : this.userTable,
-        as : "users",
-      }]
+        {
+          model: this.userTable,
+          as: 'users',
+        },
+      ],
     });
   }
-  async list() {
+  async list(query) {
     return this.table.findAll({
-      include : [{
-        model : this.beneficiariesTable,
-        through : {
-          attributes: []
+      where: query,
+      include: [
+        {
+          model: this.beneficiariesTable,
+          through: {
+            attributes: [],
+          },
+          as: 'beneficiary_details',
         },
-        as : "beneficiary_details",
-      },
-      {
-        model : this.vendorTable,
-        through : {
-          attributes: []
+        {
+          model: this.vendorTable,
+          through: {
+            attributes: [],
+          },
+          as: 'vendor_details',
         },
-        as : "vendor_details",
-      },
-      {
-        model : this.userTable,
-        as : "users",
-      }]
+        {
+          model: this.userTable,
+          as: 'users',
+        },
+      ],
     });
   }
   async delete({ id }) {
