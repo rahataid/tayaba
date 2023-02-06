@@ -1,7 +1,7 @@
-const { DataTypes, Sequelize } = require("@rumsan/core").SequelizeDB;
+const { DataTypes, Sequelize } = require('@rumsan/core').SequelizeDB;
 
-const { AbstractModel } = require("@rumsan/core/abstract");
-const { VENDOR } = require("../../constants/dbTables");
+const { AbstractModel } = require('@rumsan/core/abstract');
+const { VENDOR } = require('../../constants/dbTables');
 
 const schema = {
   name: {
@@ -9,11 +9,12 @@ const schema = {
     allowNull: false,
   },
   gender: {
-    type: Sequelize.ENUM(["M", "F", "O", "U"]),
-    defaultValue: "U",
+    type: Sequelize.ENUM(['M', 'F', 'O', 'U']),
+    defaultValue: 'U',
   },
   phone: {
     type: Sequelize.STRING,
+    unique: true,
   },
   email: {
     type: Sequelize.STRING,
@@ -38,10 +39,10 @@ const schema = {
     type: Sequelize.JSON,
     set(v) {
       v = JSON.stringify(v);
-      this.setDataValue("miscData", v);
+      this.setDataValue('miscData', v);
     },
     get() {
-      const v = this.getDataValue("miscData");
+      const v = this.getDataValue('miscData');
       return v ? JSON.parse(v) : {};
     },
   },

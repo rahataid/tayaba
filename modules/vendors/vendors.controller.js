@@ -35,6 +35,7 @@ module.exports = class extends AbstractController {
       this.updateVendorApprovalStatus(req.params.walletAddress, req.payload),
     register: (req) => this.register(req.payload, req),
     checkIfBeneficiaryExists: (req) => this.checkIfBeneficiaryExists(req.payload.walletAddress),
+    checkIfPhoneNoExists: (req) => this.checkIfPhoneNoExists(req.payload.phone),
     getSingleVendor: (req) => this.getSingleVendor(req.query),
   };
 
@@ -176,5 +177,14 @@ module.exports = class extends AbstractController {
     );
 
     return vendor;
+  }
+
+  async checkIfPhoneNoExists(phone) {
+    if (phone) {
+      const uniquePhoneNo = await this.table.findOne({
+        where: { phone },
+      });
+      return Boolean(uniquePhoneNo);
+    }
   }
 };
