@@ -31,6 +31,19 @@ module.exports = class extends AbstractController {
   };
 
   async getBeneficiaryDemographicsSummary(query) {
+    if (query?.projectId) {
+      const rawBenIds = await this.tblProjectBeneficiaries.findAll({
+        where: { projectId: query.projectId },
+        attributes: ['beneficiaryId'],
+        raw: true,
+      });
+      const benIds = rawBenIds.map((elem) => elem.beneficiaryId);
+      delete query.projectId;
+      query = {
+        ...query,
+        id: { [sequelize.Op.in]: benIds },
+      };
+    }
     const { count: totalBeneficiaries } = await this.tblBeneficiaries.findAndCountAll({
       where: {
         ...query,
