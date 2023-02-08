@@ -6,6 +6,7 @@ const {
   VillageModel,
   ProjectModel,
   ProjectBeneficiariesModel,
+  VendorModel,
 } = require('../models');
 
 module.exports = class extends AbstractController {
@@ -15,6 +16,7 @@ module.exports = class extends AbstractController {
     this.tblVillages = VillageModel;
     this.tblProjects = ProjectModel;
     this.tblProjectBeneficiaries = ProjectBeneficiariesModel;
+    this.tblVendors = VendorModel;
   }
 
   registrations = {
@@ -54,12 +56,19 @@ module.exports = class extends AbstractController {
       },
     });
 
+    const { count: totalVendors } = await this.tblVendors.findAndCountAll({
+      where: {
+        ...query,
+      },
+    });
+
     return {
       totalBeneficiaries,
       beneficiaryPerVillage,
       totalProjects: totalProjects.length,
       totalVillages,
       totalH20Disbursed,
+      totalVendors,
     };
   }
 
