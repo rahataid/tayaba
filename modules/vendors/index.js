@@ -72,5 +72,11 @@ module.exports = class extends AbstractRouter {
       description: 'get single vendor',
       // permissions: [PERMISSIONS.VENDOR_READ],
     },
+    checkIfPhoneNoExists: {
+      method: 'POST',
+      path: '/checkIfPhoneNoExists',
+      description: 'check if Phone No exists',
+      // permissions: [PERMISSIONS.VENDOR_READ],
+    },
   };
 };
