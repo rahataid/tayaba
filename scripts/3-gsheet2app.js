@@ -69,6 +69,8 @@ const lib = {
         else console.log(e.message);
       }
     }
+
+    process.exit(0);
   },
 
   cleanGender(gender) {

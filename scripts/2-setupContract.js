@@ -6,6 +6,9 @@ const { db } = SequelizeDB;
 const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
+const axios = require('axios');
+const chacheServerUrl = 'http://localhost:4810/api/v1';
+
 const deploymentData = {
   communityName: 'Tayaba',
   projectName: 'H20 Wheels',
@@ -38,8 +41,11 @@ const lib = {
     const signer = new ethers.Wallet(deployerPrivateKey, provider);
     const factory = new ethers.ContractFactory(abi, bytecode, signer);
     const contract = await factory.deploy(...args);
-    contract.deployTransaction.wait();
-    return new ethers.Contract(contract.address, abi, provider);
+    const receipt = await contract.deployTransaction.wait();
+    return {
+      blockNumber: receipt.blockNumber,
+      contract: new ethers.Contract(contract.address, abi, provider),
+    };
   },
 
   getWalletFromPrivateKey(privateKey) {
@@ -66,18 +72,23 @@ const setupContracts = async () => {
   const donorWallet = lib.getWalletFromPrivateKey(donorPrivateKey);
 
   console.log('1/4 DEPLOYING RAHAT Donor');
-  const rahatDonor = await lib.deployContract(RahatDonorAbi, RahatDonorBytecode, [donorAddress]);
+  const { blockNumber: startBlock, contract: rahatDonor } = await lib.deployContract(
+    RahatDonorAbi,
+    RahatDonorBytecode,
+    [donorAddress]
+  );
 
   console.log('2/4 DEPLOYING RAHAT CLAIM');
-  const rahatClaim = await lib.deployContract(RahatClaimAbi, RahatClaimBytecode, []);
+  const { contract: rahatClaim } = await lib.deployContract(RahatClaimAbi, RahatClaimBytecode, []);
 
   console.log('3/4 DEPLOYING RAHAT COMMUNITY');
-  const rahatCommunity = await lib.deployContract(RahatCommunityAbi, RahatCommunityBytecode, [
-    deploymentData.communityName,
-    adminAddress,
-  ]);
+  const { contract: rahatCommunity } = await lib.deployContract(
+    RahatCommunityAbi,
+    RahatCommunityBytecode,
+    [deploymentData.communityName, adminAddress]
+  );
 
-  const rahatToken = await lib.deployContract(RahatTokenAbi, RahatTokenBytecode, [
+  const { contract: rahatToken } = await lib.deployContract(RahatTokenAbi, RahatTokenBytecode, [
     deploymentData.tokenName,
     deploymentData.tokenSymbol,
     rahatDonor.address,
@@ -91,7 +102,7 @@ const setupContracts = async () => {
   // const tokenAddress = tokenCreationEvent.args.tokenAddress
 
   console.log('4/4 DEPLOYING CVA Project');
-  const cvaProject = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
+  const { contract: cvaProject } = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
     deploymentData.projectName,
     rahatToken.address,
     rahatClaim.address,
@@ -109,6 +120,43 @@ const setupContracts = async () => {
     RahatCommunity: rahatCommunity.address,
     CVAProject: cvaProject.address,
   };
+
+  await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
+    contractAddress: rahatDonor.address,
+    name: 'RahatDonor',
+    abi: RahatDonorAbi,
+    startBlock,
+  });
+
+  await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
+    contractAddress: rahatClaim.address,
+    name: 'RahatClaim',
+    abi: RahatClaimAbi,
+    startBlock,
+  });
+
+  await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
+    contractAddress: rahatToken.address,
+    name: 'RahatToken',
+    abi: RahatTokenAbi,
+    type: 'ERC20',
+    startBlock,
+  });
+
+  await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
+    contractAddress: rahatCommunity.address,
+    name: 'RahatCommunity',
+    abi: RahatCommunityAbi,
+    startBlock,
+  });
+
+  await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
+    contractAddress: cvaProject.address,
+    name: 'CVAProject',
+    abi: CVAProjectAbi,
+    startBlock,
+  });
+
   console.log({ addresData });
   console.log('Sending ETH to Community for vendors');
   await adminWallet.sendTransaction({
