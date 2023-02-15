@@ -177,7 +177,7 @@ const processTokenRequest = async (beneficiary, otp) => {
 //TESTS
 
 const beneficiaries = [
-  '0x7131EDcF4500521cB6B55C0658b2d83589946f44',
+  '0xeBe5Ab1A06F1Cec22561644C749bFe4e44f867D8',
   '0xcc85beee78cc66c03dc6aa70080d66c85dcb308d',
 ];
 

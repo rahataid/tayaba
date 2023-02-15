@@ -7,7 +7,7 @@ const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
 const axios = require('axios');
-const chacheServerUrl = null; //'http://localhost:4810/api/v1';
+const chacheServerUrl = config.get('blockchain.chainCacheServer');
 
 const deploymentData = {
   communityName: 'Tayaba',
@@ -122,37 +122,43 @@ const setupContracts = async () => {
   };
 
   if (chacheServerUrl) {
-    await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
-      contractAddress: rahatDonor.address,
+    let chainCacher = axios.create({
+      baseURL: `${chacheServerUrl}/contracts`,
+      timeout: 10000,
+      headers: { 'app-uuid': 'b997b7bf-1a69-4e1f-baf5-fc7be54a0e29' },
+    });
+
+    await chainCacher.post('?removeExisting', {
+      address: rahatDonor.address,
       name: 'RahatDonor',
       abi: RahatDonorAbi,
       startBlock,
     });
 
-    await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
-      contractAddress: rahatClaim.address,
+    await chainCacher.post(`?removeExisting`, {
+      address: rahatClaim.address,
       name: 'RahatClaim',
       abi: RahatClaimAbi,
       startBlock,
     });
 
-    await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
-      contractAddress: rahatToken.address,
+    await chainCacher.post(`?removeExisting`, {
+      address: rahatToken.address,
       name: 'RahatToken',
       abi: RahatTokenAbi,
       type: 'ERC20',
       startBlock,
     });
 
-    await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
-      contractAddress: rahatCommunity.address,
+    await chainCacher.post(`?removeExisting`, {
+      address: rahatCommunity.address,
       name: 'RahatCommunity',
       abi: RahatCommunityAbi,
       startBlock,
     });
 
-    await axios.post(`${chacheServerUrl}/chain/contracts?removeExisting`, {
-      contractAddress: cvaProject.address,
+    await chainCacher.post(`?removeExisting`, {
+      address: cvaProject.address,
       name: 'CVAProject',
       abi: CVAProjectAbi,
       startBlock,
