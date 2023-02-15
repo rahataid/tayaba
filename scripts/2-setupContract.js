@@ -7,7 +7,7 @@ const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
 const axios = require('axios');
-const chacheServerUrl = config.get('blockchain.chainCacheServer');
+const chacheServerUrl = config.get('chainCacher.url');
 
 const deploymentData = {
   communityName: 'Tayaba',
@@ -125,7 +125,7 @@ const setupContracts = async () => {
     let chainCacher = axios.create({
       baseURL: `${chacheServerUrl}/contracts`,
       timeout: 10000,
-      headers: { 'app-uuid': 'b997b7bf-1a69-4e1f-baf5-fc7be54a0e29' },
+      headers: { 'app-uuid': config.get('chainCacher.appUuid') },
     });
 
     await chainCacher.post('?removeExisting', {
