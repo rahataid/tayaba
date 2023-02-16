@@ -180,10 +180,12 @@ const setupContracts = async () => {
       networkUrl: config.get('blockchain.httpProvider'),
       chainWebSocket: config.get('blockchain.webSocketProvider'),
       chainId: config.get('blockchain.chainId'),
+      networkGasLimit: config.get('blockchain.networkGasLimit'),
     },
     isReadOnly: true,
     isPrivate: false,
   });
+
   console.log({ d });
   await AppSettings.refresh();
   process.exit(0);
