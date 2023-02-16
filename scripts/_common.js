@@ -1,9 +1,13 @@
 const ethers = require('ethers');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { default: axios } = require('axios');
+const twilio = require('twilio');
 
 const ENV = 'local';
 
 const config = require(`../config/${ENV}.json`);
+const googleCreds = require('../config/google.json');
+const { accountSid, authToken, twilioNumber } = require('../config/twilio.json');
 
 const { app } = config;
 let networkUrl, contracts;
@@ -171,8 +175,37 @@ const LogSource = {
   },
 };
 
+const gsheet = {
+  getSheetByTitle: async (docId, sheetTitle) => {
+    const doc = new GoogleSpreadsheet(docId);
+    await doc.useServiceAccountAuth(googleCreds);
+    await doc.loadInfo();
+
+    return doc.sheetsByTitle[sheetTitle];
+  },
+};
+
+const smsService = {
+  twilio: {
+    sendSMS: (phone, message) => {
+      const client = twilio(accountSid, authToken);
+      if (!phone.startsWith('+')) {
+        if (!config.get('default_country_code')) throw Error('No Country Code found.');
+        phone = `${config.get('default_country_code')}${phone}`;
+      }
+      return client.messages.create({
+        body: message,
+        from: twilioNumber,
+        to: phone,
+      });
+    },
+  },
+};
+
 module.exports = {
   backendApi,
   contractsLib: Lib,
   LogSource,
+  gsheet,
+  smsService,
 };

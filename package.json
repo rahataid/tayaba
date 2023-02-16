@@ -63,7 +63,8 @@
     "nodemailer": "^6.7.8",
     "pino": "^8.1.0",
     "pino-pretty": "^8.1.0",
-    "qs-stringify": "^1.2.1"
+    "qs-stringify": "^1.2.1",
+    "twilio": "^4.7.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

@@ -98,6 +98,20 @@ const setupAdmin = async () => {
       PERMISSIONS.REPORT_READ,
     ],
   });
+  await Role.add({
+    name: 'stakeholder',
+    permissions: [
+      PERMISSIONS.BENEFICIARY_READ,
+      PERMISSIONS.BENEFICIARY_WRITE,
+      PERMISSIONS.BENEFICIARY_DELETE,
+      PERMISSIONS.BENEFICIARY_LIST,
+      PERMISSIONS.PROJECT_READ,
+      PERMISSIONS.PROJECT_WRITE,
+      PERMISSIONS.PROJECT_DELETE,
+      PERMISSIONS.PROJECT_LIST,
+      PERMISSIONS.REPORT_READ,
+    ],
+  });
   const user1 = await User.signupUsingEmail({
     name: 'Tayaba',
     email: 'tayaba@mailinator.com',
@@ -123,6 +137,13 @@ const setupAdmin = async () => {
     password: 'T$mp9670',
     roles: ['manager'],
   });
+
+  const user4 = await User.signupUsingEmail({
+    name: 'stakeholders',
+    email: 'stakeholders@mailinator.com',
+    password: 'T$mp9670',
+    roles: ['stakeholder'],
+  });
   console.log(`Users created`);
-  return user1, user2, user3, user6;
+  return user1, user2, user3, user6, user4;
 };
