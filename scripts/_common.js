@@ -7,6 +7,7 @@ const ENV = 'local';
 
 const config = require(`../config/${ENV}.json`);
 const googleCreds = require('../config/google.json');
+const { accountSid, authToken, twilioNumber } = require('../config/twilio.json');
 
 const { app } = config;
 let networkUrl, contracts;
