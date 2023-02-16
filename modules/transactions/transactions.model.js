@@ -36,7 +36,9 @@ const schema = {
     defaultValue: false,
   },
   txType: {
-    type: Sequelize.ENUM(['sms', 'qr', 'wallet']),
+    type: Sequelize.ENUM(['sms', 'qr', '-']),
+    allowNull: false,
+    defaultValue: '-',
   },
   // event: {
   //   type: Sequelize.STRING,
