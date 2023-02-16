@@ -20,6 +20,7 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(req.query),
     getById: (req) => this.getById(req.params.id),
     update: (req) => this.update(req.params.id, req.payload),
+    updateStatus: (req) => this.updateStatus(req.params.address, req.payload.isActive),
     updateUsingWalletAddress: (req) =>
       this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     delete: (req) => this.delete(req.params.id),
@@ -27,16 +28,12 @@ module.exports = class extends AbstractController {
   };
 
   async add(payload) {
-    try {
-      const benData = await this.table.create(payload);
-      const {
-        dataValues: { id: beneficiaryId },
-      } = benData;
-      await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
-      return benData;
-    } catch (err) {
-      return err;
-    }
+    const benData = await this.table.create(payload);
+    const {
+      dataValues: { id: beneficiaryId },
+    } = benData;
+    await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    return benData;
   }
 
   async list(query) {
@@ -108,7 +105,7 @@ module.exports = class extends AbstractController {
   }
 
   async getById(id) {
-    return await this.table.findByPk(id, {
+    return this.table.findByPk(id, {
       include: [
         {
           model: this.projectTable,
@@ -125,25 +122,32 @@ module.exports = class extends AbstractController {
     });
   }
 
+  async updateStatus(walletAddress, isActive) {
+    console.log('walletAddress', walletAddress);
+    return this.table.update(
+      { isActivated: isActive },
+      {
+        where: Sequelize.where(
+          Sequelize.fn('lower', Sequelize.col('walletAddress')),
+          walletAddress?.toLowerCase()
+        ),
+        new: true,
+        returning: true,
+        raw: true,
+      }
+    );
+  }
+
   async update(id, payload) {
-    try {
-      return await this.table.update(payload, { where: { id } });
-    } catch (err) {
-      console.log(err);
-    }
+    return this.table.update(payload, { where: { id } });
   }
 
   async updateUsingWalletAddress(walletAddress, payload) {
-    try {
-      const update = await this.table.update(payload, {
-        where: { walletAddress },
-        returning: true,
-        raw: true,
-      });
-      return update;
-    } catch (err) {
-      console.log(err);
-    }
+    return this.table.update(payload, {
+      where: { walletAddress },
+      returning: true,
+      raw: true,
+    });
   }
 
   async delete(id) {
