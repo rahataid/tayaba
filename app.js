@@ -1,6 +1,6 @@
-const config = require("./helpers/config");
-const { RSError, SecureRoute } = require("@rumsan/core/utils");
-const Logger = require("./helpers/logger");
+const config = require('./helpers/config');
+const { RSError, SecureRoute } = require('@rumsan/core/utils');
+const Logger = require('./helpers/logger');
 
 const logger = Logger.getInstance();
 
@@ -13,7 +13,7 @@ class App {
    */
   constructor() {
     this.feats = {};
-    this.apiPath = "/api/v1";
+    this.apiPath = '/api/v1';
   }
 
   connectServer(server) {
@@ -59,8 +59,8 @@ class App {
     return h
       .response({
         statusCode: 401,
-        error: "Not Implemented",
-        message: "This feature has not been implemented.",
+        error: 'Not Implemented',
+        message: 'This feature has not been implemented.',
       })
       .code(501);
   }
@@ -81,22 +81,17 @@ class App {
    */
   async handle(operation, request, h) {
     const fn = operation.controller || this.defaultHandle;
-    request.info.clientIpAddress =
-      request.headers["x-real-ip"] || request.info.remoteAddress;
+    request.info.clientIpAddress = request.headers['x-real-ip'] || request.info.remoteAddress;
     try {
       if (operation.permissions) {
-        const isAllowed = SecureRoute(
-          config.app.secret,
-          operation.permissions,
-          request
-        );
+        const isAllowed = SecureRoute(config.app.secret, operation.permissions, request);
         if (!isAllowed)
           return h
             .response({
               success: false,
               statusCode: 401,
-              error: "Unauthorized",
-              message: "You are not authorized to do this operation.",
+              error: 'Unauthorized',
+              message: 'You are not authorized to do this operation.',
             })
             .code(401);
       }
@@ -108,17 +103,16 @@ class App {
           .response({
             success: false,
             statusCode: result.code || 500,
-            error: "Server Error",
+            error: 'Server Error',
             message: result.message,
             result,
           })
           .code(result.code || 500);
       }
 
-      const responseFormat =
-        request.headers["rs-response-format"] || request.query?.format;
+      const responseFormat = request.headers['rs-response-format'] || request.query?.format;
 
-      if (responseFormat === "raw") return result;
+      if (responseFormat === 'raw') return result;
       return {
         success: true,
         data: result,
@@ -129,10 +123,10 @@ class App {
       let response = {
         success: false,
         statusCode: 500,
-        error: "Server Error",
+        error: 'Server Error',
         errorName: null,
         group: null,
-        message: "Some unknown error occured.",
+        message: 'Some unknown error occured.',
       };
 
       if (error instanceof RSError) {
@@ -140,16 +134,16 @@ class App {
         response = {
           success: false,
           statusCode: data.httpCode || 500,
-          error: "Server Error",
+          error: 'Server Error',
           errorName: data.name || null,
           group: data.group || null,
-          message: data.message || "Error message not specified",
+          message: data.message || 'Error message not specified',
         };
       } else {
         response = {
           success: false,
           statusCode: 500,
-          error: "Server Error",
+          error: 'Server Error',
           errorName: null,
           group: null,
           message: `${error}`,
@@ -172,12 +166,12 @@ class App {
     const operation = this.getOperation(featName, operationName);
 
     // permissions
-    let permissions = [];
-    if (typeof permissions === "string") permissions = permissions.split(",");
+    let permissions = route.permissions || [];
+    if (typeof permissions === 'string') permissions = permissions.split(',');
     operation.permissions = permissions;
 
     // Tags
-    let tags = ["api"];
+    let tags = ['api'];
     tags.push(featName);
     if (route.tags) tags = [...new Set([...tags, ...route.tags])];
     // else
@@ -188,12 +182,10 @@ class App {
       notes,
       tags,
       validate: this.validate(operation),
-      handler: route.handler
-        ? route.handler
-        : this.handle.bind(this, operation),
+      handler: route.handler ? route.handler : this.handle.bind(this, operation),
     };
 
-    if (method === "POST" || method === "PUT") {
+    if (method === 'POST' || method === 'PUT') {
       config.payload = { maxBytes: 10000000 };
     }
 
@@ -201,9 +193,9 @@ class App {
       config.payload = config.payload || {};
       config.payload = Object.assign(config.payload, uploadPayload);
       config.plugins = {
-        "hapi-swagger": {
-          payloadType: "form",
-          consumes: ["multipart/form-data"],
+        'hapi-swagger': {
+          payloadType: 'form',
+          consumes: ['multipart/form-data'],
         },
       };
     }
@@ -254,8 +246,7 @@ class App {
       if (route.validator) {
         validators[operationName] = route.validator;
       }
-      if (validators)
-        this.registerValidator(name, operationName, validators[operationName]);
+      if (validators) this.registerValidator(name, operationName, validators[operationName]);
       this.registerController(name, operationName, controllers[operationName]);
       if (Array.isArray(route)) {
         route = {
