@@ -123,7 +123,6 @@ module.exports = class extends AbstractController {
   }
 
   async updateStatus(walletAddress, isActive) {
-    console.log('walletAddress', walletAddress);
     return this.table.update(
       { isActivated: isActive },
       {
@@ -144,7 +143,10 @@ module.exports = class extends AbstractController {
 
   async updateUsingWalletAddress(walletAddress, payload) {
     return this.table.update(payload, {
-      where: { walletAddress },
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('walletAddress')),
+        walletAddress?.toLowerCase()
+      ),
       returning: true,
       raw: true,
     });
