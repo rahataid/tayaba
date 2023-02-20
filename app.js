@@ -166,7 +166,7 @@ class App {
     const operation = this.getOperation(featName, operationName);
 
     // permissions
-    let permissions = route.permissions || [];
+    let permissions = []; //TODO enable this route.permissions || [];
     if (typeof permissions === 'string') permissions = permissions.split(',');
     operation.permissions = permissions;
 
