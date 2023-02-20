@@ -59,6 +59,16 @@ const validators = {
     }),
   },
 
+  updateUsingWalletAddress: {
+    params: Joi.object({
+      walletAddress: Joi.string(),
+    }),
+    payload: Joi.object({
+      tokensAssigned: Joi.number(),
+      tokensClaimed: Joi.number(),
+    }),
+  },
+
   delete: {
     params: Joi.object({
       id: Joi.number(),
