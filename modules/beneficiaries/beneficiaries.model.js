@@ -17,6 +17,7 @@ const schema = {
   walletAddress: {
     type: Sequelize.STRING,
     allowNull: false,
+    unique: true,
   },
   cnicNumber: {
     type: Sequelize.STRING,

@@ -50,6 +50,15 @@ const validators = {
     }),
   },
 
+  updateStatus: {
+    params: Joi.object({
+      address: Joi.string(),
+    }),
+    payload: Joi.object({
+      isActive: Joi.boolean(),
+    }),
+  },
+
   delete: {
     params: Joi.object({
       id: Joi.number(),
