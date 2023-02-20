@@ -7,15 +7,10 @@ const {
   app: { url: tayaba_apiUrl },
 } = require(`../config/${env}.json`);
 const SHEET_NAME = 'beneficiaries';
-const path = require('path');
-const fs = require('fs');
-const beneficiaryWalletPath = path.resolve(__dirname, '../outputs/beneficiaryWallets.json');
 
-const ethers = require('ethers');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const googleCreds = require('../config/google.json');
 const axios = require('axios');
-var benwalletData;
 
 console.log({ ben_gsheetId, tayaba_apiUrl });
 let villages;
@@ -27,7 +22,6 @@ const lib = {
     const sheet = doc.sheetsByTitle[SHEET_NAME];
     let rows = await sheet.getRows();
     const villageNames = Array.from(new Set(rows.map((el) => el.villageName)));
-    //benwalletData = JSON.parse(fs.readFileSync(beneficiaryWalletPath));
 
     const villageData = villageNames.map((villageName) => {
       console.log(villageName);
@@ -92,7 +86,7 @@ const lib = {
 
     return {
       name: d.name?.trim(),
-      walletAddress: ethers.Wallet.createRandom().address, // benwalletData.find((el) => el.cnicNo === Number(d.cnicNumber)).walletAddress,
+      walletAddress: d.wallet,
       gender: this.cleanGender(d.gender),
       phone: phone,
       cnicNumber: d.cnicNumber,
