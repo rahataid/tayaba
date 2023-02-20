@@ -142,6 +142,22 @@ module.exports = class extends AbstractController {
   }
 
   async updateUsingWalletAddress(walletAddress, payload) {
+    const beneficiary = await this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('walletAddress')),
+        walletAddress?.toLowerCase()
+      ),
+    });
+
+    if (payload.tokensAssigned) {
+      payload.tokensAssigned = +beneficiary.tokensAssigned + +payload.tokensAssigned;
+    }
+
+    if (payload.tokensClaimed) {
+      payload.tokensClaimed = +beneficiary.tokensClaimed + +payload.tokensClaimed;
+      payload.tokensAssigned = +beneficiary.tokensAssigned - +payload.tokensClaimed;
+    }
+
     return this.table.update(payload, {
       where: Sequelize.where(
         Sequelize.fn('lower', Sequelize.col('walletAddress')),
