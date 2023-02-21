@@ -89,7 +89,7 @@ const script = {
         };
 
         const updated = await backendApi.patch(
-          `/beneficiaries/wallet-address/${beneficiary}`,
+          `/beneficiaries/wallet-address/${beneficiary}/override-balance`,
           data
         );
         return updated;

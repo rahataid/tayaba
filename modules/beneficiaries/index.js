@@ -52,6 +52,13 @@ module.exports = class extends AbstractRouter {
       permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
+    overrideBenBalance: {
+      method: 'PATCH',
+      path: '/wallet-address/{walletAddress}/override-balance',
+      description: 'override beneficiaries balance by wallet address',
+      // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
+
     delete: {
       method: 'DELETE',
       path: '/{id}',

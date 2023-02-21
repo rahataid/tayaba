@@ -23,6 +23,7 @@ module.exports = class extends AbstractController {
     updateStatus: (req) => this.updateStatus(req.params.address, req.payload.isActive),
     updateUsingWalletAddress: (req) =>
       this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
+    overrideBenBalance: (req) => this.overrideBenBalance(req.params.walletAddress, req.payload),
     delete: (req) => this.delete(req.params.id),
     getVillagesName: (req) => this.getVillagesName(),
   };
@@ -154,10 +155,25 @@ module.exports = class extends AbstractController {
     }
 
     if (payload.tokensClaimed) {
+      payload.tokensAssigned =
+        beneficiary.tokensAssigned > 0
+          ? +beneficiary.tokensAssigned - +payload.tokensClaimed
+          : beneficiary.tokensAssigned;
+
       payload.tokensClaimed = +beneficiary.tokensClaimed + +payload.tokensClaimed;
-      payload.tokensAssigned = +beneficiary.tokensAssigned - +payload.tokensClaimed;
     }
 
+    return this.table.update(payload, {
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('walletAddress')),
+        walletAddress?.toLowerCase()
+      ),
+      returning: true,
+      raw: true,
+    });
+  }
+
+  async overrideBenBalance(walletAddress, payload) {
     return this.table.update(payload, {
       where: Sequelize.where(
         Sequelize.fn('lower', Sequelize.col('walletAddress')),
