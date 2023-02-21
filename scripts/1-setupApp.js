@@ -133,6 +133,13 @@ const setupAdmin = async () => {
     roles: ['admin'],
   });
 
+  const userSrso = await User.signupUsingEmail({
+    name: 'Hamadullah [SRSO]',
+    email: 'hamadullah@srso.org.pk',
+    password: 'T$mp9670',
+    roles: ['admin'],
+  });
+
   const user3 = await User.signupUsingEmail({
     name: 'Will Smith',
     email: 'manager@mailinator.com',
@@ -147,5 +154,5 @@ const setupAdmin = async () => {
     roles: ['stakeholder'],
   });
   console.log(`Users created`);
-  return user1, user2, user3, user4;
+  return user1, user2, user3, user4, userSrso, userTayaba;
 };

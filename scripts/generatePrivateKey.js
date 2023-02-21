@@ -5,8 +5,9 @@ let keys = {
   publicKey: '',
   address: '',
 };
-const generatePrivateKeyJSON = (fileName) => {
-  const wallet = ethers.Wallet.createRandom();
+const generatePrivateKeyJSON = (fileName, _privateKey) => {
+  if (!fileName) throw new Error('Please provide a file name for the private key JSON file');
+  const wallet = _privateKey ? new ethers.Wallet(_privateKey) : ethers.Wallet.createRandom();
   const privateKey = wallet.privateKey;
   const publicKey = wallet.publicKey;
   const address = wallet.address;
@@ -31,4 +32,5 @@ const generatePrivateKeyJSON = (fileName) => {
   });
 };
 
-generatePrivateKeyJSON('admin');
+const args = process.argv.slice(2);
+generatePrivateKeyJSON(args[0], args[1]);
