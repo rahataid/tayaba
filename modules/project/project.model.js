@@ -44,7 +44,15 @@ const schema = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  projectManager: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   description: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  wallet: {
     type: DataTypes.STRING,
     allowNull: false,
   },
