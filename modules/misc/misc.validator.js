@@ -1,11 +1,14 @@
-const Joi = require("joi");
-const { AbstractValidator } = require("@rumsan/core/abstract");
+const Joi = require('joi');
+const { AbstractValidator } = require('@rumsan/core/abstract');
 
 const validators = {
   getContracts: {
     params: Joi.object({
       contract: Joi.string(),
     }),
+  },
+  saveContract: {
+    payload: Joi.object({}),
   },
 };
 

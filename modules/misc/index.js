@@ -27,7 +27,7 @@ module.exports = class extends AbstractRouter {
       path: '/contracts/{contract}',
       description: 'Get erc20 contracts',
     },
-    getContracts: {
+    saveContracts: {
       method: 'POST',
       path: '/contracts',
       description: 'Get erc20 contracts',
