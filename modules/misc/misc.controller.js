@@ -53,6 +53,6 @@ module.exports = class extends AbstractController {
     name = name.toUpperCase();
     const path = `/../../constants/contracts/${name}.json`;
     const dir = Path.join(__dirname + path);
-    return await fs.writeFileSync(dir, JSON.stringify(contract));
+    return await fs.writeFileSync(dir, contract);
   }
 };
