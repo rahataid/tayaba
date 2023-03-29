@@ -21,6 +21,7 @@ module.exports = class extends AbstractController {
   async add(payload) {
     return this.table.create(payload);
   }
+
   async getById(id) {
     // const beneficiariesCount =  await this.beneficiariesTable.count({
     //   where:{
@@ -33,6 +34,44 @@ module.exports = class extends AbstractController {
     // return dataValues;
 
     return await this.table.findByPk(id, {
+      include: [
+        {
+          model: this.beneficiariesTable,
+          through: {
+            attributes: [],
+          },
+          as: 'beneficiary_details',
+        },
+        {
+          model: this.vendorTable,
+          through: {
+            attributes: [],
+          },
+          as: 'vendor_details',
+        },
+        {
+          model: this.userTable,
+          as: 'users',
+        },
+      ],
+    });
+  }
+
+  async getByWalletAddress(wallet) {
+    // const beneficiariesCount =  await this.beneficiariesTable.count({
+    //   where:{
+    //     projectId:id
+    //   }
+    // });
+    // let {dataValues} =  await this.table.findByPk(id);
+    // dataValues.beneficiariesCount=beneficiariesCount;
+
+    // return dataValues;
+
+    return await this.table.find({
+      where: {
+        wallet: wallet,
+      },
       include: [
         {
           model: this.beneficiariesTable,
