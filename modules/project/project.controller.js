@@ -15,7 +15,7 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(req.query),
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
-    getById: (req) => this.getById(req.params.id),
+    getById: (req) => this.getById(req.query),
   };
 
   async add(payload) {
@@ -84,6 +84,6 @@ module.exports = class extends AbstractController {
     return this.table.destroy({ where: { id } });
   }
   async update(payload, param) {
-    return this.table.update(payload, { where: { id: param.id } });
+    return this.table.update(payload, { where: { ...param } });
   }
 };
