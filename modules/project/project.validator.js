@@ -31,9 +31,9 @@ const validators = {
     }),
   },
 
-  getByWalletAddress: {
+  getByContractAddress: {
     params: Joi.object({
-      walletAddress: Joi.string().required(),
+      contractAddress: Joi.string().required(),
     }),
   },
 };

@@ -17,7 +17,7 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
     getById: (req) => this.getById(req.params.id),
-    getByWalletAddress: (req) => this.getByWalletAddress(req.params),
+    getByContractAddress: (req) => this.getByContractAddress(req.params),
   };
 
   async add(payload) {
@@ -59,11 +59,11 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async getByWalletAddress({ walletAddress }) {
+  async getByContractAddress({ contractAddress }) {
     return await this.table.findOne({
       where: Sequelize.where(
-        Sequelize.fn('lower', Sequelize.col('wallet')),
-        walletAddress?.toLowerCase()
+        Sequelize.fn('lower', Sequelize.col('contractAddress')),
+        contractAddress?.toLowerCase()
       ),
 
       include: [

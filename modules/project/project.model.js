@@ -52,7 +52,7 @@ const schema = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  wallet: {
+  contractAddress: {
     type: DataTypes.STRING,
     allowNull: false,
   },

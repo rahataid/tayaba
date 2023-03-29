@@ -45,9 +45,9 @@ module.exports = class extends AbstractRouter {
       permissions: [PERMISSIONS.PROJECT_READ],
     },
 
-    getByWalletAddress: {
+    getByContractAddress: {
       method: 'GET',
-      path: '/wallet/{walletAddress}',
+      path: '/wallet/{contractAddress}',
       description: 'get Project By Wallet',
       permissions: [PERMISSIONS.PROJECT_READ],
     },
