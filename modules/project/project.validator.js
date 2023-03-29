@@ -30,6 +30,12 @@ const validators = {
       id: Joi.number().required(),
     }),
   },
+
+  getByWalletAddress: {
+    params: Joi.object({
+      walletAddress: Joi.string().required(),
+    }),
+  },
 };
 
 module.exports = class extends AbstractValidator {

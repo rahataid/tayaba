@@ -1,5 +1,6 @@
 const { AbstractController } = require('@rumsan/core/abstract');
 const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require('../models');
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -16,6 +17,7 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
     getById: (req) => this.getById(req.params.id),
+    getByWalletAddress: (req) => this.getByWalletAddress(req.params),
   };
 
   async add(payload) {
@@ -57,21 +59,13 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async getByWalletAddress(wallet) {
-    // const beneficiariesCount =  await this.beneficiariesTable.count({
-    //   where:{
-    //     projectId:id
-    //   }
-    // });
-    // let {dataValues} =  await this.table.findByPk(id);
-    // dataValues.beneficiariesCount=beneficiariesCount;
+  async getByWalletAddress({ walletAddress }) {
+    return await this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('wallet')),
+        walletAddress?.toLowerCase()
+      ),
 
-    // return dataValues;
-
-    return await this.table.find({
-      where: {
-        wallet: wallet,
-      },
       include: [
         {
           model: this.beneficiariesTable,
