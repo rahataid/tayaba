@@ -19,6 +19,7 @@ const schema = {
   owner: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    defaultValue: 1,
   },
   budget: {
     type: DataTypes.INTEGER,
@@ -29,6 +30,31 @@ const schema = {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
+  },
+  extras: {
+    type: DataTypes.JSONB,
+    allowNull: true,
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
+  projectType: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  projectManager: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  wallet: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 };
 module.exports = class Project extends AbstractModel {
