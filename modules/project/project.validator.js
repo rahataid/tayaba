@@ -12,6 +12,7 @@ const validators = {
       location: Joi.string().required(),
       description: Joi.string().required(),
       projectType: Joi.string().required(),
+      contractAddress: Joi.string().required(),
     }),
   },
   delete: {
@@ -38,6 +39,12 @@ const validators = {
       extras: Joi.object().optional(),
       location: Joi.string().optional(),
       description: Joi.string().optional(),
+    }),
+  },
+
+  getByContractAddress: {
+    params: Joi.object({
+      contractAddress: Joi.string().required(),
     }),
   },
 };

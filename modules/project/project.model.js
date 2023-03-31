@@ -37,16 +37,24 @@ const schema = {
   },
   location: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 
   projectType: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  projectManager: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   description: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  contractAddress: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   deletedAt:{
     type:DataTypes.STRING,

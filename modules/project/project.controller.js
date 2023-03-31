@@ -1,7 +1,6 @@
 const { AbstractController } = require('@rumsan/core/abstract');
 const { ProjectModel, BeneficiariesModel, UserModel, VendorModel } = require('../models');
-const { Op } = require("sequelize");
-
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -18,11 +17,13 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.query),
     getById: (req) => this.getById(req.params.id),
+    getByContractAddress: (req) => this.getByContractAddress(req.params),
   };
 
   async add(payload) {
     return this.table.create(payload);
   }
+
   async getById(id) {
     // const beneficiariesCount =  await this.beneficiariesTable.count({
     //   where:{
@@ -35,7 +36,36 @@ module.exports = class extends AbstractController {
     // return dataValues;
 
     return await this.table.findByPk(id, {
-      
+      include: [
+        {
+          model: this.beneficiariesTable,
+          through: {
+            attributes: [],
+          },
+          as: 'beneficiary_details',
+        },
+        {
+          model: this.vendorTable,
+          through: {
+            attributes: [],
+          },
+          as: 'vendor_details',
+        },
+        {
+          model: this.userTable,
+          as: 'users',
+        },
+      ],
+    });
+  }
+
+  async getByContractAddress({ contractAddress }) {
+    return await this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('contractAddress')),
+        contractAddress?.toLowerCase()
+      ),
+
       include: [
         {
           model: this.beneficiariesTable,
@@ -59,14 +89,13 @@ module.exports = class extends AbstractController {
     });
   }
   async list(query) {
-  let where
+    let where;
 
-  if(query){
-    where= query
-  }
+    if (query) {
+      where = query;
+    }
 
-  where.deletedAt = null
-
+    where.deletedAt = null;
 
     return this.table.findAll({
       where,
@@ -93,11 +122,7 @@ module.exports = class extends AbstractController {
     });
   }
   async delete({ id }) {
-    return this.table.update(
-      {deletedAt:
-        String(new Date().getTime())
-      },
-      { where: { id } },);
+    return this.table.update({ deletedAt: String(new Date().getTime()) }, { where: { id } });
   }
   async update(payload, param) {
     return this.table.update(payload, { where: { ...param } });
