@@ -14,8 +14,8 @@ module.exports = class extends AbstractController {
     add: (req) => this.add(req.payload),
     list: (req) => this.list(req.query),
     delete: (req) => this.delete(req.params),
-    update: (req) => this.update(req.payload, req.params),
-    getById: (req) => this.getById(req.query),
+    update: (req) => this.update(req.payload, req.query),
+    getById: (req) => this.getById(req.params.id),
   };
 
   async add(payload) {

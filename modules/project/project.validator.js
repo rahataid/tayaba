@@ -31,13 +31,13 @@ const validators = {
 
     }),
     payload: Joi.object({
-      name: Joi.string().required().example('H20 Wheels').error(new Error('Invalid name')),
+      name: Joi.string().example('H20 Wheels').error(new Error('Invalid name')),
       startDate: Joi.date().optional().error(new Error('Invalid Start Date')),
       endDate: Joi.date().optional().error(new Error('Invalid End Date')),
       projectManager: Joi.string().example('Jon'),
       extras: Joi.object().optional(),
-      location: Joi.string().required(),
-      description: Joi.string().required(),
+      location: Joi.string().optional(),
+      description: Joi.string().optional(),
     }),
   },
 };
