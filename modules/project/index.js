@@ -32,8 +32,8 @@ module.exports = class extends AbstractRouter {
     },
 
     delete: {
-      method: 'DELETE',
-      path: '/{id}',
+      method: 'PATCH',
+      path: '/{id}/delete',
       description: 'delete project',
       permissions: [PERMISSIONS.PROJECT_DELETE],
     },
