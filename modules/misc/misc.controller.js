@@ -14,6 +14,7 @@ module.exports = class extends AbstractController {
     add: (req) => this.add(req.params.name, req.payload, req),
     getByName: (req) => this.getByName(req.params.name, req),
     getContracts: (req, h) => this.getContracts(req.params.contract),
+    saveContracts: (req) => this.saveContracts(req.payload),
   };
 
   async add(name, value) {
@@ -45,5 +46,13 @@ module.exports = class extends AbstractController {
     const rawData = await fs.readFileSync(dir, 'utf8');
     const data = JSON.parse(rawData);
     return { abi: data.abi };
+  }
+
+  async saveContracts({ contract, project }) {
+    let name = project.name.replace(/ /g, '');
+    name = name.toUpperCase();
+    const path = `/../../constants/contracts/${name}.json`;
+    const dir = Path.join(__dirname + path);
+    return await fs.writeFileSync(dir, contract);
   }
 };
