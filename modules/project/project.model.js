@@ -48,6 +48,10 @@ const schema = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  deletedAt:{
+    type:DataTypes.STRING,
+    defaultValue:null
+  }
 };
 module.exports = class Project extends AbstractModel {
   schema = schema;

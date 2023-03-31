@@ -25,15 +25,15 @@ module.exports = class extends AbstractRouter {
     },
 
     update: {
-      method: 'PUT',
-      path: '/{id}',
+      method: 'PATCH',
+      path: '/update',
       description: 'update  project',
       permissions: [PERMISSIONS.PROJECT_WRITE],
     },
 
     delete: {
-      method: 'DELETE',
-      path: '/{id}',
+      method: 'PATCH',
+      path: '/{id}/delete',
       description: 'delete project',
       permissions: [PERMISSIONS.PROJECT_DELETE],
     },

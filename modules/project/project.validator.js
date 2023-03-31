@@ -25,8 +25,19 @@ const validators = {
     }),
   },
   update: {
-    params: Joi.object({
-      id: Joi.number().required(),
+    query: Joi.object({
+      id: Joi.number().optional(),
+      walletAddress:Joi.string().optional()
+
+    }),
+    payload: Joi.object({
+      name: Joi.string().example('H20 Wheels').error(new Error('Invalid name')),
+      startDate: Joi.date().optional().error(new Error('Invalid Start Date')),
+      endDate: Joi.date().optional().error(new Error('Invalid End Date')),
+      projectManager: Joi.string().example('Jon'),
+      extras: Joi.object().optional(),
+      location: Joi.string().optional(),
+      description: Joi.string().optional(),
     }),
   },
 };

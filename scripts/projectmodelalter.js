@@ -19,6 +19,8 @@ const alterProjectTable = async () => {
          ADD COLUMN "projectManager" varchar,
          ADD COLUMN "projectType" varchar,
          ADD COLUMN "location" varchar ;
+         ADD COLUMN "deletedAt" varchar ;
+
         
     `);
 };
