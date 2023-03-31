@@ -17,10 +17,10 @@ const alterProjectTable = async () => {
          ADD COLUMN "extras" jsonb,
          ADD COLUMN "description" varchar,
          ADD COLUMN "projectManager" varchar,
-         ADD COLUMN "contractAddress" varchar,
          ADD COLUMN "projectType" varchar,
          ADD COLUMN "location" varchar ;
          ADD COLUMN "deletedAt" varchar ;
+         ADD COLUMN "contractAddress" varchar,
 
         
     `);

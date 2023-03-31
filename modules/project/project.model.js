@@ -56,10 +56,10 @@ const schema = {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  deletedAt:{
-    type:DataTypes.STRING,
-    defaultValue:null
-  }
+  deletedAt: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
 };
 module.exports = class Project extends AbstractModel {
   schema = schema;
