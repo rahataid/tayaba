@@ -13,10 +13,10 @@ const validators = {
         .valid('smartphone', 'featurephone', 'dumbphone')
         .example('smartphone'),
       phoneOwnedBy: Joi.string().required().example('SELF'),
-      projectId: Joi.number().example(1),
+      projectId: Joi.number().optional().example(1),
       miscData: Joi.object({}),
       villageId: Joi.number().example(1),
-      community: Joi.string().example('gfhdgfh'),
+      community: Joi.string().example('gfhdgfh').optional(),
     }),
   },
   getById: {

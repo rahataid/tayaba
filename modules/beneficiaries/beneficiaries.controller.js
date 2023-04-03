@@ -33,7 +33,10 @@ module.exports = class extends AbstractController {
     const {
       dataValues: { id: beneficiaryId },
     } = benData;
-    await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    if (payload.projectId) {
+      console.log('hiii');
+      await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    }
     return benData;
   }
 
