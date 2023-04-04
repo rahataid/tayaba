@@ -28,8 +28,7 @@ const validators = {
   update: {
     query: Joi.object({
       id: Joi.number().optional(),
-      walletAddress:Joi.string().optional()
-
+      contractAddress: Joi.string().optional(),
     }),
     payload: Joi.object({
       name: Joi.string().example('H20 Wheels').error(new Error('Invalid name')),
