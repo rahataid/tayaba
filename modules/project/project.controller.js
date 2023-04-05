@@ -62,8 +62,9 @@ module.exports = class extends AbstractController {
   async getByContractAddress({ contractAddress }) {
     return await this.table.findOne({
       where: Sequelize.where(
+
         Sequelize.fn('lower', Sequelize.col('contractAddress')),
-        contractAddress?.toLowerCase()
+        contractAddress?.toLowerCase(),
       ),
 
       include: [
@@ -88,6 +89,7 @@ module.exports = class extends AbstractController {
       ],
     });
   }
+  
   async list(query) {
     let where;
 
@@ -121,8 +123,8 @@ module.exports = class extends AbstractController {
       ],
     });
   }
-  async delete({ id }) {
-    return this.table.update({ deletedAt: String(new Date().getTime()) }, { where: { id } });
+  async delete({ contractAddress }) {
+    return this.table.update({ deletedAt: String(new Date().getTime()) }, { where: { contractAddress } });
   }
   async update(payload, param) {
     return this.table.update(payload, { where: { ...param } });
