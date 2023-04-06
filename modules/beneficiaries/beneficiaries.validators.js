@@ -60,7 +60,7 @@ const validators = {
 
   delete: {
     params: Joi.object({
-      id: Joi.number(),
+      walletAddress: Joi.string(),
     }),
   },
 };

@@ -24,7 +24,7 @@ module.exports = class extends AbstractController {
     updateUsingWalletAddress: (req) =>
       this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     overrideBenBalance: (req) => this.overrideBenBalance(req.params.walletAddress, req.payload),
-    delete: (req) => this.delete(req.params.id),
+    delete: (req) => this.delete(req.params),
     getVillagesName: (req) => this.getVillagesName(),
   };
 
@@ -184,8 +184,8 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async delete(id) {
-    return this.table.destroy({ where: { id } });
+  async delete({walletAddress}) {
+    return this.table.update({deletedAt: String( new Date().getTime())},{ where: { walletAddress } });
   }
 
   async getVillagesName() {
