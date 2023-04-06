@@ -86,11 +86,13 @@ module.exports = class extends AbstractController {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
+          required: false,
         },
         {
           model: this.projectTable,
           where: projectQuery,
           as: 'beneficiary_project_details',
+          required: false,
         },
       ],
       where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
