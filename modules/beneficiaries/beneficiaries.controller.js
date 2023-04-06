@@ -33,7 +33,10 @@ module.exports = class extends AbstractController {
     const {
       dataValues: { id: beneficiaryId },
     } = benData;
-    await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    if (payload.projectId) {
+      console.log('hiii');
+      await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    }
     return benData;
   }
 
@@ -83,11 +86,13 @@ module.exports = class extends AbstractController {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
+          required: false,
         },
         {
           model: this.projectTable,
           where: projectQuery,
           as: 'beneficiary_project_details',
+          required: false,
         },
       ],
       where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
