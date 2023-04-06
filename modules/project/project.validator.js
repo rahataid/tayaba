@@ -12,6 +12,7 @@ const validators = {
       location: Joi.string().required(),
       description: Joi.string().required(),
       projectType: Joi.string().required(),
+      wallet: Joi.string().required(),
     }),
   },
   delete: {
