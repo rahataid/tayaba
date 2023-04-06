@@ -48,7 +48,7 @@ module.exports = class extends AbstractController {
       tokensClaimed,
       ...restQuery
     } = query;
-
+    
     if (!limit) limit = 50;
     if (!start) start = 0;
 
@@ -78,11 +78,15 @@ module.exports = class extends AbstractController {
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
+      where:{
+        deletedAt: null,
+      },
       include: [
         {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
+          deletedAt : null,
         },
         {
           model: this.projectTable,
@@ -90,7 +94,7 @@ module.exports = class extends AbstractController {
           as: 'beneficiary_project_details',
         },
       ],
-      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt : null },
       order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
