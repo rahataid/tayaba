@@ -95,7 +95,7 @@ const setupContracts = async () => {
     deploymentData.tokenDecimals,
   ]);
 
-  ///@notice create token through donor contract
+  //@notice create token through donor contract
   // const tx = await rahatDonor.connect(donorWallet).createToken(deploymentData.tokenName, deploymentData.tokenSymbol, deploymentData.tokenDecimals);
   // const receipt = await tx.wait();
   // const tokenCreationEvent = receipt.events.find((el) => el.event === 'TokenCreated')
