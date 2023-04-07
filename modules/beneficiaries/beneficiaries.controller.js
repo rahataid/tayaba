@@ -24,7 +24,7 @@ module.exports = class extends AbstractController {
     updateUsingWalletAddress: (req) =>
       this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     overrideBenBalance: (req) => this.overrideBenBalance(req.params.walletAddress, req.payload),
-    delete: (req) => this.delete(req.params.id),
+    delete: (req) => this.delete(req.params),
     getVillagesName: (req) => this.getVillagesName(),
   };
 
@@ -51,7 +51,7 @@ module.exports = class extends AbstractController {
       tokensClaimed,
       ...restQuery
     } = query;
-
+    
     if (!limit) limit = 50;
     if (!start) start = 0;
 
@@ -81,11 +81,15 @@ module.exports = class extends AbstractController {
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
+      where:{
+        deletedAt: null,
+      },
       include: [
         {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
+          deletedAt : null,
           required: false,
         },
         {
@@ -95,7 +99,7 @@ module.exports = class extends AbstractController {
           required: false,
         },
       ],
-      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt : null },
       order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
@@ -189,8 +193,8 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async delete(id) {
-    return this.table.destroy({ where: { id } });
+  async delete({walletAddress}) {
+    return this.table.update({deletedAt: String( new Date().getTime())},{ where: { walletAddress } });
   }
 
   async getVillagesName() {

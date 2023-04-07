@@ -60,9 +60,9 @@ module.exports = class extends AbstractRouter {
     },
 
     delete: {
-      method: 'DELETE',
-      path: '/{id}',
-      description: 'delete beneficiaries by id',
+      method: 'PATCH',
+      path: '/{walletAddress}/delete',
+      description: 'delete beneficiaries',
       permissions: [PERMISSIONS.BENEFICIARY_DELETE],
     },
 
