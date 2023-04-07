@@ -26,6 +26,7 @@ module.exports = class extends AbstractController {
     overrideBenBalance: (req) => this.overrideBenBalance(req.params.walletAddress, req.payload),
     delete: (req) => this.delete(req.params.id),
     getVillagesName: (req) => this.getVillagesName(),
+    assignProject: (req) => this.assignProject(req.params.id, req.payload.projectId),
   };
 
   async add(payload) {
@@ -34,7 +35,6 @@ module.exports = class extends AbstractController {
       dataValues: { id: beneficiaryId },
     } = benData;
     if (payload.projectId) {
-      console.log('hiii');
       await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
     }
     return benData;
@@ -204,5 +204,8 @@ module.exports = class extends AbstractController {
     });
     const uniqueVillages = [...new Set(villageData.map((item) => item?.village_details.name))];
     return uniqueVillages;
+  }
+  async assignProject(beneficiaryId, projectId) {
+    return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
   }
 };
