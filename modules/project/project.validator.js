@@ -17,7 +17,7 @@ const validators = {
   },
   delete: {
     params: Joi.object({
-      id: Joi.number().required(),
+     contractAddress: Joi.string().required(),
     }),
   },
   getById: {
