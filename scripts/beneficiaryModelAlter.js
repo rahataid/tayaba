@@ -6,8 +6,6 @@ const SequelizeDB = require('@rumsan/core').SequelizeDB;
 SequelizeDB.init(database, username, password, config.get('db'));
 const { db } = SequelizeDB;
 
-const AppSettings = require('@rumsan/core').AppSettings;
-
 require('@rumsan/core/appSettings/model')();
 require('../modules/models');
 
