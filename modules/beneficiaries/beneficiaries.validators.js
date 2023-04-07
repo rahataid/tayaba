@@ -21,13 +21,13 @@ const validators = {
   },
   getById: {
     params: Joi.object({
-      id: Joi.number(),
+      walletAddress: Joi.string(),
     }),
   },
 
   update: {
     params: Joi.object({
-      id: Joi.number(),
+      walletAddress: Joi.string(),
     }),
     payload: Joi.object({
       name: Joi.string().example('john doe'),
@@ -53,8 +53,12 @@ const validators = {
       walletAddress: Joi.string(),
     }),
     payload: Joi.object({
-      tokensAssigned: Joi.number(),
-      tokensClaimed: Joi.number(),
+      name: Joi.string(),
+      phone: Joi.string(),
+      bankAccount: Joi.string(),
+      dailyDistanceCovered: Joi.number(),
+      villageId: Joi.number(),
+      gender: Joi.string(),
     }),
   },
 

@@ -109,8 +109,9 @@ module.exports = class extends AbstractController {
     };
   }
 
-  async getById(id) {
-    return this.table.findByPk(id, {
+  async getById(walletAddress) {
+    return this.table.findOne(walletAddress, {
+      where: walletAddress,
       include: [
         {
           model: this.projectTable,

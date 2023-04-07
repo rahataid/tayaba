@@ -27,15 +27,15 @@ module.exports = class extends AbstractRouter {
 
     getById: {
       method: 'GET',
-      path: '/{id}',
-      description: 'get beneficiaries by id',
+      path: '/{walletAddress}',
+      description: 'get beneficiaries by wallet address',
       permissions: [PERMISSIONS.BENEFICIARY_READ],
     },
 
     update: {
       method: 'PATCH',
-      path: '/{id}',
-      description: 'update beneficiaries by id',
+      path: '/{walletAddress}',
+      description: 'update beneficiaries by walletAddress',
       permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
