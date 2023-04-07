@@ -33,7 +33,10 @@ module.exports = class extends AbstractController {
     const {
       dataValues: { id: beneficiaryId },
     } = benData;
-    await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    if (payload.projectId) {
+      console.log('hiii');
+      await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    }
     return benData;
   }
 
@@ -48,7 +51,7 @@ module.exports = class extends AbstractController {
       tokensClaimed,
       ...restQuery
     } = query;
-    
+
     if (!limit) limit = 50;
     if (!start) start = 0;
 
@@ -78,7 +81,7 @@ module.exports = class extends AbstractController {
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
-      where:{
+      where: {
         deletedAt: null,
       },
       include: [
@@ -86,15 +89,17 @@ module.exports = class extends AbstractController {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
-          deletedAt : null,
+          deletedAt: null,
+          required: false,
         },
         {
           model: this.projectTable,
           where: projectQuery,
           as: 'beneficiary_project_details',
+          required: false,
         },
       ],
-      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt : null },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt: null },
       order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
@@ -189,8 +194,11 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async delete({walletAddress}) {
-    return this.table.update({deletedAt: String( new Date().getTime())},{ where: { walletAddress } });
+  async delete({ walletAddress }) {
+    return this.table.update(
+      { deletedAt: String(new Date().getTime()) },
+      { where: { walletAddress } }
+    );
   }
 
   async getVillagesName() {
