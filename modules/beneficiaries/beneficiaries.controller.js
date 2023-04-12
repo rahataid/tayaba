@@ -18,7 +18,7 @@ module.exports = class extends AbstractController {
   registrations = {
     add: (req) => this.add(req.payload),
     list: (req) => this.list(req.query),
-    getById: (req) => this.getById(req.params.id),
+    getByWalletAddress: (req) => this.getByWalletAddress(req.params.walletAddress),
     update: (req) => this.update(req.params.id, req.payload),
     updateStatus: (req) => this.updateStatus(req.params.address, req.payload.isActive),
     updateUsingWalletAddress: (req) =>
@@ -34,7 +34,6 @@ module.exports = class extends AbstractController {
       dataValues: { id: beneficiaryId },
     } = benData;
     if (payload.projectId) {
-      console.log('hiii');
       await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
     }
     return benData;
@@ -114,9 +113,12 @@ module.exports = class extends AbstractController {
     };
   }
 
-  async getById(walletAddress) {
-    return this.table.findOne(walletAddress, {
-      where: walletAddress,
+  async getByWalletAddress(walletAddress) {
+    return this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('walletAddress')),
+        walletAddress?.toLowerCase()
+      ),
       include: [
         {
           model: this.projectTable,

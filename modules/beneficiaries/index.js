@@ -25,7 +25,7 @@ module.exports = class extends AbstractRouter {
       // permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
 
-    getById: {
+    getByWalletAddress: {
       method: 'GET',
       path: '/{walletAddress}',
       description: 'get beneficiaries by wallet address',
