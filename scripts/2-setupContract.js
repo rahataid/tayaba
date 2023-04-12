@@ -102,6 +102,7 @@ const setupContracts = async () => {
   // const tokenAddress = tokenCreationEvent.args.tokenAddress
 
   console.log('4/4 DEPLOYING CVA Project');
+  //TODO: Need to cleanup
   const { contract: cvaProject } = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
     deploymentData.projectName,
     rahatToken.address,
