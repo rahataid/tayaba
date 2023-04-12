@@ -14,6 +14,7 @@ const _Transacations = require('./transactions');
 const _Reports = require('./reporting');
 const _Auth = require('./auth');
 const _Misc = require('./misc');
+const ProjectBeneficiaries = require('./projectBeneficiaries');
 const { EVENTS } = require('../constants');
 
 let Routes = {
@@ -35,6 +36,7 @@ let Routes = {
   Vendors: new Vendors(),
   Reports: new _Reports(),
   Misc: new _Misc(),
+  ProjectBeneficiaries: new ProjectBeneficiaries(),
 };
 
 module.exports = Routes;
