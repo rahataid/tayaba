@@ -59,6 +59,13 @@ module.exports = class extends AbstractRouter {
       // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
+    assignProject: {
+      method: 'PATCH',
+      path: '/project/{id}',
+      description: 'Assign project to beneficary ',
+      // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
+
     delete: {
       method: 'PATCH',
       path: '/{walletAddress}/delete',
