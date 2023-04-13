@@ -39,7 +39,6 @@ const schema = {
     type: DataTypes.STRING,
     allowNull: true,
   },
-
   projectType: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -59,6 +58,10 @@ const schema = {
   deletedAt: {
     type: DataTypes.STRING,
     defaultValue: null,
+  },
+  isApproved: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 };
 module.exports = class Project extends AbstractModel {

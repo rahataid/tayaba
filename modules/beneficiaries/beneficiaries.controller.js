@@ -46,12 +46,15 @@ module.exports = class extends AbstractController {
       limit,
       start,
       projectId,
+      contractAddress,
       id: beneficiaryId,
       village,
       tokensAssigned,
       tokensClaimed,
       ...restQuery
     } = query;
+
+    let projectRequired = false;
 
     if (!limit) limit = 50;
     if (!start) start = 0;
@@ -63,6 +66,22 @@ module.exports = class extends AbstractController {
 
     if (projectId) {
       projectQuery.id = projectId;
+      projectRequired = true;
+    }
+
+    if (contractAddress) {
+      let project = await this.projectTable.findOne({
+        where: {
+          [Sequelize.Op.and]: [
+            Sequelize.where(
+              Sequelize.fn('lower', Sequelize.col('contractAddress')),
+              contractAddress?.toLowerCase()
+            ),
+          ],
+        },
+      });
+      projectRequired = true;
+      projectQuery.id = project.id;
     }
 
     if (village) {
@@ -97,7 +116,7 @@ module.exports = class extends AbstractController {
           model: this.projectTable,
           where: projectQuery,
           as: 'beneficiary_project_details',
-          required: false,
+          required: projectRequired,
         },
       ],
       where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt: null },
