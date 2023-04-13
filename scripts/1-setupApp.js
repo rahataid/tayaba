@@ -13,14 +13,15 @@ const Role = new RoleController();
 const projectController = new ProjectController();
 require('../modules/models');
 
-const projectData = {
-  name: 'H20 Wheels',
-  startDate: '2023-01-24',
-  endDate: '2023-01-24',
-  owner: 1,
-  budget: 0,
-  disbursed: 0,
-};
+// const projectData = {
+//   name: 'H20 Wheels',
+//   startDate: '2023-01-24',
+//   endDate: '2023-01-24',
+//   owner: 1,
+//   budget: 0,
+//   disbursed: 0,
+//   contractAddress: '',
+// };
 
 db.authenticate()
   .then(async () => {
@@ -30,7 +31,7 @@ db.authenticate()
     console.log('setting up users');
     await setupAdmin();
     console.log('setting up project');
-    await projectController.add(projectData);
+    // await projectController.add(projectData);
     console.log('Done');
     process.exit(0);
   })

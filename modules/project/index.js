@@ -51,5 +51,12 @@ module.exports = class extends AbstractRouter {
       description: 'get Project By Wallet',
       permissions: [PERMISSIONS.PROJECT_READ],
     },
+
+    approveProject: {
+      method: 'PATCH',
+      path: '/{contractAddress}/approve',
+      description: 'approve project',
+      // permissions: [PERMISSIONS.PROJECT_WRITE],
+    },
   };
 };

@@ -18,6 +18,8 @@ module.exports = class extends AbstractController {
     update: (req) => this.update(req.payload, req.query),
     getById: (req) => this.getById(req.params.id),
     getByContractAddress: (req) => this.getByContractAddress(req.params),
+    approveProject: (req) =>
+      this.approveProject(req.params.contractAddress, req.payload.isApproved),
   };
 
   async add(payload) {
@@ -62,14 +64,14 @@ module.exports = class extends AbstractController {
   async getByContractAddress({ contractAddress }) {
     return await this.table.findOne({
       where: {
-      [Sequelize.Op.and]: [
-        Sequelize.where(
-          Sequelize.fn('lower', Sequelize.col('contractAddress')),
-          contractAddress?.toLowerCase()
-        ),
-        { deletedAt: null }
-      ]
-    },
+        [Sequelize.Op.and]: [
+          Sequelize.where(
+            Sequelize.fn('lower', Sequelize.col('contractAddress')),
+            contractAddress?.toLowerCase()
+          ),
+          { deletedAt: null },
+        ],
+      },
 
       include: [
         {
@@ -128,9 +130,26 @@ module.exports = class extends AbstractController {
     });
   }
   async delete({ contractAddress }) {
-    return this.table.update({ deletedAt: String(new Date().getTime()) }, { where: { contractAddress } });
+    return this.table.update(
+      { deletedAt: String(new Date().getTime()) },
+      { where: { contractAddress } }
+    );
   }
   async update(payload, param) {
     return this.table.update(payload, { where: { ...param } });
+  }
+
+  async approveProject(contractAddress, isApproved) {
+    return this.table.update(
+      {
+        isApproved,
+      },
+      {
+        where: Sequelize.where(
+          Sequelize.fn('lower', Sequelize.col('contractAddress')),
+          contractAddress?.toLowerCase()
+        ),
+      }
+    );
   }
 };
