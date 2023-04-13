@@ -13,6 +13,7 @@ module.exports = class extends AbstractController {
     this.table = BeneficiariesModel;
     this.villageTable = VillageModel;
     this.projectTable = ProjectModel;
+    this.ProjectBeneficiariesModel = ProjectBeneficiariesModel;
   }
 
   registrations = {
@@ -240,9 +241,16 @@ module.exports = class extends AbstractController {
     return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
   }
   async assignProjectBulk({ beneficiariesId, projectId }) {
-    let data = beneficiariesId.map((id) => {
-      return { beneficiaryId: id, projectId };
+    let projectBeneficeries = this.ProjectBeneficiariesModel.findAll({
+      where: {
+        projectId,
+      },
+      attributes: ['beneficiaryId'],
     });
+    let data = beneficiariesId.map((id) => {
+      if (projectBeneficeries.indexOf(id) >= 0) return { beneficiaryId: id, projectId };
+    });
+    if (data.length <= 0) return;
     return ProjectBeneficiariesModel.bulkCreate(data);
   }
 };
