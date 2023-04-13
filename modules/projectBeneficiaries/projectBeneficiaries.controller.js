@@ -1,5 +1,5 @@
-const { AbstractController } = require("@rumsan/core/abstract");
-const { ProjectModel, BeneficiariesModel, ProjectBeneficiariesModel} = require("../models");
+const { AbstractController } = require('@rumsan/core/abstract');
+const { ProjectModel, BeneficiariesModel, ProjectBeneficiariesModel } = require('../models');
 
 module.exports = class extends AbstractController {
   constructor(options) {
@@ -14,7 +14,7 @@ module.exports = class extends AbstractController {
     list: (req) => this.list(),
     delete: (req) => this.delete(req.params),
     update: (req) => this.update(req.payload, req.params),
-    getById: (req) => this.getById(req.params.id)
+    getById: (req) => this.getById(req.params.id),
   };
 
   async add(payload) {
@@ -28,13 +28,46 @@ module.exports = class extends AbstractController {
     // });
     // let {dataValues} =  await this.table.findByPk(id);
     // dataValues.beneficiariesCount=beneficiariesCount;
-
     // return dataValues;
 
     return await this.table.findByPk(id);
   }
-  async list() {
-    return this.table.findAll();
+  async list({ limit, start, contractAddress }) {
+    if (!limit) limit = 50;
+    if (!start) start = 0;
+    let query = {};
+    if (contractAddress) {
+      let project = await this.projectTable.findOne({
+        where: {
+          [Sequelize.Op.and]: [
+            Sequelize.where(
+              Sequelize.fn('lower', Sequelize.col('contractAddress')),
+              contractAddress?.toLowerCase()
+            ),
+          ],
+        },
+      });
+      console.log(project.id);
+      query.id = project.id;
+    }
+    return this.table.findAll({
+      where: {
+        ...query,
+      },
+      include: [
+        {
+          model: this.beneficiariesTable,
+          as: 'beneficary_details',
+          deletedAt: null,
+          required: false,
+        },
+        {
+          model: this.projectTable,
+          as: 'beneficiary_project_details',
+          required: false,
+        },
+      ],
+    });
   }
   async delete({ id }) {
     return this.table.destroy({ where: { id } });
