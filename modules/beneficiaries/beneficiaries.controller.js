@@ -13,6 +13,7 @@ module.exports = class extends AbstractController {
     this.table = BeneficiariesModel;
     this.villageTable = VillageModel;
     this.projectTable = ProjectModel;
+    this.ProjectBeneficiariesModel = ProjectBeneficiariesModel;
   }
 
   registrations = {
@@ -27,6 +28,7 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params),
     getVillagesName: (req) => this.getVillagesName(),
     assignProject: (req) => this.assignProject(req.params.id, req.payload.projectId),
+    assignProjectBulk: (req) => this.assignProjectBulk(req.payload),
   };
 
   async add(payload) {
@@ -237,5 +239,18 @@ module.exports = class extends AbstractController {
   }
   async assignProject(beneficiaryId, projectId) {
     return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
+  }
+  async assignProjectBulk({ beneficiariesId, projectId }) {
+    let projectBeneficeries = this.ProjectBeneficiariesModel.findAll({
+      where: {
+        projectId,
+      },
+      attributes: ['beneficiaryId'],
+    });
+    let data = beneficiariesId.map((id) => {
+      if (projectBeneficeries.indexOf(id) >= 0) return { beneficiaryId: id, projectId };
+    });
+    if (data.length <= 0) return;
+    return ProjectBeneficiariesModel.bulkCreate(data);
   }
 };

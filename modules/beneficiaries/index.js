@@ -79,5 +79,11 @@ module.exports = class extends AbstractRouter {
       description: 'List all beneficiary villages',
       permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
+    assignProjectBulk: {
+      method: 'post',
+      path: '/project/bulkadd',
+      description: ' bulk Assign beneficary to project ',
+      // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
   };
 };
