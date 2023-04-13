@@ -27,6 +27,7 @@ module.exports = class extends AbstractController {
     delete: (req) => this.delete(req.params),
     getVillagesName: (req) => this.getVillagesName(),
     assignProject: (req) => this.assignProject(req.params.id, req.payload.projectId),
+    assignProjectBulk: (req) => this.assignProjectBulk(req.payload),
   };
 
   async add(payload) {
@@ -218,5 +219,11 @@ module.exports = class extends AbstractController {
   }
   async assignProject(beneficiaryId, projectId) {
     return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
+  }
+  async assignProjectBulk({ beneficiariesId, projectId }) {
+    let data = beneficiariesId.map((id) => {
+      return { beneficiaryId: id, projectId };
+    });
+    return ProjectBeneficiariesModel.bulkCreate(data);
   }
 };
