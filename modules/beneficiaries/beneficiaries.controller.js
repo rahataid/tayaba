@@ -241,16 +241,20 @@ module.exports = class extends AbstractController {
     return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
   }
   async assignProjectBulk({ beneficiariesId, projectId }) {
-    let projectBeneficeries = this.ProjectBeneficiariesModel.findAll({
+    let projectBeneficeries = await this.ProjectBeneficiariesModel.findAll({
       where: {
         projectId,
       },
       attributes: ['beneficiaryId'],
     });
-    let data = beneficiariesId.map((id) => {
-      if (projectBeneficeries.indexOf(id) >= 0) return { beneficiaryId: id, projectId };
-    });
+    projectBeneficeries = projectBeneficeries.map((obj) => obj.beneficiaryId);
+    let data = beneficiariesId
+      .map((id) => {
+        if (projectBeneficeries.indexOf(id) < 0) return { beneficiaryId: id, projectId };
+      })
+      .filter((obj) => obj);
     if (data.length <= 0) return;
+
     return ProjectBeneficiariesModel.bulkCreate(data);
   }
 };
