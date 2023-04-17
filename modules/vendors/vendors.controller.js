@@ -1,5 +1,11 @@
 const { AbstractController } = require('@rumsan/core/abstract');
-const { VendorModel, VillageModel, ProjectVendorsModel, BeneficiariesModel } = require('../models');
+const {
+  VendorModel,
+  VillageModel,
+  ProjectVendorsModel,
+  BeneficiariesModel,
+  ProjectModel,
+} = require('../models');
 const {
   WalletUtils: { validateSignature },
 } = require('@rumsan/core/utils');
@@ -22,6 +28,7 @@ module.exports = class extends AbstractController {
     this.table = VendorModel;
     this.villageTable = VillageModel;
     this.tblProjectVendors = ProjectVendorsModel;
+    this.tblProject = ProjectModel;
     this.tblBeneficiaries = BeneficiariesModel;
   }
 
@@ -64,6 +71,11 @@ module.exports = class extends AbstractController {
           {
             model: this.villageTable,
             as: 'vendor_village_details',
+          },
+          {
+            model: this.tblProject,
+            as: 'vendor_project_details',
+            attributes: ['id', 'name'],
           },
         ],
       });
