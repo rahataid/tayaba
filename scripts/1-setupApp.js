@@ -114,22 +114,15 @@ const setupAdmin = async () => {
     ],
   });
   const user1 = await User.signupUsingEmail({
-    name: 'Tayaba',
-    email: 'tayaba@mailinator.com',
-    password: 'T$mp9670',
-    roles: ['donor'],
-  });
-
-  const userTayaba = await User.signupUsingEmail({
-    name: 'Tayaba H2O',
-    email: 'h2o@tayaba.org',
+    name: 'Donor',
+    email: 'donor@mailinator.com',
     password: 'T$mp9670',
     roles: ['donor'],
   });
 
   const user2 = await User.signupUsingEmail({
-    name: 'SRSO Admin',
-    email: 'srso@mailinator.com',
+    name: 'Rahat Manager',
+    email: 'manager@mailinator.com',
     password: 'T$mp9670',
     roles: ['admin'],
   });
@@ -141,13 +134,6 @@ const setupAdmin = async () => {
     roles: ['admin'],
   });
 
-  const user3 = await User.signupUsingEmail({
-    name: 'Will Smith',
-    email: 'manager@mailinator.com',
-    password: 'T$mp9670',
-    roles: ['manager'],
-  });
-
   const user4 = await User.signupUsingEmail({
     name: 'stakeholders',
     email: 'stakeholders@mailinator.com',
@@ -155,5 +141,5 @@ const setupAdmin = async () => {
     roles: ['stakeholder'],
   });
   console.log(`Users created`);
-  return user1, user2, user3, user4, userSrso, userTayaba;
+  return user1, user2, user4, userSrso, userTayaba;
 };

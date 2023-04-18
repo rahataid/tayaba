@@ -7,7 +7,7 @@ const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
 const axios = require('axios');
-const chacheServerUrl = config.get('chainCacher.url');
+const cacheServerUrl = config.get('chainCacher.url');
 
 const deploymentData = {
   communityName: 'Tayaba',
@@ -15,6 +15,7 @@ const deploymentData = {
   tokenName: 'H20Wheel',
   tokenSymbol: 'H20',
   tokenDecimals: 0,
+  projectManager: 'SRSO',
 };
 
 const { privateKey: deployerPrivateKey } = require('../config/privateKeys/deployer.json');
@@ -122,9 +123,9 @@ const setupContracts = async () => {
     CVAProject: cvaProject.address,
   };
 
-  if (chacheServerUrl) {
+  if (cacheServerUrl) {
     let chainCacher = axios.create({
-      baseURL: `${chacheServerUrl}/contracts`,
+      baseURL: `${cacheServerUrl}/contracts`,
       timeout: 10000,
       headers: { 'app-uuid': config.get('chainCacher.appUuid') },
     });

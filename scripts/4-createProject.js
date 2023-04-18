@@ -17,7 +17,7 @@ const ProjectController = require('../modules/project/project.controller');
 const projectController = new ProjectController();
 
 const { address: serverAddress } = require('../config/privateKeys/server.json');
-const { privateKey: deployerPrivateKey } = require('../config/privateKeys/deployer.json');
+const { privateKey: deployerPrivateKey } = require('../config/privateKeys/admin.json');
 const { default: axios } = require('axios');
 
 let networkUrl, contracts;
