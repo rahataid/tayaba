@@ -34,3 +34,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: esatya/tayaba:main
+          build-args: |
+            NODE_ENV=production
