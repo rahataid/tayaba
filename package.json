@@ -10,6 +10,7 @@
     "start": "cross-env NODE_ENV=development nodemon .",
     "stage": "NODE_ENV=stage node .",
     "production": "NODE_ENV=production node .",
+    "development": "NODE_ENV=development node .",
     "setup": "yarn install",
     "migrate:create": "npx sequelize-cli db:create",
     "migrate:up": "npx sequelize-cli db:migrate",
