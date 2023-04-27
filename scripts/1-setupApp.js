@@ -118,6 +118,7 @@ const setupAdmin = async () => {
     email: 'donor@mailinator.com',
     password: 'T$mp9670',
     roles: ['donor'],
+    wallet_address: '0x462C2fd10c0196aFd959a09eC6eB005e7Fd6D67d',
   });
 
   const user2 = await User.signupUsingEmail({
@@ -125,6 +126,7 @@ const setupAdmin = async () => {
     email: 'manager@mailinator.com',
     password: 'T$mp9670',
     roles: ['admin'],
+    wallet_address: '0xE2df378A2F1E7031f734fB946B3B4990Ae0Ec2C6',
   });
 
   const userSrso = await User.signupUsingEmail({
@@ -132,6 +134,7 @@ const setupAdmin = async () => {
     email: 'hamadullah@srso.org.pk',
     password: 'T$mp9670',
     roles: ['admin'],
+    wallet_address: '0xE2df378A2F1E7031f734fB946B3B4990Ae0Ec2C6',
   });
 
   const user4 = await User.signupUsingEmail({
@@ -141,5 +144,5 @@ const setupAdmin = async () => {
     roles: ['stakeholder'],
   });
   console.log(`Users created`);
-  return user1, user2, user4, userSrso, userTayaba;
+  return user1, user2, user4, userSrso;
 };
