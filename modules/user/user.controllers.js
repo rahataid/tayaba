@@ -1,12 +1,18 @@
 const { UserController, RSU_EVENTS } = require('@rumsan/user');
+const { Utils, RSConfig } = require('@rumsan/core');
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
+
 const EventHandlers = require('../eventHandlers');
 const Settings = require('../../helpers/settings');
-
+const { ethers } = require('ethers');
 const getPrivateKeys = (file) => {
   const keyFile = require(`../../config/privateKeys/${file}.json`);
 
   return keyFile;
 };
+
+const { CryptoUtils, WalletUtils } = Utils;
+const secret = RSConfig.get('secret');
 
 const mixins = {
   async loginUsingOtp(service, serviceId, otp, { clientIpAddress }) {
@@ -23,6 +29,21 @@ const mixins = {
     }
     return data;
   },
+
+  async loginUsingWallet(signature, signPayload, { clientIpAddress }) {
+    const { address } = WalletUtils.validateSignature(signature, signPayload, {
+      ip: clientIpAddress,
+      secret,
+    });
+    let user = await this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('wallet_address')),
+        address?.toLowerCase()
+      ),
+    });
+    if (!user) throw Error('Invalid Wallet');
+    return this.loginSuccess(user.id, clientIpAddress);
+  },
 };
 
 const listeners = {};
@@ -34,6 +55,7 @@ module.exports = class extends UserController {
     super(options);
     this.registerControllers({
       add: (req) => this.add(req.payload),
+      generateSigninMessage: (req) => this.generateSigninMessage(req.info.clientIpAddress),
     });
   }
 
@@ -44,5 +66,9 @@ module.exports = class extends UserController {
     };
 
     return this._add(payload);
+  }
+
+  generateSigninMessage(ip) {
+    return CryptoUtils.encrypt(JSON.stringify({ ip, secret }), secret);
   }
 };

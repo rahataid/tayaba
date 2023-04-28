@@ -37,6 +37,11 @@ module.exports = class extends UserRouter {
           }),
         },
       },
+      generateSigninMessage: {
+        method: 'GET',
+        path: '/walletmessage',
+        description: 'get wallet message',
+      },
     });
   }
 };
