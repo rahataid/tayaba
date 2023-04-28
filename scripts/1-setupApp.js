@@ -13,6 +13,8 @@ const Role = new RoleController();
 const projectController = new ProjectController();
 require('../modules/models');
 
+const { address: adminAddress } = require('../config/privateKeys/admin.json');
+const { address: donorAddress } = require('../config/privateKeys/donor.json');
 // const projectData = {
 //   name: 'H20 Wheels',
 //   startDate: '2023-01-24',
@@ -118,7 +120,7 @@ const setupAdmin = async () => {
     email: 'donor@mailinator.com',
     password: 'T$mp9670',
     roles: ['donor'],
-    wallet_address: '0x462C2fd10c0196aFd959a09eC6eB005e7Fd6D67d',
+    wallet_address: donorAddress,
   });
 
   const user2 = await User.signupUsingEmail({
@@ -126,7 +128,7 @@ const setupAdmin = async () => {
     email: 'manager@mailinator.com',
     password: 'T$mp9670',
     roles: ['admin'],
-    wallet_address: '0xE2df378A2F1E7031f734fB946B3B4990Ae0Ec2C6',
+    wallet_address: adminAddress,
   });
 
   const userSrso = await User.signupUsingEmail({
@@ -134,7 +136,7 @@ const setupAdmin = async () => {
     email: 'hamadullah@srso.org.pk',
     password: 'T$mp9670',
     roles: ['admin'],
-    wallet_address: '0xE2df378A2F1E7031f734fB946B3B4990Ae0Ec2C6',
+    wallet_address: adminAddress,
   });
 
   const user4 = await User.signupUsingEmail({
