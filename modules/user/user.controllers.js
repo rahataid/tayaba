@@ -1,5 +1,6 @@
 const { UserController, RSU_EVENTS } = require('@rumsan/user');
 const { Utils, RSConfig } = require('@rumsan/core');
+const { Sequelize } = require('@rumsan/core').SequelizeDB;
 
 const EventHandlers = require('../eventHandlers');
 const Settings = require('../../helpers/settings');
@@ -35,10 +36,12 @@ const mixins = {
       secret,
     });
     let user = await this.table.findOne({
-      where: {
-        wallet_address: address,
-      },
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('wallet_address')),
+        address?.toLowerCase()
+      ),
     });
+    if (!user) throw Error('Invalid Wallet');
     return this.loginSuccess(user.id, clientIpAddress);
   },
 };
