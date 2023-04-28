@@ -40,15 +40,7 @@ const mixins = {
       },
     });
     let data = await this.loginSuccess(user.id, clientIpAddress);
-    if (data.user.roles?.includes('donor')) {
-      let keys = getPrivateKeys('donor');
 
-      data.privateKey = keys.privateKey;
-    } else {
-      let keys = getPrivateKeys('admin');
-
-      data.privateKey = keys.privateKey;
-    }
     return data;
   },
 };
