@@ -39,9 +39,7 @@ const mixins = {
         wallet_address: address,
       },
     });
-    let data = await this.loginSuccess(user.id, clientIpAddress);
-
-    return data;
+    return this.loginSuccess(user.id, clientIpAddress);
   },
 };
 
