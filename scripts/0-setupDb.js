@@ -29,6 +29,7 @@ const dropTables = `
   DROP TABLE IF EXISTS "tblVendors";
   DROP TABLE IF EXISTS "tblUsers";
   DROP TABLE IF EXISTS "tblVillages";
+    DROP TABLE IF EXISTS "tblUserKeys";
 `;
 
 const settingsData = {
