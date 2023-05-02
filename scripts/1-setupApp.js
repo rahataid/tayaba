@@ -7,14 +7,22 @@ SequelizeDB.init(database, username, password, config.get('db'));
 const { db } = SequelizeDB;
 const { UserController, RoleController } = require('@rumsan/user');
 const ProjectController = require('../modules/project/project.controller');
+const UserKeyController = require('../modules/userKey/userKey.controller');
 const { PERMISSIONS } = require('../constants');
 const User = new UserController();
 const Role = new RoleController();
 const projectController = new ProjectController();
+const userKeyController = new UserKeyController();
 require('../modules/models');
 
-const { address: adminAddress } = require('../config/privateKeys/admin.json');
-const { address: donorAddress } = require('../config/privateKeys/donor.json');
+const {
+  address: adminAddress,
+  privateKey: adminPrivateKey,
+} = require('../config/privateKeys/admin.json');
+const {
+  address: donorAddress,
+  privateKey: donorPrivateKey,
+} = require('../config/privateKeys/donor.json');
 // const projectData = {
 //   name: 'H20 Wheels',
 //   startDate: '2023-01-24',
@@ -123,6 +131,8 @@ const setupAdmin = async () => {
     wallet_address: donorAddress,
   });
 
+  await userKeyController.add({ userId: user1.id, privateKey: donorPrivateKey });
+
   const user2 = await User.signupUsingEmail({
     name: 'Rahat Manager',
     email: 'manager@mailinator.com',
@@ -130,6 +140,7 @@ const setupAdmin = async () => {
     roles: ['admin'],
     wallet_address: adminAddress,
   });
+  await userKeyController.add({ userId: user2.id, privateKey: adminPrivateKey });
 
   const userSrso = await User.signupUsingEmail({
     name: 'Hamadullah [SRSO]',
@@ -138,6 +149,7 @@ const setupAdmin = async () => {
     roles: ['admin'],
     wallet_address: adminAddress,
   });
+  await userKeyController.add({ userId: userSrso.id, privateKey: adminPrivateKey });
 
   const user4 = await User.signupUsingEmail({
     name: 'stakeholders',

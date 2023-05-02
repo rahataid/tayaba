@@ -1,7 +1,7 @@
 const { UserController, RSU_EVENTS } = require('@rumsan/user');
 const { Utils, RSConfig } = require('@rumsan/core');
 const { Sequelize } = require('@rumsan/core').SequelizeDB;
-
+const { UserKeyModel } = require('../models');
 const EventHandlers = require('../eventHandlers');
 const Settings = require('../../helpers/settings');
 const { ethers } = require('ethers');
@@ -17,14 +17,11 @@ const secret = RSConfig.get('secret');
 const mixins = {
   async loginUsingOtp(service, serviceId, otp, { clientIpAddress }) {
     const userId = await this.authController.authenticateUsingOtp(service, serviceId, otp);
-    let data = await this.loginSuccess(userId, clientIpAddress);
-    if (data.user.roles?.includes('donor')) {
-      let keys = getPrivateKeys('donor');
-      data.privateKey = keys.privateKey;
-    } else {
-      let keys = getPrivateKeys('admin');
-      data.privateKey = keys.privateKey;
-    }
+    const userKey = await this.userKeyTable.findOne({ where: { userId } });
+    if (!userKey) throw Error(' User Is Invalid');
+    const data = await this.loginSuccess(userId, clientIpAddress);
+    data.privateKey = userKey.privateKey;
+
     return data;
   },
 
@@ -51,6 +48,8 @@ module.exports = class extends UserController {
     options.mixins = mixins;
     options.listeners = listeners;
     super(options);
+    this.userKeyTable = UserKeyModel;
+
     this.registerControllers({
       add: (req) => this.add(req.payload),
       generateSigninMessage: (req) => this.generateSigninMessage(req.info.clientIpAddress),
