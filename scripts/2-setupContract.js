@@ -7,7 +7,7 @@ const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
 const axios = require('axios');
-const cacheServerUrl = config.get('chainCacher.url');
+const cacheServerUrl = null; // config.get('chainCacher.url');
 
 const deploymentData = {
   communityName: 'Tayaba',
