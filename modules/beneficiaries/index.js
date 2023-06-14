@@ -25,17 +25,17 @@ module.exports = class extends AbstractRouter {
       // permissions: [PERMISSIONS.BENEFICIARY_LIST],
     },
 
-    getById: {
+    getByWalletAddress: {
       method: 'GET',
-      path: '/{id}',
-      description: 'get beneficiaries by id',
+      path: '/{walletAddress}',
+      description: 'get beneficiaries by wallet address',
       permissions: [PERMISSIONS.BENEFICIARY_READ],
     },
 
     update: {
       method: 'PATCH',
-      path: '/{id}',
-      description: 'update beneficiaries by id',
+      path: '/{walletAddress}',
+      description: 'update beneficiaries by walletAddress',
       permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
@@ -59,10 +59,17 @@ module.exports = class extends AbstractRouter {
       // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
 
+    assignProject: {
+      method: 'PATCH',
+      path: '/project/{id}',
+      description: 'Assign project to beneficary ',
+      // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
+    },
+
     delete: {
-      method: 'DELETE',
-      path: '/{id}',
-      description: 'delete beneficiaries by id',
+      method: 'PATCH',
+      path: '/{walletAddress}/delete',
+      description: 'delete beneficiaries',
       permissions: [PERMISSIONS.BENEFICIARY_DELETE],
     },
 
@@ -71,6 +78,12 @@ module.exports = class extends AbstractRouter {
       path: '/get-villages',
       description: 'List all beneficiary villages',
       permissions: [PERMISSIONS.BENEFICIARY_LIST],
+    },
+    assignProjectBulk: {
+      method: 'post',
+      path: '/project/bulkadd',
+      description: ' bulk Assign beneficary to project ',
+      // permissions: [PERMISSIONS.BENEFICIARY_WRITE],
     },
   };
 };

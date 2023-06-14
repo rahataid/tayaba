@@ -13,19 +13,22 @@ module.exports = class extends AbstractController {
     this.table = BeneficiariesModel;
     this.villageTable = VillageModel;
     this.projectTable = ProjectModel;
+    this.ProjectBeneficiariesModel = ProjectBeneficiariesModel;
   }
 
   registrations = {
     add: (req) => this.add(req.payload),
     list: (req) => this.list(req.query),
-    getById: (req) => this.getById(req.params.id),
+    getByWalletAddress: (req) => this.getByWalletAddress(req.params.walletAddress),
     update: (req) => this.update(req.params.id, req.payload),
     updateStatus: (req) => this.updateStatus(req.params.address, req.payload.isActive),
     updateUsingWalletAddress: (req) =>
       this.updateUsingWalletAddress(req.params.walletAddress, req.payload),
     overrideBenBalance: (req) => this.overrideBenBalance(req.params.walletAddress, req.payload),
-    delete: (req) => this.delete(req.params.id),
+    delete: (req) => this.delete(req.params),
     getVillagesName: (req) => this.getVillagesName(),
+    assignProject: (req) => this.assignProject(req.params.id, req.payload.projectId),
+    assignProjectBulk: (req) => this.assignProjectBulk(req.payload),
   };
 
   async add(payload) {
@@ -33,7 +36,9 @@ module.exports = class extends AbstractController {
     const {
       dataValues: { id: beneficiaryId },
     } = benData;
-    await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    if (payload.projectId) {
+      await ProjectBeneficiariesModel.create({ beneficiaryId, projectId: payload.projectId });
+    }
     return benData;
   }
 
@@ -42,12 +47,15 @@ module.exports = class extends AbstractController {
       limit,
       start,
       projectId,
+      contractAddress,
       id: beneficiaryId,
       village,
       tokensAssigned,
       tokensClaimed,
       ...restQuery
     } = query;
+
+    let projectRequired = false;
 
     if (!limit) limit = 50;
     if (!start) start = 0;
@@ -59,6 +67,22 @@ module.exports = class extends AbstractController {
 
     if (projectId) {
       projectQuery.id = projectId;
+      projectRequired = true;
+    }
+
+    if (contractAddress) {
+      let project = await this.projectTable.findOne({
+        where: {
+          [Sequelize.Op.and]: [
+            Sequelize.where(
+              Sequelize.fn('lower', Sequelize.col('contractAddress')),
+              contractAddress?.toLowerCase()
+            ),
+          ],
+        },
+      });
+      projectRequired = true;
+      projectQuery.id = project.id;
     }
 
     if (village) {
@@ -78,19 +102,25 @@ module.exports = class extends AbstractController {
     }
 
     let { rows: list, count } = await this.table.findAndCountAll({
+      where: {
+        deletedAt: null,
+      },
       include: [
         {
           model: this.villageTable,
           where: villageQuery,
           as: 'village_details',
+          deletedAt: null,
+          required: false,
         },
         {
           model: this.projectTable,
           where: projectQuery,
           as: 'beneficiary_project_details',
+          required: projectRequired,
         },
       ],
-      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery },
+      where: { ...restQuery, ...tokensAssignedQuery, ...tokensClaimedQuery, deletedAt: null },
       order: [['name', 'ASC']],
       limit: limit || 100,
       offset: start || 0,
@@ -105,8 +135,12 @@ module.exports = class extends AbstractController {
     };
   }
 
-  async getById(id) {
-    return this.table.findByPk(id, {
+  async getByWalletAddress(walletAddress) {
+    return this.table.findOne({
+      where: Sequelize.where(
+        Sequelize.fn('lower', Sequelize.col('walletAddress')),
+        walletAddress?.toLowerCase()
+      ),
       include: [
         {
           model: this.projectTable,
@@ -184,8 +218,11 @@ module.exports = class extends AbstractController {
     });
   }
 
-  async delete(id) {
-    return this.table.destroy({ where: { id } });
+  async delete({ walletAddress }) {
+    return this.table.update(
+      { deletedAt: String(new Date().getTime()) },
+      { where: { walletAddress } }
+    );
   }
 
   async getVillagesName() {
@@ -199,5 +236,25 @@ module.exports = class extends AbstractController {
     });
     const uniqueVillages = [...new Set(villageData.map((item) => item?.village_details.name))];
     return uniqueVillages;
+  }
+  async assignProject(beneficiaryId, projectId) {
+    return ProjectBeneficiariesModel.create({ beneficiaryId, projectId });
+  }
+  async assignProjectBulk({ beneficiariesId, projectId }) {
+    let projectBeneficeries = await this.ProjectBeneficiariesModel.findAll({
+      where: {
+        projectId,
+      },
+      attributes: ['beneficiaryId'],
+    });
+    projectBeneficeries = projectBeneficeries.map((obj) => obj.beneficiaryId);
+    let data = beneficiariesId
+      .map((id) => {
+        if (projectBeneficeries.indexOf(id) < 0) return { beneficiaryId: id, projectId };
+      })
+      .filter((obj) => obj);
+    if (data.length <= 0) return;
+
+    return ProjectBeneficiariesModel.bulkCreate(data);
   }
 };

@@ -108,6 +108,10 @@ const schema = {
     allowNull: false,
     defaultValue: 0,
   },
+  deletedAt: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  }
 };
 module.exports = class Beneficiaries extends AbstractModel {
   schema = schema;

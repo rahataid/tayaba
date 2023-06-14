@@ -2,13 +2,11 @@ const Joi = require('joi');
 const { AbstractValidator } = require('@rumsan/core/abstract');
 
 const validators = {
-  getContracts: {
-    params: Joi.object({
-      contract: Joi.string(),
+  add: {
+    payload: Joi.object({
+      privateKey: Joi.string().required().error(new Error('Private Key Is required')),
+      userId: Joi.number().required().error(new Error('UserId Is required')),
     }),
-  },
-  saveContract: {
-    payload: Joi.object({}),
   },
 };
 

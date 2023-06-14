@@ -8,7 +8,7 @@ const VendorModel = require('./vendors/vendors.model');
 const ProjectBeneficiariesModel = require('./projectBeneficiaries/projectBeneficiaries.model');
 const ProjectVendorsModel = require('./projectVendors/projectVendors.model');
 const TransactionsModel = require('./transactions/transactions.model');
-
+const UserKeyModel = require('./userKey/userkey.model');
 const MiscModel = require('./misc/misc.model');
 
 let modelFactory = {
@@ -22,6 +22,7 @@ let modelFactory = {
   TransactionsModel: new TransactionsModel().init(),
   VendorModel: new VendorModel().init(),
   MiscModel: new MiscModel().init(),
+  UserKeyModel: new UserKeyModel().init(),
 };
 
 /**********************************************************

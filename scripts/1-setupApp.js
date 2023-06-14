@@ -7,20 +7,31 @@ SequelizeDB.init(database, username, password, config.get('db'));
 const { db } = SequelizeDB;
 const { UserController, RoleController } = require('@rumsan/user');
 const ProjectController = require('../modules/project/project.controller');
+const UserKeyController = require('../modules/userKey/userKey.controller');
 const { PERMISSIONS } = require('../constants');
 const User = new UserController();
 const Role = new RoleController();
 const projectController = new ProjectController();
+const userKeyController = new UserKeyController();
 require('../modules/models');
 
-const projectData = {
-  name: 'H20 Wheels',
-  startDate: '2023-01-24',
-  endDate: '2023-01-24',
-  owner: 1,
-  budget: 0,
-  disbursed: 0,
-};
+const {
+  address: adminAddress,
+  privateKey: adminPrivateKey,
+} = require('../config/privateKeys/admin.json');
+const {
+  address: donorAddress,
+  privateKey: donorPrivateKey,
+} = require('../config/privateKeys/donor.json');
+// const projectData = {
+//   name: 'H20 Wheels',
+//   startDate: '2023-01-24',
+//   endDate: '2023-01-24',
+//   owner: 1,
+//   budget: 0,
+//   disbursed: 0,
+//   contractAddress: '',
+// };
 
 db.authenticate()
   .then(async () => {
@@ -30,7 +41,7 @@ db.authenticate()
     console.log('setting up users');
     await setupAdmin();
     console.log('setting up project');
-    await projectController.add(projectData);
+    // await projectController.add(projectData);
     console.log('Done');
     process.exit(0);
   })
@@ -113,39 +124,32 @@ const setupAdmin = async () => {
     ],
   });
   const user1 = await User.signupUsingEmail({
-    name: 'Tayaba',
-    email: 'tayaba@mailinator.com',
+    name: 'Donor',
+    email: 'donor@mailinator.com',
     password: 'T$mp9670',
     roles: ['donor'],
+    wallet_address: donorAddress,
   });
 
-  const userTayaba = await User.signupUsingEmail({
-    name: 'Tayaba H2O',
-    email: 'h2o@tayaba.org',
-    password: 'T$mp9670',
-    roles: ['donor'],
-  });
+  await userKeyController.add({ userId: user1.id, privateKey: donorPrivateKey });
 
   const user2 = await User.signupUsingEmail({
-    name: 'SRSO Admin',
-    email: 'srso@mailinator.com',
+    name: 'Rahat Manager',
+    email: 'manager@mailinator.com',
     password: 'T$mp9670',
     roles: ['admin'],
+    wallet_address: adminAddress,
   });
+  await userKeyController.add({ userId: user2.id, privateKey: adminPrivateKey });
 
   const userSrso = await User.signupUsingEmail({
     name: 'Hamadullah [SRSO]',
     email: 'hamadullah@srso.org.pk',
     password: 'T$mp9670',
     roles: ['admin'],
+    wallet_address: adminAddress,
   });
-
-  const user3 = await User.signupUsingEmail({
-    name: 'Will Smith',
-    email: 'manager@mailinator.com',
-    password: 'T$mp9670',
-    roles: ['manager'],
-  });
+  await userKeyController.add({ userId: userSrso.id, privateKey: adminPrivateKey });
 
   const user4 = await User.signupUsingEmail({
     name: 'stakeholders',
@@ -154,5 +158,5 @@ const setupAdmin = async () => {
     roles: ['stakeholder'],
   });
   console.log(`Users created`);
-  return user1, user2, user3, user4, userSrso, userTayaba;
+  return user1, user2, user4, userSrso;
 };

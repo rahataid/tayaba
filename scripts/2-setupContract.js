@@ -7,7 +7,7 @@ const AppSettings = require('@rumsan/core').AppSettings;
 require('@rumsan/core/appSettings/model')();
 
 const axios = require('axios');
-const chacheServerUrl = config.get('chainCacher.url');
+const cacheServerUrl = config.get('chainCacher.url');
 
 const deploymentData = {
   communityName: 'Tayaba',
@@ -15,6 +15,7 @@ const deploymentData = {
   tokenName: 'H20Wheel',
   tokenSymbol: 'H20',
   tokenDecimals: 0,
+  projectManager: 'SRSO',
 };
 
 const { privateKey: deployerPrivateKey } = require('../config/privateKeys/deployer.json');
@@ -95,13 +96,14 @@ const setupContracts = async () => {
     deploymentData.tokenDecimals,
   ]);
 
-  ///@notice create token through donor contract
+  //@notice create token through donor contract
   // const tx = await rahatDonor.connect(donorWallet).createToken(deploymentData.tokenName, deploymentData.tokenSymbol, deploymentData.tokenDecimals);
   // const receipt = await tx.wait();
   // const tokenCreationEvent = receipt.events.find((el) => el.event === 'TokenCreated')
   // const tokenAddress = tokenCreationEvent.args.tokenAddress
 
   console.log('4/4 DEPLOYING CVA Project');
+  //TODO: Need to cleanup
   const { contract: cvaProject } = await lib.deployContract(CVAProjectAbi, CVAProjectBytecode, [
     deploymentData.projectName,
     rahatToken.address,
@@ -121,9 +123,9 @@ const setupContracts = async () => {
     CVAProject: cvaProject.address,
   };
 
-  if (chacheServerUrl) {
+  if (cacheServerUrl) {
     let chainCacher = axios.create({
-      baseURL: `${chacheServerUrl}/contracts`,
+      baseURL: `${cacheServerUrl}/contracts`,
       timeout: 10000,
       headers: { 'app-uuid': config.get('chainCacher.appUuid') },
     });

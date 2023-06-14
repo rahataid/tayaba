@@ -37,24 +37,31 @@ const schema = {
   },
   location: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-
   projectType: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   projectManager: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   description: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  wallet: {
+  contractAddress: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  deletedAt: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  isApproved: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 };
 module.exports = class Project extends AbstractModel {

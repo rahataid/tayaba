@@ -25,15 +25,15 @@ module.exports = class extends AbstractRouter {
     },
 
     update: {
-      method: 'PUT',
-      path: '/{id}',
+      method: 'PATCH',
+      path: '/update',
       description: 'update  project',
       permissions: [PERMISSIONS.PROJECT_WRITE],
     },
 
     delete: {
-      method: 'DELETE',
-      path: '/{id}',
+      method: 'PATCH',
+      path: '/{contractAddress}/delete',
       description: 'delete project',
       permissions: [PERMISSIONS.PROJECT_DELETE],
     },
@@ -43,6 +43,20 @@ module.exports = class extends AbstractRouter {
       path: '/{id}',
       description: 'get Project By Id',
       permissions: [PERMISSIONS.PROJECT_READ],
+    },
+
+    getByContractAddress: {
+      method: 'GET',
+      path: '/wallet/{contractAddress}',
+      description: 'get Project By Wallet',
+      permissions: [PERMISSIONS.PROJECT_READ],
+    },
+
+    approveProject: {
+      method: 'PATCH',
+      path: '/{contractAddress}/approve',
+      description: 'approve project',
+      // permissions: [PERMISSIONS.PROJECT_WRITE],
     },
   };
 };
